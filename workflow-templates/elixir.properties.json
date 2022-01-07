@@ -4,5 +4,9 @@
     "iconName": "example-icon",
     "categories": [
         "Elixir"
+    ],
+    "filePatterns": [
+        "mix.exs$",
+        "^mix.lock"
     ]
 }
