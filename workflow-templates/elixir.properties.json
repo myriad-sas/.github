@@ -1,7 +1,6 @@
 {
     "name": "Myriad HUB elixir CI workflow template",
     "description": "Myriad HUB elixir project CI starter workflow.",
-    "iconName": "example-icon",
     "categories": [
         "Elixir"
     ],
