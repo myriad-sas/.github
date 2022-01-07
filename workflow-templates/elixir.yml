@@ -1,1 +1,18 @@
 # Starter Workflow for Elixir Project
+name: Myriad HUB elixir CI
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  build:
+    runs-on: [testing,hub]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run a one-line script
+        run: echo "This is a public repo"
