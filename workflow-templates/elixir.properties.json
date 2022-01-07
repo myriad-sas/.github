@@ -3,7 +3,7 @@
     "description": "Myriad HUB elixir project CI starter workflow.",
     "iconName": "example-icon",
     "categories": [
-        "Go"
+        "elixir"
     ],
     "filePatterns": [
         "package.json$",
