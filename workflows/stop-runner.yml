@@ -1,0 +1,40 @@
+name: stop-runner
+
+on: 
+  workflow_call:
+    inputs:
+      label:
+        description: >-
+          Name of the unique label assigned to the runner.
+          The label is used in two cases:
+          - to use as the input of 'runs-on' property for the following jobs;
+          - to remove the runner from GitHub when it is not needed anymore.
+        required: true
+        type: string
+      ec2-instance-id:
+        description: >-
+          EC2 Instance Id of the created runner.
+          The id is used to terminate the EC2 instance when the runner is not needed anymore.
+        required: true
+        type: string
+    secrets:
+      github-token:
+        description: >-
+          GitHub personal access token
+        required: true
+        
+jobs:
+  stop-runner:
+    name: stop runner
+    runs-on: [ubuntu-latest]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+      - name: stop on-demande ec2 instance
+        uses: ./.github/actions/stop-runner
+        with:
+          github-token: ${{ secrets.github-token }}
+          label: ${{ inputs.label }}
+          ec2-instance-id: ${{ inputs.ec2-instance-id }}
