@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: start runner
         id: start-ec2-runner
-        uses: myriad-actions/start-runner@v1
+        uses: myriad-actions/start-runner@v2
         with:
           environment: testing
           config-path: ${{ inputs.config-path }}
