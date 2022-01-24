@@ -11,6 +11,11 @@ on:
         description: >-
           public key for ssh access to the runner, for troubleshooting purpose
         required: true
+    inputs:
+      config-path:
+        description: >-
+          path to the ec2.yml file which stores the parameters for the instance creation
+        required: true    
     outputs:
       label:
         description: >-
@@ -39,9 +44,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: start runner
         id: start-ec2-runner
-        uses: ./.github/actions/start-runner
+        uses: myriad-actions/start-runner@v1
         with:
           environment: testing
+          config-path: ${{ inputs.config-path }}
           github-token: ${{ secrets.github-token }}
   run-launch-scripts:
     name: run launch scripts
