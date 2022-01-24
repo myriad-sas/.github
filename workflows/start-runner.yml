@@ -1,0 +1,62 @@
+name: start-runner
+
+on: 
+  workflow_call:
+    secrets:
+      github-token:
+        description: >-
+          GitHub personal access token
+        required: true
+      runner-ssh-key:
+        description: >-
+          public key for ssh access to the runner, for troubleshooting purpose
+        required: true
+    outputs:
+      label:
+        description: >-
+          Name of the unique label assigned to the runner.
+          The label is used in two cases:
+          - to use as the input of 'runs-on' property for the following jobs;
+          - to remove the runner from GitHub when it is not needed anymore.
+        value: ${{ jobs.start-runner.outputs.label }}
+      ec2-instance-id:
+        description: >-
+          EC2 Instance Id of the created runner.
+          The id is used to terminate the EC2 instance when the runner is not needed anymore.
+        value: ${{ jobs.start-runner.outputs.ec2-instance-id }}
+
+jobs:          
+  start-runner:
+    name: start runner
+    runs-on: [ubuntu-latest]
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      label: ${{ steps.start-ec2-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: start runner
+        id: start-ec2-runner
+        uses: ./.github/actions/start-runner
+        with:
+          environment: testing
+          github-token: ${{ secrets.github-token }}
+  run-launch-scripts:
+    name: run launch scripts
+    needs: start-runner
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/run-launch-scripts
+        with:
+          github-token: ${{ secrets.github-token }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+          runner-ssh-key: ${{ secrets.runner-ssh-key }}
+      - uses: actions/checkout@v2
+      - name: initialize build environment
+        uses: ./.github/actions/init-vm-env
+        with:
+          tools-token: ${{ secrets.github-token }}
