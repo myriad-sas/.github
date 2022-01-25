@@ -14,7 +14,12 @@ on:
     inputs:
       config-path:
         description: >-
-          path to the ec2.yml file which stores the parameters for the instance creation
+          path to the ec2.yml file which stores the variables for the instance
+        required: true
+        type: string
+      env-path:
+        description: >-
+          path to the .env file which stores the envinronment variables for the instance
         required: true
         type: string
     outputs:
@@ -69,3 +74,7 @@ jobs:
           tools-token: ${{ inputs.tools-token }}
           tools-folder: ${{ inputs.tools-folder }}
           tools-path: ${{ inputs.tools-path }}
+      - name: set envinronment variables
+        uses: myriad-actions/load-environment-variables@v1
+        with:
+          tools-repository:  ${{ inputs.env-path }}
