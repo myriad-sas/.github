@@ -22,6 +22,21 @@ on:
           path to the .env file which stores the envinronment variables for the instance
         required: true
         type: string
+      tools-repository:
+        description: >-
+          path to the .env file which stores the envinronment variables for the instance
+        required: true
+        type: string
+      tools-folder:
+        description: >-
+          path to the .env file which stores the envinronment variables for the instance
+        required: true
+        type: string
+      tools-path:
+        description: >-
+          path to the .env file which stores the envinronment variables for the instance
+        required: true
+        type: string
     outputs:
       label:
         description: >-
@@ -71,7 +86,7 @@ jobs:
         uses: myriad-actions/checkout-repos@v2
         with:
           tools-repository:  ${{ inputs.tools-repository }}
-          tools-token: ${{ inputs.tools-token }}
+          tools-token: ${{ secrets.github-token }}
           tools-folder: ${{ inputs.tools-folder }}
           tools-path: ${{ inputs.tools-path }}
       - name: set envinronment variables
