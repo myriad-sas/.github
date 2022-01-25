@@ -90,6 +90,6 @@ jobs:
           tools-folder: ${{ inputs.tools-folder }}
           tools-path: ${{ inputs.tools-path }}
       - name: set envinronment variables
-        uses: myriad-actions/load-environment-variables@v1
+        uses: myriad-actions/load-environment-variables@v3
         with:
           env-path:  ${{ inputs.env-path }}
