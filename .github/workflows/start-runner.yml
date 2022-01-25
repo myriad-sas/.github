@@ -92,4 +92,4 @@ jobs:
       - name: set envinronment variables
         uses: myriad-actions/load-environment-variables@v1
         with:
-          tools-repository:  ${{ inputs.env-path }}
+          env-path:  ${{ inputs.env-path }}
