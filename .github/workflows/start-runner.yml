@@ -93,3 +93,4 @@ jobs:
         uses: myriad-actions/load-environment-variables@v18
         with:
           env-path:  ${{ inputs.env-path }}
+      - run: echo $BUCKET
