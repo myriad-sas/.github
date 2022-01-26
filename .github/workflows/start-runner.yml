@@ -65,7 +65,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: start runner
         id: start-ec2-runner
-        uses: myriad-actions/start-runner@v5
+        uses: myriad-actions/start-runner@v1
         with:
           environment: testing
           config-path: ${{ inputs.config-path }}
@@ -89,11 +89,3 @@ jobs:
           tools-token: ${{ secrets.github-token }}
           tools-folder: ${{ inputs.tools-folder }}
           tools-path: ${{ inputs.tools-path }}
-      - name: set envinronment variables
-        uses: myriad-actions/load-environment-variables@v18
-        with:
-          env-path:  ${{ inputs.env-path }}
-      - run: echo $BASH
-      - run: |
-          source /etc/environment
-          echo $BUCKET
