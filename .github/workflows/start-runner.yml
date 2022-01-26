@@ -80,9 +80,9 @@ jobs:
         with:
           runner-ssh-key: ${{ secrets.runner-ssh-key }}
       - name: initialize build environment
-        uses: myriad-actions/checkout-repos@v2
+        uses: myriad-actions/checkout-repos@v1
         with:
           tools-repository:  ${{ inputs.tools-repository }}
-          tools-token: ${{ secrets.github-pat }}
           tools-folder: ${{ inputs.tools-folder }}
           tools-path: ${{ inputs.tools-path }}
+          github-pat: ${{ secrets.github-pat }}
