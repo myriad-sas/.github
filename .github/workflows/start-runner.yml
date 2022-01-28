@@ -53,7 +53,7 @@ on:
 
 jobs:          
   start-runner:
-    name: start runner
+    name: launch
     runs-on: [ubuntu-latest]
     permissions:
       id-token: write
@@ -71,7 +71,7 @@ jobs:
           config-path: ${{ inputs.config-path }}
           github-pat: ${{ secrets.github-pat }}
   run-launch-scripts:
-    name: run launch scripts
+    name: init
     needs: start-runner
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps:
