@@ -1,0 +1,69 @@
+name: start-runner
+
+on: 
+  workflow_call:
+    inputs:
+      config-path:
+        description: >-
+          path to the ec2.yml file which stores the variables for the instance
+        required: true
+        type: string
+    outputs:
+      uri:
+        description: >-
+          Uri of the pushed container
+          The label is used in two cases:
+          - to use as the input of 'image' property for the following jobs;
+          - to remove the container from registry when it is not needed anymore.
+        value: ${{ jobs.build-n-push.outputs.uri }}
+      image-tag:
+        description: >-
+          tag of the image, for the moment only can pass one tag to the following jobs;
+          this is useful when the tag is not 'latest'
+        value: ${{ jobs.build-n-push.outputs.image-tag }}
+        
+jobs:          
+  build-n-push:
+    name: build & push
+    runs-on: [ubuntu-latest]
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      uri: ${{ steps.export.outputs.uri }}
+      image-tag: ${{ steps.export.outputs.image-tag }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: get build args
+        id: build
+        run: |
+          echo "::set-output name=APP_NAME::$(grep 'app:' mix.exs | sed -e 's/\[//g' -e 's/ //g' -e 's/app://' -e 's/[:,]//g')"
+          echo "::set-output name=APP_VSN_FULL::$(grep 'version:' mix.exs | cut -d '"' -f2 | awk -F'+' '{ print $1 }')"
+          echo "::set-output name=APP_VSN::$(grep 'vlite:' mix.exs | cut -d '"' -f2)"
+          echo "::set-output name=BUILD::$(git rev-parse --short HEAD)"
+      - name: set up Docker Buildx # docker build action
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      - name: login to ecr
+        id: login-ecr
+        uses: myriad-actions/login-ecr@main
+        with:
+          config-path: ${{ inputs.config-path }}
+      #- name: debug
+      #  run: echo ${{ steps.login-ecr.outputs.registry }} | sed 's/./& /g'
+      - name: Build image and push to GitHub Container Registry
+        uses: docker/build-push-action@v2
+        with:
+          pull: true
+          push: true
+          build-args: |
+            APP_NAME=${{ steps.build.outputs.APP_NAME }}
+            APP_VSN=${{ steps.build.outputs.APP_VSN }}
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ github.event.repository.name }}:${{ steps.build.outputs.APP_VSN_FULL }}-${{ steps.build.outputs.BUILD }}
+            ${{ steps.login-ecr.outputs.registry }}/${{ github.event.repository.name }}:latest
+      - name: export outputs
+        id: export
+        run: |
+        echo "::set-output name=uri::'${{ steps.login-ecr.outputs.registry }}/${{ github.event.repository.name }}'"
+        echo "::set-output name=image-tag::'${{ steps.build.outputs.APP_VSN_FULL }}-${{ steps.build.outputs.BUILD }}'"
