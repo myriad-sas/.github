@@ -1,0 +1,48 @@
+# This workflow will create a new release for the current repo 
+#
+# To use this workflow, following inputs are mandatory 
+#
+# 1. version
+#    For example: "v1.0.0".
+#    The release version to be used for the deployment. 
+#
+# 2. notes
+#    notes for the changes made in this release 
+
+name: Create Release
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: release version number, format vx.x.x
+        required: true
+      notes:
+        description: notes for changes in relaese
+        required: false
+        default: "N/A"
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: get short sha
+        run: echo "SHA7=`echo ${{ github.sha }} | cut -c1-7`" >> $GITHUB_ENV
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ env.SHA7 }}
+          release_name: Release ${{ github.event.inputs.version }}
+          body: |
+            release notes: 
+            ${{ github.event.inputs.notes }}
+          draft: false
+          prerelease: false
