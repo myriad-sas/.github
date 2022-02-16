@@ -17,10 +17,12 @@ on:
       version:
         description: release version number, format vx.x.x
         required: true
+        type: string
       notes:
         description: notes for changes in relaese
         required: false
         default: "N/A"
+        type: string
 
 jobs:
   deploy:
