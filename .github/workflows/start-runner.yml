@@ -80,7 +80,7 @@ jobs:
         with:
           runner-ssh-key: ${{ secrets.runner-ssh-key }}
       - name: initialize build environment
-        uses: myriad-actions/checkout-repos@v1
+        uses: myriad-actions/checkout-repos@main
         with:
           tools-repository:  ${{ inputs.tools-repository }}
           tools-folder: ${{ inputs.tools-folder }}
