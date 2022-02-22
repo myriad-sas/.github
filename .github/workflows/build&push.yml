@@ -4,8 +4,9 @@ on:
     inputs:
       config-path:
         description: >-
-          path to the ec2.yml file which stores the variables for the instance
-        required: true
+          path to the ecr.json file which stores the variables for the instance
+        required: false
+        default: ".github/ecr.json"
         type: string
       image-name:
         description: >-
