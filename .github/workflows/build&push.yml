@@ -43,6 +43,10 @@ on:
         required: true
         default: false
         type: boolean
+      context:
+        description: "Build's context is the set of files located in the specified PATH or URL"
+        required: false
+        type: string
       file:
         description: "Path to the Dockerfile"
         required: false
@@ -87,6 +91,7 @@ jobs:
           pull: true
           push: true
           file: ${{ inputs.file }}
+          context:  ${{ inputs.context }}
           build-args: |
             APP_NAME=${{ inputs.APP_NAME }}
             APP_VSN=${{ inputs.APP_VSN }}
@@ -108,7 +113,7 @@ jobs:
           pull: true
           push: true
           file: ${{ inputs.file }}
-          context: build-elixir-docker
+          context:  ${{ inputs.context }}
           build-args: |
             APP_NAME=${{ inputs.APP_NAME }}
             APP_VSN=${{ inputs.APP_VSN }}
