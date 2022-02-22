@@ -26,6 +26,13 @@ on:
           this is useful when the tag is not 'latest'
         required: false
         type: string
+      push_to_ghcr:
+        description: >-
+          boolean value to check if the image should be pushed to ghcr or not. 
+        required: false
+        default: false
+        type: boolean
+
     outputs:
       uri:
         description: >-
@@ -47,16 +54,18 @@ jobs:
       uri: ${{ steps.export.outputs.uri }}
       image-tag: ${{ steps.export.outputs.image-tag }}
     steps:
+    
       - uses: actions/checkout@v2
       - name: set up Docker Buildx # docker build action
         id: buildx
         uses: docker/setup-buildx-action@v1
+
       - name: login to ecr
         id: login-ecr
         uses: myriad-actions/login-ecr@main
         with:
           config-path: ${{ inputs.config-path }}
-      - name: Build image and push to GitHub Container Registry
+      - name: Build image and push to AWS Elastic Container Registry
         uses: docker/build-push-action@v2
         with:
           pull: true
@@ -71,3 +80,23 @@ jobs:
         id: export
         run: |
           echo "::set-output name=uri::'${{ steps.login-ecr.outputs.registry }}/${{ github.event.repository.name }}'"
+          
+      - name: login ghcr
+        if: ${{ inputs.push_to_ghcr == 'true' }}
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.LW_PAT }}
+      - name: Build image and push to GitHub Container Registry
+        uses: docker/build-push-action@v2
+        if: ${{ inputs.push_to_ghcr == 'true' }}
+        with:
+          pull: true
+          push: true
+          build-args: |
+            APP_NAME=${{ inputs.APP_NAME }}
+            APP_VSN=${{ inputs.APP_VSN }}
+          tags: |
+            ghcr.io/${{ github.event.repository.name }}:${{ inputs.image-tag }}
+            ghcr.io/${{ github.event.repository.name }}:latest
