@@ -104,7 +104,8 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ github.actor }}  
+          #TODO: change to {{ secrets.GITHUB_TOKEN }} when subscription is activated
           password: ${{ secrets.LW_PAT }}
       - name: Build image and push to GitHub Container Registry
         uses: docker/build-push-action@master
