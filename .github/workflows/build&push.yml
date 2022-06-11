@@ -43,12 +43,6 @@ on:
         required: true
         default: false
         type: boolean
-      github-pat:
-        description: >-
-           GitHub personal access token
-        required: false
-        default: ""
-        type: string
       context:
         description: "Build's context is the set of files located in the specified PATH or URL"
         required: false
@@ -58,6 +52,11 @@ on:
         required: false
         default: "./Dockerfile"
         type: string
+    secrets:
+      github-pat:
+        description: >-
+           GitHub personal access token
+        required: false
     outputs:
       uri:
         description: >-
