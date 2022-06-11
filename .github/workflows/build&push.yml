@@ -43,6 +43,11 @@ on:
         required: true
         default: false
         type: boolean
+      github-pat:
+        description: >-
+           GitHub personal access token
+        required: false
+        type: string
       context:
         description: "Build's context is the set of files located in the specified PATH or URL"
         required: false
@@ -106,7 +111,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}  
           #TODO: change to {{ secrets.GITHUB_TOKEN }} when subscription is activated
-          password: ${{ secrets.LW_PAT }}
+          password: ${{ inputs.github-pat }}
       - name: Build image and push to GitHub Container Registry
         uses: docker/build-push-action@master
         if: ${{ inputs.push_to_ghcr }}
