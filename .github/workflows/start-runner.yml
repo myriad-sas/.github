@@ -17,11 +17,6 @@ on:
           path to the ec2.yml file which stores the variables for the instance
         required: true
         type: string
-      env-path:
-        description: >-
-          path to the .env file which stores the envinronment variables for the instance
-        required: true
-        type: string
       tools-repository:
         description: >-
           path to the .env file which stores the envinronment variables for the instance
