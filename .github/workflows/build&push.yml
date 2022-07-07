@@ -113,7 +113,7 @@ jobs:
           #TODO: change to {{ secrets.GITHUB_TOKEN }} when subscription is activated
           password: ${{ secrets.github-pat }}
       - name: Build image and push to GitHub Container Registry
-        uses: docker/build-push-action@master
+        uses: docker/build-push-action@v3
         if: ${{ inputs.push_to_ghcr }}
         with:
           pull: true
