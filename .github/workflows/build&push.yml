@@ -111,7 +111,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}  
           #TODO: change to {{ secrets.GITHUB_TOKEN }} when subscription is activated
-          password: ${{ secrets.github-pat }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build image and push to GitHub Container Registry
         uses: docker/build-push-action@master
         if: ${{ inputs.push_to_ghcr }}
