@@ -116,7 +116,7 @@ jobs:
         uses: docker/build-push-action@master
         if: ${{ inputs.push_to_ghcr }}
         with:
-          pull: true
+          pull: false
           push: true
           file: ${{ inputs.file }}
           context:  ${{ inputs.context }}
