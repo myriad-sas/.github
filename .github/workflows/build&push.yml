@@ -49,6 +49,11 @@ on:
         required: true
         default: false
         type: boolean
+      rhuser:
+        description: >-
+           redhat user 
+        required: false
+        type: string
       context:
         description: "Build's context is the set of files located in the specified PATH or URL"
         required: false
@@ -62,10 +67,6 @@ on:
       github-pat:
         description: >-
            GitHub personal access token
-        required: false
-      rhuser:
-        description: >-
-           redhat user 
         required: false
       rhpwd:
         description: >-
@@ -131,7 +132,7 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: registry.redhat.io
-          username: ${{ secrets.rhuser }}
+          username: ${{ inputs.rhuser }}
           password: ${{ secrets.rhpwd }}
       - name: Build image and push to GitHub Container Registry
         uses: docker/build-push-action@master
