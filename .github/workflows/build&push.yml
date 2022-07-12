@@ -104,6 +104,24 @@ jobs:
         uses: myriad-actions/login-ecr@main
         with:
           config-path: ${{ inputs.config-path }}
+          
+      - name: login rhcr
+        if: ${{ inputs.push_to_rhcr }}
+        uses: docker/login-action@v1
+        with:
+          registry: registry.redhat.io
+          username: ${{ inputs.rhuser }}
+          password: ${{ secrets.rhpwd }}
+
+      - name: login ghcr
+        if: ${{ inputs.login_to_rhcr }}
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}  
+          #TODO: change to {{ secrets.GITHUB_TOKEN }} when subscription is activated
+          password: ${{ secrets.github-pat }}
+          
       - name: Build image and push to AWS Elastic Container Registry
         uses: docker/build-push-action@v2
         if: ${{ inputs.push_to_ecr }}
@@ -119,21 +137,6 @@ jobs:
             ${{ steps.login-ecr.outputs.registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
             ${{ steps.login-ecr.outputs.registry }}/${{ inputs.image-name }}:latest
 
-      - name: login ghcr
-        if: ${{ inputs.login_to_rhcr }}
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}  
-          #TODO: change to {{ secrets.GITHUB_TOKEN }} when subscription is activated
-          password: ${{ secrets.github-pat }}
-      - name: login rhcr
-        if: ${{ inputs.push_to_rhcr }}
-        uses: docker/login-action@v1
-        with:
-          registry: registry.redhat.io
-          username: ${{ inputs.rhuser }}
-          password: ${{ secrets.rhpwd }}
       - name: Build image and push to GitHub Container Registry
         uses: docker/build-push-action@master
         if: ${{ inputs.push_to_ghcr }}
