@@ -90,7 +90,7 @@ on:
 jobs:          
   build-n-push:
     name: build & push
-    runs-on: [ubuntu-latest]
+    runs-on: ${{ inputs.runs-on }}
     services:
       registry:
         image: registry:latest
