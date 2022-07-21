@@ -121,8 +121,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}  
           #TODO: change to {{ secrets.GITHUB_TOKEN }} when subscription is activated
-          password: ${{ secrets.GITHUB_TOKEN }}
-          #password: ${{ secrets.github-pat }}
+          #password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.github-pat }}
           
       - name: Build image and push to AWS Elastic Container Registry
         uses: docker/build-push-action@v2
