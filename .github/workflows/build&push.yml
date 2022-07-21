@@ -34,19 +34,19 @@ on:
       push_to_ghcr:
         description: >-
           boolean value to check if the image should be pushed to ghcr. 
-        required: true
+        required: false
         default: false
         type: boolean
       push_to_ecr:
         description: >-
           boolean value to check if the image should be pushed to ecr. 
-        required: true
+        required: false
         default: false
         type: boolean
       login_to_rhcr:
         description: >-
           boolean value to check if the image should be pulled from rhcr. 
-        required: true
+        required: false
         default: false
         type: boolean
       rhuser:
