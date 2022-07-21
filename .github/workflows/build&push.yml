@@ -146,7 +146,7 @@ jobs:
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ inputs.image-name }}:${{ inputs.image-tag }}
             ${{ steps.login-ecr.outputs.registry }}/${{ inputs.image-name }}:latest
-            localhost:5000/${{ inputs.image-name }}:latest
+            172.17.0.1:5000/${{ inputs.image-name }}:latest
 
       - name: Build image and push to GitHub Container Registry
         uses: docker/build-push-action@master
@@ -162,4 +162,4 @@ jobs:
           tags: |
             ghcr.io/${{ inputs.image-name }}:${{ inputs.image-tag }}
             ghcr.io/${{ inputs.image-name }}:latest
-            localhost:5000/${{ inputs.image-name }}:latest
+            172.17.0.1:5000/${{ inputs.image-name }}:latest
