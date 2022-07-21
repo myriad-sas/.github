@@ -63,6 +63,11 @@ on:
         required: false
         default: "./Dockerfile"
         type: string
+      runs-on:
+        description: tag of the runner
+        required: false
+        default: ubuntu-latest
+        type: string
     secrets:
       github-pat:
         description: >-
