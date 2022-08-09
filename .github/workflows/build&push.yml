@@ -63,6 +63,21 @@ on:
         required: false
         default: "./Dockerfile"
         type: string
+      download-artifacts:
+        description: "Build's context is the set of files located in the specified PATH or URL"
+        required: false
+        default: false
+        type: boolean
+      artifacts-name:
+        description: "artifacts name"
+        required: false
+        default: "artifacts"
+        type: string
+      artifacts-path:
+        description: "path to the artifacts"
+        required: false
+        default: "artifacts/"
+        type: string
     secrets:
       github-pat:
         description: >-
