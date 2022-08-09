@@ -110,6 +110,13 @@ jobs:
     
       - uses: actions/checkout@v2
       
+      - name: Download artifacts from previous build
+        if: ${{ inputs.download-artifacts }}
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ artifacts-name }}
+          path: ${{ artifacts-path }}
+      
       - name: set up Docker Buildx # docker build action
         id: buildx
         uses: docker/setup-buildx-action@v2
