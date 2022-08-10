@@ -114,8 +114,8 @@ jobs:
         if: ${{ inputs.download-artifacts }}
         uses: actions/download-artifact@v2
         with:
-          name: ${{ artifacts-name }}
-          path: ${{ artifacts-path }}
+          name: ${{ inputs.artifacts-name }}
+          path: ${{ inputs.artifacts-path }}
       
       - name: set up Docker Buildx # docker build action
         id: buildx
