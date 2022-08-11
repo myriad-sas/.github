@@ -64,7 +64,7 @@ on:
         default: "./Dockerfile"
         type: string
       download-artifacts:
-        description: "Build's context is the set of files located in the specified PATH or URL"
+        description: "whether to download the artifacts before the build starts"
         required: false
         default: false
         type: boolean
