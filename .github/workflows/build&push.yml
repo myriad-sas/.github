@@ -110,17 +110,17 @@ jobs:
     
       - uses: actions/checkout@v2
       
+      - name: set up Docker Buildx # docker build action
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      
       - name: Download artifacts from previous build
         if: ${{ inputs.download-artifacts }}
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.artifacts-name }}
           path: ${{ inputs.artifacts-path }}
-      
-      - name: set up Docker Buildx # docker build action
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-
+          
       - name: login to ecr
         id: login-ecr
         if: ${{ inputs.push_to_ecr }}
