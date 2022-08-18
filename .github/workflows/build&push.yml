@@ -148,7 +148,8 @@ jobs:
           
       - name: list deploy 
         run: |
-          ls -l deploy
+          pwd
+          ls -lR 
           
       - name: Build image and push to AWS Elastic Container Registry
         uses: docker/build-push-action@v2
