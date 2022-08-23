@@ -81,12 +81,12 @@ on:
       cache-from:
         description: "source of cache"
         required: false
-        default: "cache/"
+        default: "type=local,src=cache"
         type: string
       cache-to:
         description: "destination of cache"
         required: false
-        default: "cache/"
+        default: "type=local,dest=cache,mode=max"
         type: string
     secrets:
       github-pat:
