@@ -168,7 +168,6 @@ jobs:
           
       - name: Build image and push to AWS Elastic Container Registry
         uses: docker/build-push-action@v2
-        if: ${{ inputs.push_to_ecr }}
         with:
           push: true
           file: ${{ inputs.file }}
