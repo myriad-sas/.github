@@ -168,7 +168,7 @@ jobs:
           tags: |
             type=raw,value=${{ inputs.image-tag }}
           
-      - name: Build image and push to AWS Elastic Container Registry
+      - name: Build and push
         uses: docker/build-push-action@v2
         with:
           push: true
