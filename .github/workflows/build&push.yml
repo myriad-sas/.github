@@ -163,6 +163,8 @@ jobs:
           images: |
             ${{ env.GHCR }}
             ${{ env.ECR }}
+          flavor: |
+            latest=auto
           tags: |
             type=raw,value=${{ inputs.image-tag }}
           
