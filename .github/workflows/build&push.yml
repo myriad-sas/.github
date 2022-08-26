@@ -157,7 +157,7 @@ jobs:
           echo "GHCR=ghcr.io/myriad-sas/${{ inputs.image-name }}" >> $GITHUB_ENV
           
       - name: set docker meta
-        id: ghmeta
+        id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
