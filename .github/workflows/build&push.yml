@@ -167,6 +167,7 @@ jobs:
             latest=auto
           tags: |
             type=raw,value=${{ inputs.image-tag }}
+            type=raw,value=latest,enable={{is_default_branch}}
           
       - name: Build and push
         uses: docker/build-push-action@v2
