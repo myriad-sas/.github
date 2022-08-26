@@ -127,12 +127,7 @@ jobs:
         with:
           registry: registry.redhat.io
           username: ${{ inputs.rhuser }}
-          password: ${{ secrets.rhpwd }}          
-
-      - name: set ecr url
-        if: ${{ inputs.push_to_ecr }}
-        run: |
-          echo "$ECR=${{ steps.login-ecr.outputs.registry }}/${{ inputs.image-name }}" >> $GITHUB_ENV
+          password: ${{ secrets.rhpwd }}
           
       - name: login to ecr
         id: login-ecr
@@ -141,10 +136,10 @@ jobs:
         with:
           config-path: ${{ inputs.config-path }}
 
-      - name: set ghcr url
-        if: ${{ inputs.push_to_ghcr }}
+      - name: set ecr url
+        if: ${{ inputs.push_to_ecr }}
         run: |
-          echo "$GHCR=ghcr.io/myriad-sas/${{ inputs.image-name }}" >> $GITHUB_ENV
+          echo "$ECR=${{ steps.login-ecr.outputs.registry }}/${{ inputs.image-name }}" >> $GITHUB_ENV
 
       - name: login ghcr
         if: ${{ inputs.push_to_ghcr }}
@@ -154,7 +149,12 @@ jobs:
           username: ${{ github.actor }}  
           #TODO: change to {{ secrets.GITHUB_TOKEN }} when subscription is activated
           #password: ${{ secrets.GITHUB_TOKEN }}
-          password: ${{ secrets.github-pat }}        
+          password: ${{ secrets.github-pat }}
+
+      - name: set ghcr url
+        if: ${{ inputs.push_to_ghcr }}
+        run: |
+          echo "$GHCR=ghcr.io/myriad-sas/${{ inputs.image-name }}" >> $GITHUB_ENV
           
       - name: set docker meta
         id: ghmeta
