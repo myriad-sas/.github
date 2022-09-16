@@ -78,7 +78,7 @@ jobs:
     if: ${{ inputs.init == 'true' }}
     steps:
       - uses: actions/checkout@v2
-      - uses: myriad-actions/run-launch-scripts@v1
+      - uses: myriad-actions/run-launch-scripts@main
         with:
           runner-ssh-key: ${{ secrets.runner-ssh-key }}
       - name: initialize build environment
