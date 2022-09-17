@@ -7,29 +7,10 @@ on:
         description: >-
           GitHub personal access token
         required: true
-      runner-ssh-key:
-        description: >-
-          public key for ssh access to the runner, for troubleshooting purpose
-        required: true
     inputs:
-      config-path:
+      environment:
         description: >-
-          path to the ec2.yml file which stores the variables for the instance
-        required: true
-        type: string
-      tools-repository:
-        description: >-
-          path to the .env file which stores the envinronment variables for the instance
-        required: true
-        type: string
-      tools-folder:
-        description: >-
-          path to the .env file which stores the envinronment variables for the instance
-        required: true
-        type: string
-      tools-path:
-        description: >-
-          path to the .env file which stores the envinronment variables for the instance
+          one of the testbed, preprod or prod envinronment, for the workflow running
         required: true
         type: string
       init:
@@ -53,7 +34,7 @@ on:
         value: ${{ jobs.start-runner.outputs.ec2-instance-id }}
 
 jobs:          
-  start-runner:
+  launch:
     name: launch
     runs-on: [ubuntu-latest]
     permissions:
@@ -63,28 +44,32 @@ jobs:
       label: ${{ steps.start-ec2-runner.outputs.label }}
       ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
     steps:
-      - uses: actions/checkout@v2
+      - name: init job  
+        uses: myriad-actions/init-job@main
+      - name: load non-prod launch config
+        if: "${{  inputs.environment != 'prod' }}"
+        run: |
+          echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-NON-PROD-CONFIG }})" >> $GITHUB_ENV
+      - name: load prod launch config
+        if: "${{  inputs.environment == 'prod' }}"
+        run: |
+          echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-PROD-CONFIG }})" >> $GITHUB_ENV
       - name: start runner
         id: start-ec2-runner
         uses: myriad-actions/start-runner@main
         with:
-          environment: testing
-          config-path: ${{ inputs.config-path }}
+          environment: ${{ inputs.environment }}
+          config-path: ${{ env.CONFIG-PATH }}
           github-pat: ${{ secrets.github-pat }}
-  run-launch-scripts:
+  init:
     name: init
-    needs: start-runner
-    runs-on: ${{ needs.start-runner.outputs.label }}
+    needs: launch
+    runs-on: ${{ needs.launch.outputs.label }}
     if: ${{ inputs.init == 'true' }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: myriad-actions/run-launch-scripts@main
+      - name: init job  
+        uses: myriad-actions/init-job@main
+      - name: init runner
+        uses: myriad-actions/run-launch-scripts@main
         with:
-          runner-ssh-key: ${{ secrets.runner-ssh-key }}
-      - name: initialize build environment
-        uses: myriad-actions/checkout-repos@main
-        with:
-          tools-repository:  ${{ inputs.tools-repository }}
-          tools-folder: ${{ inputs.tools-folder }}
-          tools-path: ${{ inputs.tools-path }}
-          github-pat: ${{ secrets.github-pat }}
+          runner-ssh-key: ${{ env.AWS-RUNNER-SSH-PUBLIC-KEY }}
