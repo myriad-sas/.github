@@ -71,6 +71,8 @@ jobs:
     steps:
       - name: init job  
         uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
       - name: init runner
         uses: myriad-actions/run-launch-scripts@main
         with:
