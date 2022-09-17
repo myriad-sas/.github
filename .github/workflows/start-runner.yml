@@ -26,12 +26,12 @@ on:
           The label is used in two cases:
           - to use as the input of 'runs-on' property for the following jobs;
           - to remove the runner from GitHub when it is not needed anymore.
-        value: ${{ jobs.start-runner.outputs.label }}
+        value: ${{ jobs.launch.outputs.label }}
       ec2-instance-id:
         description: >-
           EC2 Instance Id of the created runner.
           The id is used to terminate the EC2 instance when the runner is not needed anymore.
-        value: ${{ jobs.start-runner.outputs.ec2-instance-id }}
+        value: ${{ jobs.launch.outputs.ec2-instance-id }}
 
 jobs:          
   launch:
