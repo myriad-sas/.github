@@ -2,6 +2,11 @@ name: stop-runner
 
 on: 
   workflow_call:
+    secrets:
+      github-token:
+        description: >-
+          GitHub personal access token
+        required: true
     inputs:
       label:
         description: >-
@@ -17,11 +22,6 @@ on:
           The id is used to terminate the EC2 instance when the runner is not needed anymore.
         required: true
         type: string
-    secrets:
-      github-token:
-        description: >-
-          GitHub personal access token
-        required: true
         
 jobs:
   terminate:
