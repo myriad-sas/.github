@@ -32,6 +32,8 @@ jobs:
     steps:
       - name: init job  
         uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
       - name: stop on-demande ec2 instance
         uses: myriad-actions/stop-runner@bis
         with:
