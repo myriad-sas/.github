@@ -25,16 +25,16 @@ on:
         
 jobs:
   stop-runner:
-    name: stop runner
     runs-on: [ubuntu-latest]
     permissions:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v2
+      - name: init job  
+        uses: myriad-actions/init-job@main
       - name: stop on-demande ec2 instance
-        uses: ./.github/actions/stop-runner
+        uses: myriad-actions/stop-runner@bis
         with:
           github-token: ${{ secrets.github-token }}
           label: ${{ inputs.label }}
-          ec2-instance-id: ${{ inputs.ec2-instance-id }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
