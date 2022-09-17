@@ -39,4 +39,4 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           label: ${{ inputs.label }}
-          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+          ec2-instance-id: ${{ inputs.ec2-instance-id }}
