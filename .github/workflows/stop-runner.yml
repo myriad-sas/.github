@@ -3,7 +3,7 @@ name: stop-runner
 on: 
   workflow_call:
     secrets:
-      github-token:
+      github-pat:
         description: >-
           GitHub personal access token
         required: true
@@ -35,6 +35,6 @@ jobs:
       - name: stop on-demande ec2 instance
         uses: myriad-actions/stop-runner@bis
         with:
-          github-token: ${{ secrets.github-token }}
+          github-token: ${{ secrets.github-pat }}
           label: ${{ inputs.label }}
           ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
