@@ -37,6 +37,6 @@ jobs:
       - name: stop on-demande ec2 instance
         uses: myriad-actions/stop-runner@bis
         with:
-          github-token: ${{ secrets.github-pat }}
+          github-pat: ${{ secrets.github-pat }}
           label: ${{ inputs.label }}
           ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
