@@ -46,6 +46,8 @@ jobs:
     steps:
       - name: init job  
         uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
       - name: load non-prod launch config
         if: "${{  inputs.environment != 'prod' }}"
         run: |
