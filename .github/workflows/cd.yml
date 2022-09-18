@@ -1,4 +1,4 @@
-name: check-deploy-validate
+name: cd
 
 on: 
   workflow_call:
