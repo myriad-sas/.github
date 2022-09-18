@@ -1,4 +1,4 @@
-name: build-in-docker
+name: check-deploy-validate
 
 on: 
   workflow_call:
@@ -8,6 +8,11 @@ on:
           GitHub personal access token
         required: true
     inputs:
+      environment:
+        description: >-
+          one of the testing, preprod or prod envinronment, for the workflow run
+        required: true
+        type: string
       runner:
         description: >-
           runner label on which this workflow will be ran
@@ -19,98 +24,33 @@ on:
         default: ./.github/.env
         required: false
         type: string
-      image:
-        description: >-
-          docker image url 
-        required: true
-        type: string
-      mysql-version:
-        description: >-
-          mysql service container version
-        required: false
-        default: latest
-        type: string
-      redis-version:
-        description: >-
-          redis service container version 
-        required: false
-        default: latest
-        type: string
-      influxdb-version:
-        description: >-
-          influxdb service container version 
-        required: false
-        default: latest
-        type: string
-    outputs:
-      label:
-        description: >-
-          Name of the unique label assigned to the runner.
-          The label is used in two cases:
-          - to use as the input of 'runs-on' property for the following jobs;
-          - to remove the runner from GitHub when it is not needed anymore.
-        value: ${{ jobs.launch.outputs.label }}
-      ec2-instance-id:
-        description: >-
-          EC2 Instance Id of the created runner.
-          The id is used to terminate the EC2 instance when the runner is not needed anymore.
-        value: ${{ jobs.launch.outputs.ec2-instance-version }}
 
 jobs:
-  build:
-    name: build and test
+  init-vars:
+    name: init variables
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - name: load non-prod launch config
+        if: ${{  inputs.environment == 'testing' }} && ${{  env.HOST_MODE == 'ecs' }}
+        run: |
+          echo "CLUSTER=${{ env.AWS-ECS-CLUSTER-NAME-TESTING }}" >> $GITHUB_ENV
+      - name: load prod launch config
+        if: ${{  inputs.environment == 'preprod' }}  && ${{  env.HOST_MODE == 'ecs' }}
+        run: |
+          echo "CLUSTER=${{ env.AWS-ECS-CLUSTER-NAME-PREPROD }}" >> $GITHUB_ENV
+      - name: load prod launch config
+        if: ${{  inputs.environment == 'prod' }}  && ${{  env.HOST_MODE == 'ecs' }}
+        run: |
+          echo "CLUSTER=${{ env.AWS-ECS-CLUSTER-NAME-PROD }}" >> $GITHUB_ENV
+
+  check-freeze:
+    name: check freeze
+    needs: init-vars
     runs-on: ${{ inputs.runner }}
     permissions:
       id-token: write
       contents: read
-      packages: read
-    container:
-      image: ghcr.io/myriad-sas/${{ inputs.image }}
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    services: 
-      mysql:
-        image: mysql:${{ inputs.mysql-version }}
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        ports:
-          - 3306:3306
-        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
-      redis:
-        image: redis:${{ inputs.redis-version }}
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
-      influxdb:
-        image: influxdb:${{ inputs.influxdb-version }}
-        options: >-
-          --health-cmd "curl -f http://localhost:8086/ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
     steps:
-      - name: init container
-        uses: myriad-actions/init-container@bis
-      - name: init job  
-        uses: myriad-actions/init-job@main
+      - uses: myriad-actions/check-deployment-freeze@bis
         with:
-          github-pat: ${{ secrets.github-pat }}
-      - name: build and test
-        uses: myriad-actions/run-ci-scripts@bis
-        with:
-          script: ${{ env.SCRIPT0 }}
-      - name: upload to s3
-        uses: myriad-actions/run-ci-scripts@bis
-        with:
-          script: ${{ env.SCRIPT1 }}
-      - name: upload build data as artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.ARTIFACT-NAME }}
-          path: ${{ env.ARTIFACTS-SRC-PATH }}/
-          retention-days: ${{ env.ARTIFACTS-RETENTION-DURATION-IN-DAY }}
+          cluster: ${{ env.cluster }}
