@@ -47,7 +47,7 @@ jobs:
       env-path: ${{ inputs.env-path }}
 
   ci:
-    uses: ./.github/workflows/build-in-docker.yml
+    uses: ./.github/workflows/ci.yml
     needs: init-vars
     secrets:
       github-pat: ${{ secrets.github-pat }}
@@ -59,7 +59,7 @@ jobs:
       env-path: ${{ inputs.env-path }}
 
   cd-testing:
-    uses: ./.github/workflows/check-deploy-validate.yml
+    uses: ./.github/workflows/cd.yml
     needs: 
       - init-vars
       - start-runner
