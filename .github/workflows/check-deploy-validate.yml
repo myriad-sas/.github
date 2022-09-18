@@ -8,6 +8,11 @@ on:
           GitHub personal access token
         required: true
     inputs:
+      runner:
+        description: >-
+          runner label on which this workflow will be ran
+        required: true
+        type: string
       env-path:
         description: >-
           path to the configuration file of environment variables
@@ -54,6 +59,7 @@ on:
 jobs:
   build:
     name: build and test
+    runs-on: ${{ inputs.runner }}
     permissions:
       id-token: write
       contents: read
