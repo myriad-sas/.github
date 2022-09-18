@@ -1,0 +1,80 @@
+name: update-deployment-freeze-status
+
+on: 
+  workflow_call:
+    secrets:
+      github-pat:
+        description: >-
+          GitHub personal access token
+        required: true
+
+    inputs:
+      env-path:
+        description: >-
+          path to the file for the environment variables
+        required: false
+        default: ./.github/.env
+        type: string
+      environment:
+        type: choice
+        description: ENVIRONMENT
+        options:
+        - testing
+        - preprod
+        - prod
+      status:
+        type: choice
+        description: STATUS
+        options: 
+        - frozen
+        - unfrozen
+
+
+jobs:
+  update-status:
+    runs-on: [ubuntu-latest]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+       - name: init job  
+         uses: myriad-actions/init-job@main
+         with:
+           github-pat: ${{ secrets.github-pat }}
+           env-path: ${{ inputs.env-path }}
+      -  uses: tspascoal/get-user-teams-membership@v1
+         id: isMember
+         with:
+           username: ${{ github.actor }}
+           GITHUB_TOKEN: ${{ secrets.LW_PAT }}
+      - name: check user access
+        if: ${{ !(contains(steps.isMember.outputs.teams, ${{ env.GROUP1 }} ) || contains(steps.isMember.outputs.teams.teams, ${{ env.GROUP2 }} )) }}
+        uses: actions/github-script@main
+        with:
+          script: core.setFailed( ${{ env.NOT-AUTHORIZED-ERROR }}  )
+      - uses: myriad-actions/update-deployment-freeze@main
+        with:
+          environment: ${{ inputs.environment }}
+          github-pat:  ${{ secrets.github-pat }}
+          status: ${{ inputs.status }} 
+      - name: Sets webhookUrl for preprod
+        run: |
+          echo "WEBHOOK_URL=${{ env.MSTEAMS_WEBHOOK_ICEMAN_PREPROD }}" >> $GITHUB_ENV
+        if: ${{ inputs.environment == 'preprod' }} 
+      - name: Sets webhookUrl for prod
+        run: |
+          echo "WEBHOOK_URL=${{ env.MSTEAMS_WEBHOOK_ICEMAN_PROD }}" >> $GITHUB_ENV
+        if: ${{ inputs.environment == 'prod' }} 
+      - name: notify
+        uses: neonidian/teams-notify-build-status@main
+        continue-on-error: true
+        with:
+          webhookUrl: ${{ env.WEBHOOK_URL }}
+          title: |
+            DEPLOYMENT FREEZE STATUS CHANGE:  
+            **${{ github.event.repository.name }}** on 
+            **${{ inputs.cluster }}** is **${{ inputs.status }}**
+          titleBackgroundColor: "blue"
+          status: "${{ inputs.status }}"
+          message: >-
+            actor: ${{ github.actor }}
