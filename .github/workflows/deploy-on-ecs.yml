@@ -57,7 +57,22 @@ jobs:
       redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
       influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
-      
+
+  check-deploy-validate:
+    uses: ./.github/workflows/check-deploy-validate.yml
+    needs: 
+      - init-vars
+      - start-runner
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      image: ${{ needs.init-vars.outputs.IMAGE }}
+      mysql-version: ${{ needs.init-vars.outputs.MYSQL-VERSION }}
+      redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
+      influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
+      env-path: ${{ inputs.env-path }}
+      runner: ${{ needs.start-runner.outputs.label }}
+
   stop-runner:
     needs:
       - start-runner
