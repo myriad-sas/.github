@@ -41,7 +41,7 @@ jobs:
   start-runner:
     uses: ./.github/workflows/start-runner.yml
     secrets:
-      github-pat: ${{ inputs.github-pat }}
+      github-pat: ${{ secrets.github-pat }}
     with:
       environment: non-prod
       env-path: ${{ inputs.env-path }}
@@ -64,7 +64,7 @@ jobs:
     if: ${{ always() }} 
     uses: ./.github/workflows/stop-runner.yml
     secrets:
-      github-pat: ${{ inputs.github-pat }}
+      github-pat: ${{ secrets.github-pat }}
     with:
       label: ${{ needs.start-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
