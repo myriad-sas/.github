@@ -16,19 +16,15 @@ on:
         default: ./.github/.env
         type: string
       environment:
-        type: choice
-        description: ENVIRONMENT
-        options:
-        - testing
-        - preprod
-        - prod
+        description: >-
+          one of the testing, preprod or prod envinronment, for the workflow run
+        required: true
+        type: string
       status:
-        type: choice
-        description: STATUS
-        options: 
-        - frozen
-        - unfrozen
-
+        description: >-
+          new status to be applied
+        required: false
+        type: string
 
 jobs:
   update-status:
@@ -37,16 +33,16 @@ jobs:
       id-token: write
       contents: read
     steps:
-       - name: init job  
-         uses: myriad-actions/init-job@main
-         with:
-           github-pat: ${{ secrets.github-pat }}
-           env-path: ${{ inputs.env-path }}
-      -  uses: tspascoal/get-user-teams-membership@v1
-         id: isMember
-         with:
-           username: ${{ github.actor }}
-           GITHUB_TOKEN: ${{ secrets.LW_PAT }}
+      - name: init job  
+        uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
+      - uses: tspascoal/get-user-teams-membership@v1
+        id: isMember
+        with:
+          username: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.LW_PAT }}
       - name: check user access
         if: ${{ !(contains(steps.isMember.outputs.teams, ${{ env.GROUP1 }} ) || contains(steps.isMember.outputs.teams.teams, ${{ env.GROUP2 }} )) }}
         uses: actions/github-script@main
