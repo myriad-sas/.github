@@ -23,7 +23,7 @@ jobs:
      MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
      INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
-     IMAGE: ${{ steps.vars.outputs.DOCKER-RUNNER-IMAGE }}
+     IMAGE: ${{ steps.vars.outputs.IMAGE }}
    steps:
      - name: init job  
        uses: myriad-actions/init-job@main
@@ -53,9 +53,9 @@ jobs:
       github-pat: ${{ inputs.github-pat }}
     with:
       image: ${{ needs.init-vars.output.IMAGE }}
-      mysql-version: ${{ needs.init-vars.output.MYSQL-VERSION }}
-      redis-version: ${{ needs.init-vars.output.REDIS-VERSION }}
-      influxdb-version: ${{ needs.init-vars.output.INFLUXDB-VERSION }}
+      mysql-version: ${{ needs.init-vars.outputs.MYSQL-VERSION }}
+      redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
+      influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
       
   stop-runner:
