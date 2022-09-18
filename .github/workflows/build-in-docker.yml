@@ -53,7 +53,7 @@ on:
 
 jobs:
   build:
-    name: build and test
+    name: build artifacts
     runs-on:  ubuntu-latest
     permissions:
       id-token: write
