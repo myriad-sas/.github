@@ -42,7 +42,7 @@ jobs:
         id: isMember
         with:
           username: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.LW_PAT }}
+          GITHUB_TOKEN: ${{ secrets.github-pat }}
       - name: check user access
         if: ${{ !(contains(steps.isMember.outputs.teams,  env.GROUP1) || contains(steps.isMember.outputs.teams.teams, env.GROUP2)) }}
         uses: actions/github-script@main
