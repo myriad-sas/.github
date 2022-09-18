@@ -60,7 +60,7 @@ jobs:
       contents: read
       packages: read
     container:
-      image: ${{ inputs.image }}
+      image: ghcr.io/myriad-sas/test:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
