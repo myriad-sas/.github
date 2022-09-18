@@ -53,7 +53,7 @@ jobs:
       github-pat: ${{ inputs.github-pat }}
     with:
       image: ${{ needs.init-vars.output.IMAGE }}
-      mysql-verion: ${{ needs.init-vars.output.MYSQL-VERSION }}
+      mysql-version: ${{ needs.init-vars.output.MYSQL-VERSION }}
       redis-version: ${{ needs.init-vars.output.REDIS-VERSION }}
       influxdb-version: ${{ needs.init-vars.output.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
