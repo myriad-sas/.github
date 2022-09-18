@@ -66,11 +66,7 @@ jobs:
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
-      image: ${{ needs.init-vars.outputs.IMAGE }}
-      mysql-version: ${{ needs.init-vars.outputs.MYSQL-VERSION }}
-      redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
-      influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
-      env-path: ${{ inputs.env-path }}
+      environment: testing
       runner: ${{ needs.start-runner.outputs.label }}
 
   stop-runner:
