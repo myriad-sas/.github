@@ -1,0 +1,35 @@
+name: deploy-on-ecs
+
+on: 
+  workflow_call:
+    secrets:
+      github-pat:
+        description: >-
+          GitHub personal access token
+        required: true
+
+    inputs:
+      config-path:
+        description: >-
+          path to the ec2.yml file which stores the variables for the instance
+        required: true
+        type: string
+
+jobs:
+  start-runner:
+    uses: ./start-runner.yml@bis
+    secrets:
+      github-pat: ${{ inputs.github-pat }}
+    with:
+      environment: testing
+
+  stop-runner:
+    needs:
+      - start-runner
+    if: ${{ always() }} 
+    uses: ./stop-runner.yml@bis
+    secrets:
+      github-pat: ${{ inputs.github-pat }}
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
