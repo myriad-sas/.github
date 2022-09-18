@@ -43,7 +43,7 @@ on:
         description: >-
           EC2 Instance Id of the created runner.
           The id is used to terminate the EC2 instance when the runner is not needed anymore.
-        value: ${{ jobs.launch.outputs.ec2-instance-version}
+        value: ${{ jobs.launch.outputs.ec2-instance-version }}
 
 jobs:
   build:
