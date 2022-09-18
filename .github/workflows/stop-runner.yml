@@ -8,6 +8,12 @@ on:
           GitHub personal access token
         required: true
     inputs:
+      env-path:
+        description: >-
+          path to the configuration file of environment variables
+        default: ./.github/.env
+        required: false
+        type: string
       label:
         description: >-
           Name of the unique label assigned to the runner.
