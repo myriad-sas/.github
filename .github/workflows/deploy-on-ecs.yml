@@ -9,25 +9,46 @@ on:
         required: true
 
     inputs:
-      config-path:
+      env-path:
         description: >-
-          path to the ec2.yml file which stores the variables for the instance
+          path to the file for the environment variables
         required: true
+        default: ./.github/.env
         type: string
 
 jobs:
+  init-vars:
+   runs-on: ubuntu-latest
+   outputs:
+     MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
+     REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
+     INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
+     IMAGE: ${{ steps.vars.outputs.DOCKER-RUNNER-IMAGE }}
+   steps:
+     - name: init job  
+       uses: myriad-actions/init-job@main
+       with:
+         github-pat: ${{ secrets.LW_PAT }}
+     - name: set vers
+       id: vars
+       run: |
+         echo "::set-output name=MYSQL-VERSION::${{ env.MYSQL-VERSION }}"
+         echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
+         echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
+         echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
+
   start-runner:
-    uses: ./start-runner.yml@bis
+    uses: ./.github/workflows/start-runner.yml
     secrets:
       github-pat: ${{ inputs.github-pat }}
     with:
-      environment: testing
+      environment: non-prod
 
   stop-runner:
     needs:
       - start-runner
     if: ${{ always() }} 
-    uses: ./stop-runner.yml@bis
+    uses: ./.github/workflows/stop-runner.yml
     secrets:
       github-pat: ${{ inputs.github-pat }}
     with:
