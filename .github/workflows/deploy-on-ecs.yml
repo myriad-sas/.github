@@ -44,6 +44,17 @@ jobs:
     with:
       environment: non-prod
 
+  build-and-test:
+    uses: ./.github/workflows/build-in-docker.yml
+    needs: init-vars
+    secrets:
+      github-pat: ${{ inputs.github-pat }}
+    with:
+      image: ${{ needs.init-vars.output.IMAGE }}
+      mysql-verion: ${{ needs.init-vars.output.MYSQL-VERSION }}
+      redis-version: ${{ needs.init-vars.output.REDIS-VERSION }}
+      influxdb-version: ${{ needs.init-vars.output.INFLUXDB-VERSION }}
+      
   stop-runner:
     needs:
       - start-runner
