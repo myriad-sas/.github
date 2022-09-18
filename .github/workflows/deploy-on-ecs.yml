@@ -50,7 +50,7 @@ jobs:
     uses: ./.github/workflows/build-in-docker.yml
     needs: init-vars
     secrets:
-      github-pat: ${{ inputs.github-pat }}
+      github-pat: ${{ secrets.github-pat }}
     with:
       image: ${{ needs.init-vars.outputs.IMAGE }}
       mysql-version: ${{ needs.init-vars.outputs.MYSQL-VERSION }}
