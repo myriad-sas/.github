@@ -82,7 +82,7 @@ jobs:
         ports:
           - 6379:6379
       influxdb:
-        image: influxdb::${{ inputs.influxdb-version }}
+        image: influxdb:${{ inputs.influxdb-version }}
         options: >-
           --health-cmd "curl -f http://localhost:8086/ping"
           --health-interval 10s
