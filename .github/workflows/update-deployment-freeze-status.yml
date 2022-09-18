@@ -48,7 +48,7 @@ jobs:
         uses: actions/github-script@main
         with:
           script: core.setFailed( ${{ env.NOT-AUTHORIZED-ERROR }}  )
-      - uses: myriad-actions/update-deployment-freeze@main
+      - uses: myriad-actions/update-deployment-freeze@bis
         with:
           environment: ${{ inputs.environment }}
           github-pat:  ${{ secrets.github-pat }}
