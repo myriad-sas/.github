@@ -60,8 +60,7 @@ jobs:
       contents: read
       packages: read
     container:
-      image: ${{ inputs.mysql-version }}
-      
+      image: ${{ inputs.image }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
