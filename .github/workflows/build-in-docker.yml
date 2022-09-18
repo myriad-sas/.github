@@ -8,6 +8,12 @@ on:
           GitHub personal access token
         required: true
     inputs:
+      env-path:
+        description: >-
+          path to the configuration file of environment variables
+        default: ./.github/.env
+        required: false
+        type: string
       image:
         description: >-
           docker image url 
