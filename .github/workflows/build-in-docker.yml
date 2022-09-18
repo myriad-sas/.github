@@ -102,4 +102,4 @@ jobs:
         with:
           name: ${{ env.ARTIFACT-NAME }}
           path: ${{ env.ARTIFACTS-SRC-PATH }}/
-          retention-days: ${{ ARTIFACTS-RETENTION-DURATION--IN-DAY }}
+          retention-days: ${{ ARTIFACTS-RETENTION-DURATION-IN-DAY }}
