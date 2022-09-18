@@ -13,6 +13,12 @@ on:
           one of the testbed, preprod or prod envinronment, for the workflow running
         required: true
         type: string
+      env-path:
+        description: >-
+          path to the configuration file of environment variables
+        default: ./.github/.env
+        required: false
+        type: string
       init:
         description: >-
           whether to run init script on the new runner 
