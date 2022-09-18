@@ -46,7 +46,7 @@ jobs:
       environment: non-prod
       env-path: ${{ inputs.env-path }}
 
-  build-and-test:
+  ci:
     uses: ./.github/workflows/build-in-docker.yml
     needs: init-vars
     secrets:
@@ -58,7 +58,7 @@ jobs:
       influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
 
-  check-deploy-validate:
+  cd-testing:
     uses: ./.github/workflows/check-deploy-validate.yml
     needs: 
       - init-vars
@@ -76,6 +76,7 @@ jobs:
   stop-runner:
     needs:
       - start-runner
+      - cd-testing
     if: ${{ always() }} 
     uses: ./.github/workflows/stop-runner.yml
     secrets:
