@@ -37,3 +37,31 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           environment: ${{ inputs.environment }}
+  deploy:
+    name: deploy
+    needs:
+      - check-freeze
+    runs-on: ${{ inputs.runner }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: init job  
+        uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
+      - name: download artifacts
+        uses: myriad-actions/run-ci-scripts@bis
+        with:
+          script: ${{ env.SCRIPT2 }}
+      - name: deploy on testbed
+        uses: myriad-actions/run-ci-scripts@bis
+        with:
+          script: '${{ env.SCRIPT3 }} ${{ inputs.environment }}'
+      - name: upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifacts
+          path: artifacts/
+          retention-days: 1
