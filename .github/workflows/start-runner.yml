@@ -10,7 +10,7 @@ on:
     inputs:
       environment:
         description: >-
-          one of the testbed, preprod or prod envinronment, for the workflow running
+          one of the testing, preprod or prod envinronment, for the workflow running
         required: true
         type: string
       env-path:
