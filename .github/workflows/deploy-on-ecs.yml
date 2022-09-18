@@ -12,7 +12,7 @@ on:
       env-path:
         description: >-
           path to the file for the environment variables
-        required: true
+        required: false
         default: ./.github/.env
         type: string
 
