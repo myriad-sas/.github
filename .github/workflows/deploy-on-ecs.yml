@@ -27,7 +27,7 @@ jobs:
     needs:
       - start-runner
     if: ${{ always() }} 
-    uses: ./workflows/stop-runner.yml@bis
+    uses: ./stop-runner.yml@bis
     secrets:
       github-pat: ${{ inputs.github-pat }}
     with:
