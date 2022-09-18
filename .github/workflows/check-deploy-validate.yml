@@ -30,15 +30,19 @@ jobs:
     name: init variables
     runs-on: ${{ inputs.runner }}
     steps:
-      - name: load non-prod launch config
+      - name: init job  
+        uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
+      - name: load testing config
         if: ${{  inputs.environment == 'testing' }} && ${{  env.HOST_MODE == 'ecs' }}
         run: |
           echo "CLUSTER=${{ env.AWS-ECS-CLUSTER-NAME-TESTING }}" >> $GITHUB_ENV
-      - name: load prod launch config
+      - name: load preprod config
         if: ${{  inputs.environment == 'preprod' }}  && ${{  env.HOST_MODE == 'ecs' }}
         run: |
           echo "CLUSTER=${{ env.AWS-ECS-CLUSTER-NAME-PREPROD }}" >> $GITHUB_ENV
-      - name: load prod launch config
+      - name: load prod config
         if: ${{  inputs.environment == 'prod' }}  && ${{  env.HOST_MODE == 'ecs' }}
         run: |
           echo "CLUSTER=${{ env.AWS-ECS-CLUSTER-NAME-PROD }}" >> $GITHUB_ENV
