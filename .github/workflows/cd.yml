@@ -81,11 +81,6 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
-      - name: download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: artifacts
-          path: artifacts
       - name: validate installed version
         uses: myriad-actions/run-ci-scripts@bis
         with:
