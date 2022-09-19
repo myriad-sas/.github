@@ -62,6 +62,7 @@ jobs:
   cd-testing:
     uses: ./.github/workflows/cd.yml
     needs: 
+      - ci
       - start-runner
     secrets:
       github-pat: ${{ secrets.github-pat }}
