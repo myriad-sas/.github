@@ -28,7 +28,7 @@ on:
 jobs:
   check:
     name: check freeze
-    runs-on: ${{ inputs.runner }}
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -42,7 +42,7 @@ jobs:
     name: deploy
     needs:
       - check
-    runs-on: ${{ inputs.runner }}
+    runs-on:  ${{ inputs.runner }}
     permissions:
       id-token: write
       contents: read
@@ -70,7 +70,7 @@ jobs:
           retention-days: 1
 
   validate:
-    name: validate testbed
+    name: validate
     needs:
       - deploy
     runs-on:  ${{ inputs.runner }}
