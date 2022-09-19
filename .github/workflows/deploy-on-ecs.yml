@@ -38,13 +38,6 @@ jobs:
          echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
          echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
 
-  start-runner:
-    uses: ./.github/workflows/start-runner.yml
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      environment: non-prod
-      env-path: ${{ inputs.env-path }}
 
   ci:
     uses: ./.github/workflows/ci.yml
@@ -57,11 +50,18 @@ jobs:
       redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
       influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
+      
+  start-runner:
+    uses: ./.github/workflows/start-runner.yml
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      environment: non-prod
+      env-path: ${{ inputs.env-path }}
 
   cd-testing:
     uses: ./.github/workflows/cd.yml
     needs: 
-      - init-vars
       - start-runner
     secrets:
       github-pat: ${{ secrets.github-pat }}
