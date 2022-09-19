@@ -96,10 +96,10 @@ jobs:
           args: ${{ inputs.environment }}
       - name: set next-env as preprod
         if: inputs.environment == 'testing'
-        run: echo "NEXT-ENV=preprod" > GITHUB_ENV
+        run: echo "NEXT-ENV=preprod" >> GITHUB_ENV
       - name: set next-env as prod
         if: inputs.environment == 'preprod'
-        run: echo "NEXT-ENV=prod" > GITHUB_ENV
+        run: echo "NEXT-ENV=prod" >> GITHUB_ENV
       - name: tag next env
         uses: myriad-actions/run-ci-scripts@bis
         if: inputs.environment != 'prod'
