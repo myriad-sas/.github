@@ -26,7 +26,7 @@ on:
         type: string
 
 jobs:
-  check-freeze:
+  check:
     name: check freeze
     runs-on: ${{ inputs.runner }}
     permissions:
@@ -37,10 +37,11 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           environment: ${{ inputs.environment }}
+          
   deploy:
     name: deploy
     needs:
-      - check-freeze
+      - check
     runs-on: ${{ inputs.runner }}
     permissions:
       id-token: write
@@ -67,3 +68,38 @@ jobs:
           name: artifacts
           path: artifacts/
           retention-days: 1
+
+  validate:
+    name: validate testbed
+    needs:
+      - deploy
+    runs-on:  ${{ inputs.runner }}
+    timeout-minutes: 23
+    steps:
+      - name: init job  
+        uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
+      - name: download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: artifacts
+          path: artifacts
+      - name: validate installed version
+        uses: myriad-actions/run-ci-scripts@bis
+        with:
+          script: ${{ env.SCRIPT4 }} 
+          args: ${{ inputs.environment }}
+      - name: set next-env as preprod
+        if: inputs.environment == 'testing'
+        run: echo "NEXT-ENV=preprod" > GITHUB_ENV
+      - name: set next-env as prod
+        if: inputs.environment == 'preprod'
+        run: echo "NEXT-ENV=prod" > GITHUB_ENV
+      - name: tag next env
+        uses: myriad-actions/run-ci-scripts@bis
+        if: inputs.environment != 'prod'
+        with:
+          script: ${{ env.SCRIPT5 }} 
+          args: ${{ env.NEXT-ENV }}
