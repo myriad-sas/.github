@@ -55,10 +55,12 @@ jobs:
         uses: myriad-actions/run-ci-scripts@bis
         with:
           script: ${{ env.SCRIPT2 }}
+          args: testing
       - name: deploy on testbed
         uses: myriad-actions/run-ci-scripts@bis
         with:
-          script: '${{ env.SCRIPT3 }} ${{ inputs.environment }}'
+          script: ${{ env.SCRIPT3 }} 
+          args: ${{ inputs.environment }}
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
