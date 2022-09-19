@@ -63,6 +63,7 @@ jobs:
         if: ${{ inputs.environment == 'prod' }} 
       - name: notify
         uses: neonidian/teams-notify-build-status@main
+        if: ${{ env.SEND_NOTIFICATIONS == 'true' }}
         continue-on-error: true
         with:
           webhookUrl: ${{ env.WEBHOOK_URL }}
