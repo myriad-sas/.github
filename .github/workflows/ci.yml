@@ -1,5 +1,8 @@
 name: ci
 
+env:
+  CI_COMMIT_SHA: ${{ github.sha }}
+
 on: 
   workflow_call:
     secrets:
