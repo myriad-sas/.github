@@ -102,7 +102,7 @@ jobs:
       - name: upload to s3
         uses: myriad-actions/run-ci-scripts@bis
         with:
-          script: ${{ env.SCRIPT1 }}
+          script: ${{ env.LANG }}/${{ env.SCRIPT1 }}
       - name: upload build data as artifacts
         uses: actions/upload-artifact@v2
         with:
