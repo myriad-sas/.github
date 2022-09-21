@@ -1,4 +1,4 @@
-name: ci
+name: ci-main
 
 env:
   CI_COMMIT_SHA: ${{ github.sha }}
