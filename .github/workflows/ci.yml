@@ -1,0 +1,64 @@
+name: ci-main
+
+on: 
+  workflow_call:
+    secrets:
+      github-pat:
+        description: >-
+          GitHub personal access token
+        required: true
+
+    inputs:
+      env-path:
+        description: >-
+          path to the file for the environment variables
+        required: false
+        default: ./.github/.env
+        type: string
+
+jobs:
+  init-vars:
+   runs-on: ubuntu-latest
+   outputs:
+     IMAGE: ${{ steps.vars.outputs.IMAGE }}
+   steps:
+     - name: init job  
+       uses: myriad-actions/init-job@main
+       with:
+         github-pat: ${{ secrets.github-pat }}
+         env-path: ${{ inputs.env-path }}
+     - name: set vars
+       id: vars
+       run: |
+         echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
+
+  ci:
+    uses: ./.github/workflows/ci.yml
+    needs: init-vars
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      image: ${{ needs.init-vars.outputs.IMAGE }}
+      env-path: ${{ inputs.env-path }}
+      
+  #start-runner:
+  #  uses: ./.github/workflows/start-runner.yml
+  #  secrets:
+  #    github-pat: ${{ secrets.github-pat }}
+  #  with:
+  #    environment: non-prod
+  #    env-path: ${{ inputs.env-path }}
+  #
+  #stop-runner:
+  #  needs:
+  #    - start-runner
+  #    - cd-preprod
+  #  if: ${{ always() }} 
+  #  uses: ./.github/workflows/stop-runner.yml
+  #  secrets:
+  #    github-pat: ${{ secrets.github-pat }}
+  #  with:
+  #    label: ${{ needs.start-runner.outputs.label }}
+  #    ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+  #    env-path: ${{ inputs.env-path }}
+  #
