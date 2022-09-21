@@ -76,9 +76,7 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
       - name: build and test
-        uses: myriad-actions/run-ci-scripts@bis
-        with:
-          script: ${{ env.LANG }}/${{ env.SCRIPT0 }}
+        run: ./${{ env.SCRIPT0 }}
       - name: upload to s3
         uses: myriad-actions/run-ci-scripts@bis
         with:
