@@ -113,6 +113,9 @@ jobs:
     
       - uses: actions/checkout@v2
       
+      - name: get build args
+        run:  echo "IMAGE-TAG=$(date +'%Y%m%d%H%M%S')"  >> $GITHUB_ENV
+      
       - name: set up Docker Buildx # docker build action
         id: buildx
         uses: docker/setup-buildx-action@v2
@@ -169,7 +172,7 @@ jobs:
           flavor: |
             latest=auto
           tags: |
-            type=raw,value=${{ inputs.image-tag }}
+            type=raw,value=${{ env.IMAGE-TAG }}
             type=raw,value=latest,enable={{is_default_branch}}
           
       - name: Build and push
