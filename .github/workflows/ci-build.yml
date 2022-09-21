@@ -76,7 +76,7 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
       - name: prepare
-        run: cd ${{ env.CI-SCRIPT-WORKING-DIRECTORY }}/${{ env.CI-SCRIPT-FOLDER-NAME }}/.github; ./${{ env.SCRIPT0 }}
+        run: ./${{ env.SCRIPT0 }}
       - name: upload to s3
         run:  ${{ env.SCRIPT1 }}
       - name: upload build data as artifacts
