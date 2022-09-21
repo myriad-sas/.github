@@ -60,6 +60,7 @@ on:
       context:
         description: "Build's context is the set of files located in the specified PATH or URL"
         required: false
+        default: .
         type: string
       build-contexts:
         description: "List of additional build contexts (e.g., name=path)"
