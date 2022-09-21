@@ -33,7 +33,7 @@ jobs:
          echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
 
   ci:
-    uses: ./.github/workflows/ci.yml
+    uses: ./.github/workflows/ci-build.yml
     needs: init-vars
     secrets:
       github-pat: ${{ secrets.github-pat }}
