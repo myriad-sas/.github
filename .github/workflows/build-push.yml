@@ -57,8 +57,12 @@ on:
            redhat user 
         required: false
         type: string
-      build-contexts:
+      context:
         description: "Build's context is the set of files located in the specified PATH or URL"
+        required: false
+        type: string
+      build-contexts:
+        description: "List of additional build contexts (e.g., name=path)"
         required: false
         type: string
       file:
@@ -179,6 +183,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
+          context: ${{ inputs.context }}
           file: ${{ inputs.file }}
           build-contexts:  ${{ inputs.build-contexts }}
           build-args: |
@@ -186,3 +191,4 @@ jobs:
             APP_VSN=${{ inputs.APP_VSN }}
             OTP_VERSION=${{ inputs.OTP_VERSION }}
           tags: ${{ steps.meta.outputs.tags }}
+
