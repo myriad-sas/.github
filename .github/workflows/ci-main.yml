@@ -1,4 +1,4 @@
-name: ci-build
+name: ci-main
 
 on: 
   workflow_call:
