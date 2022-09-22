@@ -69,6 +69,7 @@ jobs:
     with:
       environment: testing
       runner: ${{ needs.start-runner.outputs.label }}
+      skip-check: yes
 
   cd-preprod:
     uses: ./.github/workflows/cd.yml
