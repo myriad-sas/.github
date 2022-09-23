@@ -24,6 +24,8 @@ jobs:
      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
      INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
+     IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
+     IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
    steps:
      - name: init job  
        uses: myriad-actions/init-job@main
@@ -37,13 +39,9 @@ jobs:
          echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
          echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
          echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
-     - name: get deployment freeze status
-       id: DFS
-       run: |
-         echo "::set-output name=MYSQL-VERSION::${{ env.MYSQL-VERSION }}"
-         echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
-         echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
-         echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
+     - name: get frozen sataus
+       id: status
+       uses: myriad-actions/get-deployment-freeze-status@main
 
   ci:
     uses: ./.github/workflows/ci.yml
