@@ -35,7 +35,7 @@ jobs:
   check:
     name: check freeze
     runs-on:  ${{ inputs.runner }}
-    if: inputs.skip-check == 'true'
+    #if: inputs.skip-check == 'true'
     permissions:
       id-token: write
       contents: read
