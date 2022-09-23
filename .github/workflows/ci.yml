@@ -63,7 +63,7 @@ on:
 jobs:
   build:
     name: build artifacts
-    runs-on:  ubuntu-latest
+    runs-on:  ${{ inputs.runner }}
     permissions:
       id-token: write
       contents: read
