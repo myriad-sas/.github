@@ -40,6 +40,12 @@ on:
         required: false
         default: latest
         type: string
+      runner:
+        description: >-
+          runner label on which this workflow will be ran
+        required: true
+        type: string
+        
     outputs:
       label:
         description: >-
