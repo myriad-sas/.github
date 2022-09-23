@@ -18,7 +18,7 @@ on:
 
 jobs:
   init-vars:
-   runs-on: ubuntu-latest
+   runs-on: self-hosted
    outputs:
      MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
@@ -42,18 +42,6 @@ jobs:
      - name: get frozen status
        id: status
        uses: myriad-actions/get-deployment-freeze-status@main
-
-  ci:
-    uses: ./.github/workflows/ci.yml
-    needs: init-vars
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      image: ${{ needs.init-vars.outputs.IMAGE }}
-      mysql-version: ${{ needs.init-vars.outputs.MYSQL-VERSION }}
-      redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
-      influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
-      env-path: ${{ inputs.env-path }}
       
   start-runner:
     uses: ./.github/workflows/start-runner.yml
@@ -62,6 +50,21 @@ jobs:
     with:
       environment: non-prod
       env-path: ${{ inputs.env-path }}
+      
+  ci:
+    uses: ./.github/workflows/ci.yml
+    needs: 
+      - init-vars
+      - start-runner
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      image: ${{ needs.init-vars.outputs.IMAGE }}
+      mysql-version: ${{ needs.init-vars.outputs.MYSQL-VERSION }}
+      redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
+      influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
+      env-path: ${{ inputs.env-path }}
+      runner: ${{ needs.start-runner.outputs.label }}
 
   cd-testing:
     uses: ./.github/workflows/cd.yml
