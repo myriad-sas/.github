@@ -128,7 +128,6 @@ jobs:
     needs:
       - start-prod-runner
       - cd-prod
-    if: ${{ always() }} 
     uses: ./.github/workflows/stop-runner.yml
     secrets:
       github-pat: ${{ secrets.github-pat }}
