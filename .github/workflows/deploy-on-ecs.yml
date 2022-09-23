@@ -80,6 +80,8 @@ jobs:
     needs: 
       - start-runner
       - cd-testing
+      - init-vars
+    if: needs.init-vars.outputs.IS_PREPROD_FROZEN == 'unfrozen'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
@@ -103,12 +105,13 @@ jobs:
     uses: ./.github/workflows/start-runner.yml
     needs:
       - cd-preprod
+      - init-vars
+    if: needs.init-vars.outputs.IS_PREPROD_FROZEN == 'unfrozen'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: prod
       env-path: ${{ inputs.env-path }}
-
 
   cd-prod:
     uses: ./.github/workflows/cd.yml
