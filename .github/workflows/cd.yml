@@ -32,23 +32,21 @@ on:
         type: string
 
 jobs:
-  check:
-    name: check freeze
-    runs-on:  ${{ inputs.runner }}
-    #if: inputs.skip-check == 'true'
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - uses: myriad-actions/check-deployment-freeze@bis
-        with:
-          github-pat: ${{ secrets.github-pat }}
-          environment: ${{ inputs.environment }}
+  #check:
+  #  name: check freeze
+  #  runs-on:  ${{ inputs.runner }}
+  #  #if: inputs.skip-check == 'true'
+  #  permissions:
+  #    id-token: write
+  #    contents: read
+  #  steps:
+  #    - uses: myriad-actions/check-deployment-freeze@bis
+  #      with:
+  #        github-pat: ${{ secrets.github-pat }}
+  #        environment: ${{ inputs.environment }}
           
   deploy:
     name: deploy
-    needs:
-      - check
     runs-on:  ${{ inputs.runner }}
     permissions:
       id-token: write
