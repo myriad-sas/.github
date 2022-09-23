@@ -39,7 +39,7 @@ jobs:
          echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
          echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
          echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
-     - name: get frozen sataus
+     - name: get frozen satus
        id: status
        uses: myriad-actions/get-deployment-freeze-status@main
 
