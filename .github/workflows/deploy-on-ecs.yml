@@ -37,7 +37,13 @@ jobs:
          echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
          echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
          echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
-
+     - name: get deployment freeze status
+       id: DFS
+       run: |
+         echo "::set-output name=MYSQL-VERSION::${{ env.MYSQL-VERSION }}"
+         echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
+         echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
+         echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
 
   ci:
     uses: ./.github/workflows/ci.yml
