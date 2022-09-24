@@ -42,13 +42,15 @@ jobs:
         id: isMember
         with:
           username: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.LW_PAT }}
+
+          GITHUB_TOKEN: ${{ secrets.github-pat }}
       - name: check user access
-        if: ${{ !(contains(steps.isMember.outputs.teams, ${{ env.GROUP1 }} ) || contains(steps.isMember.outputs.teams.teams, ${{ env.GROUP2 }} )) }}
+        if: ${{ !(contains(steps.isMember.outputs.teams,  env.GROUP1) || contains(steps.isMember.outputs.teams.teams, env.GROUP2)) }}
         uses: actions/github-script@main
         with:
           script: core.setFailed( ${{ env.NOT-AUTHORIZED-ERROR }}  )
-      - uses: myriad-actions/update-deployment-freeze@main
+      - uses: myriad-actions/update-deployment-freeze@bis
+
         with:
           environment: ${{ inputs.environment }}
           github-pat:  ${{ secrets.github-pat }}
@@ -63,6 +65,8 @@ jobs:
         if: ${{ inputs.environment == 'prod' }} 
       - name: notify
         uses: neonidian/teams-notify-build-status@main
+
+        if: ${{ env.SEND_NOTIFICATIONS == 'true' }}
         continue-on-error: true
         with:
           webhookUrl: ${{ env.WEBHOOK_URL }}

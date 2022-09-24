@@ -9,6 +9,89 @@ on:
         required: true
 
     inputs:
+
+      env-path:
+        description: >-
+          path to the file for the environment variables
+        required: false
+        default: ./.github/.env
+        type: string
+
+jobs:
+  init-vars:
+   runs-on: self-hosted
+   outputs:
+     MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
+     REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
+     INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
+     IMAGE: ${{ steps.vars.outputs.IMAGE }}
+     IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
+     IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
+   steps:
+     - name: init job  
+       uses: myriad-actions/init-job@main
+       with:
+         github-pat: ${{ secrets.github-pat }}
+         env-path: ${{ inputs.env-path }}
+     - name: set vars
+       id: vars
+       run: |
+         echo "::set-output name=MYSQL-VERSION::${{ env.MYSQL-VERSION }}"
+         echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
+         echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
+         echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
+     - name: get frozen status
+       id: status
+       uses: myriad-actions/get-deployment-freeze-status@main
+      
+  start-runner:
+    uses: ./.github/workflows/start-runner.yml
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      environment: non-prod
+      env-path: ${{ inputs.env-path }}
+      
+  ci:
+    uses: ./.github/workflows/ci.yml
+    needs: 
+      - init-vars
+      - start-runner
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      image: ${{ needs.init-vars.outputs.IMAGE }}
+      mysql-version: ${{ needs.init-vars.outputs.MYSQL-VERSION }}
+      redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
+      influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
+      env-path: ${{ inputs.env-path }}
+      runner: ${{ needs.start-runner.outputs.label }}
+
+  cd-testing:
+    uses: ./.github/workflows/cd.yml
+    needs: 
+      - ci
+      - start-runner
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      environment: testing
+      runner: ${{ needs.start-runner.outputs.label }}
+      skip-check: yes
+
+  cd-preprod:
+    uses: ./.github/workflows/cd.yml
+    needs: 
+      - start-runner
+      - cd-testing
+      - init-vars
+    if: needs.init-vars.outputs.IS_PREPROD_FROZEN == 'unfrozen'
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      environment: preprod
+      runner: ${{ needs.start-runner.outputs.label }}
+
       config-path:
         description: >-
           path to the ec2.yml file which stores the variables for the instance
@@ -23,9 +106,56 @@ jobs:
     with:
       environment: testing
 
+
   stop-runner:
     needs:
       - start-runner
+
+      - cd-preprod
+    if: ${{ always() }} 
+    uses: ./.github/workflows/stop-runner.yml
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+      env-path: ${{ inputs.env-path }}
+
+  start-prod-runner:
+    uses: ./.github/workflows/start-runner.yml
+    needs:
+      - cd-preprod
+      - init-vars
+    if: needs.init-vars.outputs.IS_PROD_FROZEN == 'unfrozen'
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      environment: prod
+      env-path: ${{ inputs.env-path }}
+
+  cd-prod:
+    uses: ./.github/workflows/cd.yml
+    needs: 
+      - start-prod-runner
+      - cd-preprod
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      environment: prod
+      runner: ${{ needs.start-prod-runner.outputs.label }}
+      
+  stop-prod-runner:
+    needs:
+      - start-prod-runner
+      - cd-prod
+    uses: ./.github/workflows/stop-runner.yml
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      label: ${{ needs.start-prod-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-prod-runner.outputs.ec2-instance-id }}
+      env-path: ${{ inputs.env-path }}
+
     if: ${{ always() }} 
     uses: ./stop-runner.yml@bis
     secrets:
@@ -33,3 +163,4 @@ jobs:
     with:
       label: ${{ needs.start-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+

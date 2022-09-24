@@ -2,7 +2,18 @@ name: stop-runner
 
 on: 
   workflow_call:
+    secrets:
+      github-pat:
+        description: >-
+          GitHub personal access token
+        required: true
     inputs:
+      env-path:
+        description: >-
+          path to the configuration file of environment variables
+        default: ./.github/.env
+        required: false
+        type: string
       label:
         description: >-
           Name of the unique label assigned to the runner.
@@ -17,24 +28,22 @@ on:
           The id is used to terminate the EC2 instance when the runner is not needed anymore.
         required: true
         type: string
-    secrets:
-      github-token:
-        description: >-
-          GitHub personal access token
-        required: true
         
 jobs:
-  stop-runner:
-    name: stop runner
+  terminate:
     runs-on: [ubuntu-latest]
     permissions:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v2
-      - name: stop on-demande ec2 instance
-        uses: ./.github/actions/stop-runner
+      - name: init job  
+        uses: myriad-actions/init-job@main
         with:
-          github-token: ${{ secrets.github-token }}
+          github-pat: ${{ secrets.github-pat }}
+      - name: stop on-demande ec2 instance
+        uses: myriad-actions/stop-runner@bis
+        if: inputs.ec2-instance-id != ''
+        with:
+          github-pat: ${{ secrets.github-pat }}
           label: ${{ inputs.label }}
           ec2-instance-id: ${{ inputs.ec2-instance-id }}
