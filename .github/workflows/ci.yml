@@ -103,5 +103,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.ARTIFACT-NAME }}
-          path: ${{ env.ARTIFACTS-SRC-PATH }}/
+          path: main/${{ env.ARTIFACTS-SRC-PATH }}/
           retention-days: ${{ env.ARTIFACTS-RETENTION-DURATION-IN-DAY }}
