@@ -32,19 +32,6 @@ on:
         type: string
 
 jobs:
-  #check:
-  #  name: check freeze
-  #  runs-on:  ${{ inputs.runner }}
-  #  #if: inputs.skip-check == 'true'
-  #  permissions:
-  #    id-token: write
-  #    contents: read
-  #  steps:
-  #    - uses: myriad-actions/check-deployment-freeze@bis
-  #      with:
-  #        github-pat: ${{ secrets.github-pat }}
-  #        environment: ${{ inputs.environment }}
-          
   deploy:
     name: deploy
     runs-on:  ${{ inputs.runner }}
@@ -58,12 +45,12 @@ jobs:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
       - name: download artifacts
-        uses: myriad-actions/run-ci-scripts@bis
+        uses: myriad-actions/run@main
         with:
           script: ${{ env.SCRIPT2 }}
           args: testing
       - name: deploy
-        uses: myriad-actions/run-ci-scripts@bis
+        uses: myriad-actions/run@main
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT3 }} 
           args: ${{ inputs.environment }}
@@ -95,7 +82,7 @@ jobs:
           name: artifacts
           path: artifacts
       - name: validate installed version
-        uses: myriad-actions/run-ci-scripts@bis
+        uses: myriad-actions/run@main
         with:
           script: ${{ env.SCRIPT4 }} 
           args: ${{ inputs.environment }}
@@ -106,7 +93,7 @@ jobs:
         if: inputs.environment == 'preprod'
         run: echo 'NEXT-ENV=prod' >> $GITHUB_ENV
       - name: tag next env
-        uses: myriad-actions/run-ci-scripts@bis
+        uses: myriad-actions/run@main
         if: inputs.environment != 'prod'
         with:
           script: ${{ env.SCRIPT5 }}
