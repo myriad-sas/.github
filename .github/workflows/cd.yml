@@ -58,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
-          path: artifacts/
+          path: main/artifacts/
           retention-days: 1
 
 
@@ -80,7 +80,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: artifacts
-          path: artifacts
+          path: main/artifacts
       - name: validate installed version
         uses: myriad-actions/run@main
         with:
