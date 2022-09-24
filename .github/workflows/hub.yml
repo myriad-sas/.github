@@ -7,7 +7,10 @@ on:
         description: >-
           GitHub personal access token
         required: true
-
+      github-pak:
+        description: >-
+          GitHub personal access key
+        required: true
     inputs:
       env-path:
         description: >-
@@ -58,6 +61,7 @@ jobs:
       - start-runner
     secrets:
       github-pat: ${{ secrets.github-pat }}
+      github-pak: ${{ secrets.github-pak }}
     with:
       image: ${{ needs.init-vars.outputs.IMAGE }}
       mysql-version: ${{ needs.init-vars.outputs.MYSQL-VERSION }}
