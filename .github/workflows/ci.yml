@@ -97,7 +97,7 @@ jobs:
           env-path: ${{ inputs.env-path }}
       - name: configure git ssh
         uses: webfactory/ssh-agent@v0.5.4
-        if: secrets.github-pak != ''
+        if: inputs.github-pak == ''
         with:
             ssh-private-key: ${{ secrets.github-pak }}
       - name: create logs folder
