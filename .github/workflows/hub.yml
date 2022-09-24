@@ -10,7 +10,7 @@ on:
       github-pak:
         description: >-
           GitHub personal access key
-        required: true
+        required: false
     inputs:
       env-path:
         description: >-
