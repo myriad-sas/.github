@@ -96,7 +96,7 @@ jobs:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
       - name: check ssh key
-        run: ${{ secrets.github-pak != '' }} && echo "CONFIGURE_SSH=true" >> $GITHUB_ENV
+        run: ${{ secrets.github-pak != '' }} && echo "CONFIGURE_SSH=true" >> $GITHUB_ENV || continue 
       - name: configure git ssh
         uses: webfactory/ssh-agent@v0.5.4
         if: env.CONFIGURE_SSH == 'true'
