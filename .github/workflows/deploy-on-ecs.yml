@@ -9,6 +9,7 @@ on:
         required: true
 
     inputs:
+
       env-path:
         description: >-
           path to the file for the environment variables
@@ -91,9 +92,25 @@ jobs:
       environment: preprod
       runner: ${{ needs.start-runner.outputs.label }}
 
+      config-path:
+        description: >-
+          path to the ec2.yml file which stores the variables for the instance
+        required: true
+        type: string
+
+jobs:
+  start-runner:
+    uses: ./start-runner.yml@bis
+    secrets:
+      github-pat: ${{ inputs.github-pat }}
+    with:
+      environment: testing
+
+
   stop-runner:
     needs:
       - start-runner
+
       - cd-preprod
     if: ${{ always() }} 
     uses: ./.github/workflows/stop-runner.yml
@@ -138,3 +155,12 @@ jobs:
       label: ${{ needs.start-prod-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-prod-runner.outputs.ec2-instance-id }}
       env-path: ${{ inputs.env-path }}
+
+    if: ${{ always() }} 
+    uses: ./stop-runner.yml@bis
+    secrets:
+      github-pat: ${{ inputs.github-pat }}
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+
