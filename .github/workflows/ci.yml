@@ -17,6 +17,11 @@ on:
         default: ./.github/.env
         required: false
         type: string
+      runner:
+        description: >-
+          runner label on which this workflow will be ran
+        required: true
+        type: string
       image:
         description: >-
           docker image url 
@@ -40,25 +45,6 @@ on:
         required: false
         default: latest
         type: string
-      runner:
-        description: >-
-          runner label on which this workflow will be ran
-        required: true
-        type: string
-        
-    outputs:
-      label:
-        description: >-
-          Name of the unique label assigned to the runner.
-          The label is used in two cases:
-          - to use as the input of 'runs-on' property for the following jobs;
-          - to remove the runner from GitHub when it is not needed anymore.
-        value: ${{ jobs.launch.outputs.label }}
-      ec2-instance-id:
-        description: >-
-          EC2 Instance Id of the created runner.
-          The id is used to terminate the EC2 instance when the runner is not needed anymore.
-        value: ${{ jobs.launch.outputs.ec2-instance-version }}
 
 jobs:
   build:
@@ -99,20 +85,21 @@ jobs:
           --health-retries 10
     steps:
       - name: init container
-        uses: myriad-actions/init-container@bis
+        uses: myriad-actions/init-container@main
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
       - name: build and test
-        uses: myriad-actions/run-ci-scripts@bis
+        uses: myriad-actions/run@main
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT0 }}
-      - name: upload to s3
-        uses: myriad-actions/run-ci-scripts@bis
+      - name: upload build artifacts
+        uses: myriad-actions/run@main
         with:
           script: ${{ env.SCRIPT1 }}
-      - name: upload build data as artifacts
+      - name: upload workflow artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.ARTIFACT-NAME }}
