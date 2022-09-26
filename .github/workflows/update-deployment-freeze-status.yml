@@ -45,8 +45,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.github-pat }}
       - name: check user access
         run: |
-          ${{ !(contains(steps.isMember.outputs.teams,  env.GROUP1) || contains(steps.isMember.outputs.teams, env.GROUP2)) }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || continue
-          ${{ contains(steps.isMember.outputs.teams, env.GROUP3)) && inputs.environment == 'preprod' )) &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || continue
+          ${{!(contains(steps.isMember.outputs.teams, env.GROUP1) || contains(steps.isMember.outputs.teams, env.GROUP2))}} &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || continue
+          ${{ contains(steps.isMember.outputs.teams, env.GROUP3) && inputs.environment == 'preprod' }} &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || continue
         shell: bash 
       - name: check failed
         if: env.CHECK_PASSED != 'true' 
@@ -70,7 +70,6 @@ jobs:
         if: ${{ inputs.environment == 'prod' }} 
       - name: notify
         uses: neonidian/teams-notify-build-status@main
-
         if: ${{ env.SEND_NOTIFICATIONS == 'true' }}
         continue-on-error: true
         with:
