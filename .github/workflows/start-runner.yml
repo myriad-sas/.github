@@ -25,6 +25,12 @@ on:
         required: false
         default: true
         type: string
+      instance-type:
+        description: >-
+          aws instance type to be used 
+        required: false
+        default: 'micro'
+        type: string
     outputs:
       label:
         description: >-
@@ -54,8 +60,8 @@ jobs:
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
-      - name: load non-prod launch config
-        if: "${{  inputs.environment != 'prod' }}"
+      - name: load non-prod launch config 
+        if: inputs.environment != 'prod'
         run: |
           echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-NON-PROD-CONFIG }})" >> $GITHUB_ENV
       - name: load prod launch config
@@ -69,6 +75,8 @@ jobs:
           environment: ${{ inputs.environment }}
           config-path: ${{ env.CONFIG-PATH }}
           github-pat: ${{ secrets.github-pat }}
+          instance-type: ${{ inputs.instance-type }}
+
   init:
     name: init
     needs: launch
