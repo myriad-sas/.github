@@ -22,6 +22,9 @@ on:
 jobs:
   init-vars:
    runs-on: ubuntu-latest
+   permissions:
+     id-token: write
+     contents: read
    outputs:
      MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
@@ -45,6 +48,8 @@ jobs:
      - name: get frozen status
        id: status
        uses: myriad-actions/get-deployment-freeze-status@main
+       with: 
+         github-pat:  ${{ secrets.github-pat }}
       
   start-runner:
     uses: ./.github/workflows/start-runner.yml
