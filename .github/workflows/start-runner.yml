@@ -25,12 +25,6 @@ on:
         required: false
         default: true
         type: string
-      instance-type:
-        description: >-
-          aws instance type to be used 
-        required: false
-        default: 'micro'
-        type: string
     outputs:
       label:
         description: >-
@@ -68,6 +62,8 @@ jobs:
         if: "${{  inputs.environment == 'prod' }}"
         run: |
           echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-PROD-CONFIG }})" >> $GITHUB_ENV
+      - name: load instance type
+        run: ${{  env.INSTANCE-TYPE == '' }} && "INSTANCE-TYPE=micro" >> $GITHUB_ENV || continue 
       - name: start runner
         id: start-ec2-runner
         uses: myriad-actions/start-runner@main
@@ -75,7 +71,7 @@ jobs:
           environment: ${{ inputs.environment }}
           config-path: ${{ env.CONFIG-PATH }}
           github-pat: ${{ secrets.github-pat }}
-          instance-type: ${{ inputs.instance-type }}
+          instance-type: ${{ env.INSTANCE-TYPE }}
 
   init:
     name: init
