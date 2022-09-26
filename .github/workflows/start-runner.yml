@@ -63,7 +63,7 @@ jobs:
         run: |
           echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-PROD-CONFIG }})" >> $GITHUB_ENV
       - name: load instance type
-        run: ${{  env.INSTANCE-TYPE == '' }} && "INSTANCE-TYPE=micro" >> $GITHUB_ENV || continue 
+        run: ${{  env.INSTANCE-TYPE == '' }} && "INSTANCE-TYPE=t3a.micro" >> $GITHUB_ENV || continue 
       - name: start runner
         id: start-ec2-runner
         uses: myriad-actions/start-runner@main
