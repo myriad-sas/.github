@@ -45,7 +45,7 @@ jobs:
          ${{ env.REDIS-VERSION == '' }} && echo "::set-output name=REDIS-VERSION::latest" || echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
          ${{ env.INFLUXDB-VERSION == '' }} && echo "::set-output name=INFLUXDB-VERSION::latest" || echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
          echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
-     - name: get frozen status
+     - name: get freeze status
        id: status
        uses: myriad-actions/get-deployment-freeze-status@main
        with: 
