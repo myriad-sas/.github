@@ -42,14 +42,19 @@ jobs:
         id: isMember
         with:
           username: ${{ github.actor }}
-
           GITHUB_TOKEN: ${{ secrets.github-pat }}
       - name: check user access
         run: |
-          ${{ !(contains(steps.isMember.outputs.teams,  env.GROUP1) || contains(steps.isMember.outputs.teams.teams, env.GROUP2)) }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || continue
-          ${{ contains(steps.isMember.outputs.teams.teams, env.GROUP3)) && inputs.environment == 'preprod' )) &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || continue
+          ${{ !(contains(steps.isMember.outputs.teams,  env.GROUP1) || contains(steps.isMember.outputs.teams, env.GROUP2)) }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || continue
+          ${{ contains(steps.isMember.outputs.teams, env.GROUP3)) && inputs.environment == 'preprod' )) &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || continue
         shell: bash 
-      - uses: myriad-actions/update-deployment-freeze@main
+      - name: check failed
+        if: env.CHECK_PASSED != 'true' 
+        uses: actions/github-script@main
+        with:
+          script: core.setFailed(  "you are not authorized to trigger this action, please contact DEVOPS team"  )
+      - name: set status
+        uses: myriad-actions/set-deployment-freeze-status@main
         if: env.CHECK_PASSED == 'true' 
         with:
           environment: ${{ inputs.environment }}
