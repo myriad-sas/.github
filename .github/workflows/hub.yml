@@ -104,7 +104,7 @@ jobs:
     needs:
       - start-runner
       - cd-preprod
-    if: ${{ always() }} 
+    #if: ${{ always() }} 
     uses: ./.github/workflows/stop-runner.yml
     secrets:
       github-pat: ${{ secrets.github-pat }}
@@ -140,7 +140,7 @@ jobs:
     needs:
       - start-prod-runner
       - cd-prod
-    if: ${{ always() }} 
+    #if: ${{ always() }} 
     uses: ./.github/workflows/stop-runner.yml
     secrets:
       github-pat: ${{ secrets.github-pat }}
