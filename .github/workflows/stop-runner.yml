@@ -40,6 +40,8 @@ jobs:
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
+      - name: wait
+        run: sleep 20
       - name: stop on-demande ec2 instance
         uses: myriad-actions/stop-runner@bis
         if: inputs.ec2-instance-id != ''
