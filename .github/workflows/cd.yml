@@ -71,9 +71,10 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: set next-env
+      - name: set env
+        if: inputs.environment != 'testing'
         run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
-      - name: tag next env
+      - name: tag env
         uses: myriad-actions/run@main
         if: inputs.environment != 'testing'
         with:
