@@ -136,12 +136,25 @@ jobs:
     with:
       environment: prod
       runner: ${{ needs.start-prod-runner.outputs.label }}
+
+  freeze_prod:
+    name: freeze prod
+    needs:
+      - cd-prod
+    if: ${{ always() }}
+    uses: myriad-sas/.github/.github/workflows/update-deployment-freeze-status.yml@main
+    secrets:
+      github-pat: ${{ secrets.LW_PAT }}
+    with:
+      environment: prod
+      status: frozen
+
       
   stop-prod-runner:
     needs:
       - start-prod-runner
       - cd-prod
-    #if: ${{ always() }} 
+    if: ${{ always() }} 
     uses: ./.github/workflows/stop-runner.yml
     secrets:
       github-pat: ${{ secrets.github-pat }}
