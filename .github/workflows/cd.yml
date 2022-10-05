@@ -71,6 +71,14 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: set next-env
+        run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
+      - name: tag next env
+        uses: myriad-actions/run@main
+        if: inputs.environment != 'testing'
+        with:
+          script: ${{ env.SCRIPT5 }}
+          args: ${{ env.NEXT-ENV }}
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
@@ -86,15 +94,3 @@ jobs:
         with:
           script: ${{ env.SCRIPT4 }} 
           args: ${{ inputs.environment }}
-      - name: set next-env as preprod
-        if: inputs.environment == 'testing'
-        run: echo 'NEXT-ENV=preprod' >> $GITHUB_ENV
-      - name: set next-env as prod
-        if: inputs.environment == 'preprod'
-        run: echo 'NEXT-ENV=prod' >> $GITHUB_ENV
-      - name: tag next env
-        uses: myriad-actions/run@main
-        if: inputs.environment != 'prod'
-        with:
-          script: ${{ env.SCRIPT5 }}
-          args: ${{ env.NEXT-ENV }}
