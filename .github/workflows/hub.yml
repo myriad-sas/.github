@@ -88,6 +88,19 @@ jobs:
       runner: ${{ needs.start-runner.outputs.label }}
       skip-check: yes
 
+  stop-runner-testing:
+    needs:
+      - start-runner
+      - cd-testing
+    if: needs.init-vars.outputs.IS_PREPROD_FROZEN != 'unfrozen'
+    uses: ./.github/workflows/stop-runner.yml
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+      env-path: ${{ inputs.env-path }}
+
   cd-preprod:
     uses: ./.github/workflows/cd.yml
     needs: 
