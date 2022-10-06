@@ -32,6 +32,7 @@ on:
 jobs:
   terminate:
     runs-on: self-hosted
+    continue-on-error: true
     permissions:
       id-token: write
       contents: read
