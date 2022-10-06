@@ -49,6 +49,15 @@ jobs:
         with:
           script: ${{ env.SCRIPT2 }}
           args: testing
+      - name: set env
+        if: inputs.environment != 'testing'
+        run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
+      - name: tag env
+        uses: myriad-actions/run@main
+        if: inputs.environment != 'testing'
+        with:
+          script: ${{ env.SCRIPT5 }}
+          args: ${{ env.NEXT-ENV }}
       - name: deploy
         uses: myriad-actions/run@main
         with:
@@ -81,15 +90,6 @@ jobs:
         with:
           name: ${{ env.ARTIFACT-NAME }}
           path: main/${{ env.ARTIFACTS-SRC-PATH }}/
-      - name: set env
-        if: inputs.environment != 'testing'
-        run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
-      - name: tag env
-        uses: myriad-actions/run@main
-        if: inputs.environment != 'testing'
-        with:
-          script: ${{ env.SCRIPT5 }}
-          args: ${{ env.NEXT-ENV }}
       - name: validate installed version
         uses: myriad-actions/run@main
         with:
