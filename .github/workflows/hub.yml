@@ -144,7 +144,7 @@ jobs:
     if: ${{ always() }}
     uses: myriad-sas/.github/.github/workflows/update-deployment-freeze-status.yml@main
     secrets:
-      github-pat: ${{ secrets.LW_PAT }}
+      github-pat: ${{ secrets.github-pat }}
     with:
       environment: prod
       status: frozen
