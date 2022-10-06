@@ -114,7 +114,7 @@ jobs:
       environment: preprod
       runner: ${{ needs.start-runner.outputs.label }}
 
-  stop-runner:
+  stop-runner-preprod:
     needs:
       - start-runner
       - cd-preprod
