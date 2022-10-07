@@ -46,7 +46,6 @@ jobs:
       - name: check user access
         run: |
           ${{ contains(steps.isMember.outputs.teams, env.GROUP1) || contains(steps.isMember.outputs.teams, env.GROUP2) }} &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "check failed"
-          ${{ contains(steps.isMember.outputs.teams, env.GROUP3) && inputs.environment == 'preprod' }} &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "check failed"
           ${{ inputs.status == 'frozen' }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "check failed"
         shell: bash 
       - name: check failed
