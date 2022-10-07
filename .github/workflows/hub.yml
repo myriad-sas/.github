@@ -114,6 +114,18 @@ jobs:
       environment: preprod
       runner: ${{ needs.start-runner.outputs.label }}
 
+  freeze_preprod:
+    name: freeze preprod
+    needs:
+      - cd-preprod
+    if: ${{ always() }}
+    uses: myriad-sas/.github/.github/workflows/update-deployment-freeze-status.yml@main
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      environment: preprod
+      status: frozen
+
   stop-runner-preprod:
     needs:
       - start-runner
