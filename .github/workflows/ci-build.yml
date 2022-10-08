@@ -72,7 +72,7 @@ jobs:
       - name: init container
         uses: myriad-actions/init-container@bis
       - name: init job  
-        uses: myriad-actions/init-job@ter
+        uses: myriad-actions/init-job@termain
         with:
           github-pat: ${{ secrets.github-pat }}
       - name: prepare
