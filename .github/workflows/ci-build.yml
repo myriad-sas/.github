@@ -84,6 +84,7 @@ jobs:
           path: |
             build
             csd_packages
+            packages
             lib
             git_info_tango_g2r0
             git_info_tango_g4
