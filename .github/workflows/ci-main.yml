@@ -23,7 +23,7 @@ jobs:
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
    steps:
      - name: init job  
-       uses: myriad-actions/init-job@ter
+       uses: myriad-actions/init-job@main
        with:
          github-pat: ${{ secrets.github-pat }}
          env-path: ${{ inputs.env-path }}
