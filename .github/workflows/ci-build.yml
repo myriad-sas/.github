@@ -79,9 +79,19 @@ jobs:
         run: cd main; ./${{ env.SCRIPT0 }}
       - name: upload to s3
         run:  ${{ env.SCRIPT1 }}
-      - name: upload build data as artifacts
-        uses: actions/upload-artifact@v2
+      - uses: actions/cache@v3
         with:
-          name: ${{ env.ARTIFACT-NAME }}
-          path: ${{ env.ARTIFACTS-SRC-PATH }}/
-          retention-days: ${{ env.ARTIFACTS-RETENTION-DURATION-IN-DAY }}
+          path: |
+            build
+            csd_packages
+            lib
+            git_info_tango_g2r0
+            git_info_tango_g4
+            git_info_plugin_library
+          key: ${{ github.sha }}
+      #- name: upload build data as artifacts
+      #  uses: actions/upload-artifact@v2
+      #  with:
+      #    name: ${{ env.ARTIFACT-NAME }}
+      #    path: ${{ env.ARTIFACTS-SRC-PATH }}/
+      #    retention-days: ${{ env.ARTIFACTS-RETENTION-DURATION-IN-DAY }}
