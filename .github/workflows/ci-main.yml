@@ -40,6 +40,7 @@ jobs:
     with:
       image: ${{ needs.init-vars.outputs.IMAGE }}
       env-path: ${{ inputs.env-path }}
+      script-name: prepare.sh
       
   #start-runner:
   #  uses: ./.github/workflows/start-runner.yml
