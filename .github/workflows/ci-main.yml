@@ -44,8 +44,7 @@ jobs:
       
   doc:
     uses: ./.github/workflows/ci-build.yml
-    needs: |
-      - init-vars
+    needs: init-vars
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
@@ -53,7 +52,7 @@ jobs:
       env-path: ${{ inputs.env-path }}
       script-name: build-doc.sh
 
-  unit-test:
+  unit-tests:
     uses: ./.github/workflows/ci-build.yml
     needs: |
       - init-vars
