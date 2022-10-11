@@ -32,7 +32,7 @@ jobs:
        run: |
          echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
 
-  ci:
+  tempalte:
     uses: ./.github/workflows/ci-build.yml
     needs: init-vars
     secrets:
@@ -40,26 +40,14 @@ jobs:
     with:
       image: ${{ needs.init-vars.outputs.IMAGE }}
       env-path: ${{ inputs.env-path }}
-      script-name: prepare.sh
+      script-name: build-template.sh
       
-  #start-runner:
-  #  uses: ./.github/workflows/start-runner.yml
-  #  secrets:
-  #    github-pat: ${{ secrets.github-pat }}
-  #  with:
-  #    environment: non-prod
-  #    env-path: ${{ inputs.env-path }}
-  #
-  #stop-runner:
-  #  needs:
-  #    - start-runner
-  #    - cd-preprod
-  #  if: ${{ always() }} 
-  #  uses: ./.github/workflows/stop-runner.yml
-  #  secrets:
-  #    github-pat: ${{ secrets.github-pat }}
-  #  with:
-  #    label: ${{ needs.start-runner.outputs.label }}
-  #    ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-  #    env-path: ${{ inputs.env-path }}
-  #
+  doc:
+    uses: ./.github/workflows/ci-build.yml
+    needs: init-vars
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      image: ${{ needs.init-vars.outputs.IMAGE }}
+      env-path: ${{ inputs.env-path }}
+      script-name: build-doc.sh
