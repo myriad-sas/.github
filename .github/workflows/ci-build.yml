@@ -61,7 +61,7 @@ on:
 
 jobs:
   build:
-    name: build artifacts
+    name: run
     runs-on:  ubuntu-latest
     permissions:
       id-token: write
@@ -92,7 +92,7 @@ jobs:
         with:
           path: ${{ env.CACHE-PATHS }}
           key: ${{ github.sha }}
-      - name: prepare
+      - name: run
         run: |
           chown -R clcm: *
           cd main; su clcm -c ./${{ env.SCRIPT-PATH }}/${{ inputs.script-name }}
