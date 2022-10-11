@@ -22,6 +22,11 @@ on:
           docker image url 
         required: true
         type: string
+      script-name:
+        description: >-
+          name of the script
+        required: true
+        type: string
       mysql-version:
         description: >-
           mysql service container version
@@ -90,5 +95,5 @@ jobs:
       - name: prepare
         run: |
           chown -R clcm: *
-          cd main; su clcm -c ./${{ env.SCRIPT0 }}
+          cd main; su clcm -c ./${{ env.SCRIPT-PATH }}/${{ inputs.script-name }}
 
