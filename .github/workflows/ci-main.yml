@@ -44,7 +44,9 @@ jobs:
       
   doc:
     uses: ./.github/workflows/ci-build.yml
-    needs: init-vars
+    needs: |
+      - init-vars
+      - template
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
