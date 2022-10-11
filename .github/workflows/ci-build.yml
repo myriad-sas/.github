@@ -84,7 +84,7 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
       - name: prepare
-        run: cd main; ./${{ env.SCRIPT0 }}
+        run: cd main; su clcm -c ./${{ env.SCRIPT0 }}
       - uses: actions/cache@v3
         with:
           path: ${{ env.CACHE-PATHS }}
