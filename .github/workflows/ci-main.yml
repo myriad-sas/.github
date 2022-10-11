@@ -46,10 +46,22 @@ jobs:
     uses: ./.github/workflows/ci-build.yml
     needs: |
       - init-vars
-      - template
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
       image: ${{ needs.init-vars.outputs.IMAGE }}
       env-path: ${{ inputs.env-path }}
       script-name: build-doc.sh
+
+  unit-test:
+    uses: ./.github/workflows/ci-build.yml
+    needs: |
+      - init-vars
+      - doc
+      - template
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      image: ${{ needs.init-vars.outputs.IMAGE }}
+      env-path: ${{ inputs.env-path }}
+      script-name: unit-tests.sh
