@@ -32,7 +32,7 @@ jobs:
        run: |
          echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
 
-  tempalte:
+  template:
     uses: ./.github/workflows/ci-build.yml
     needs: init-vars
     secrets:
@@ -54,7 +54,7 @@ jobs:
 
   unit-tests:
     uses: ./.github/workflows/ci-build.yml
-    needs: |
+    needs:
       - init-vars
       - doc
       - template
