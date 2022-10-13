@@ -26,7 +26,7 @@ jobs:
      id-token: write
      contents: read
    outputs:
-     MYSQL-VERSION: ${{ env.MYSQL-VERSION }}
+     MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
      INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
@@ -41,7 +41,7 @@ jobs:
      - name: set vars
        id: vars
        run: |
-         ${{ env.MYSQL-VERSION == '' }} && echo "MYSQL-VERSION=latest"  >> $GITHUB_ENV || echo "MYSQL-VERSION=${{ env.MYSQL-VERSION }}"  >> $GITHUB_ENV 
+         ${{ env.MYSQL-VERSION == '' }} && echo "MYSQL-VERSION=latest"  >> $GITHUB_OUTPUT || echo "MYSQL-VERSION=${{ env.MYSQL-VERSION }}"  >> $GITHUB_OUTPUT
          ${{ env.REDIS-VERSION == '' }} && echo "::set-output name=REDIS-VERSION::latest" || echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
          ${{ env.INFLUXDB-VERSION == '' }} && echo "::set-output name=INFLUXDB-VERSION::latest" || echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
          echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
