@@ -76,6 +76,7 @@ jobs:
     needs:
       - deploy
     runs-on:  ${{ inputs.runner }}
+    environment: ${{ inputs.environment }}
     permissions:
       id-token: write
       contents: read
