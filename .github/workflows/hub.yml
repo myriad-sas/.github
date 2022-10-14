@@ -42,9 +42,9 @@ jobs:
        id: vars
        run: |
          ${{ env.MYSQL-VERSION == '' }} && echo "MYSQL-VERSION=latest"  >> $GITHUB_OUTPUT || echo "MYSQL-VERSION=${{ env.MYSQL-VERSION }}"  >> $GITHUB_OUTPUT
-         ${{ env.REDIS-VERSION == '' }} && echo "::set-output name=REDIS-VERSION::latest" || echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
-         ${{ env.INFLUXDB-VERSION == '' }} && echo "::set-output name=INFLUXDB-VERSION::latest" || echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
-         echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
+         ${{ env.REDIS-VERSION == '' }} && echo "REDIS-VERSION=latest"  >> $GITHUB_OUTPUT || echo "REDIS-VERSION=${{ env.REDIS-VERSION }}"  >> $GITHUB_OUTPUT 
+         ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT 
+         echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
      - name: get freeze status
        id: status
        uses: myriad-actions/get-deployment-freeze-status@main
