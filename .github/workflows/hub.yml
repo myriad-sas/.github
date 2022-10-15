@@ -23,7 +23,7 @@ on:
         type: string
 
 jobs:
-  init-vars:
+  init:
    runs-on: ubuntu-latest
    permissions:
      id-token: write
@@ -60,35 +60,35 @@ jobs:
   ci:
     uses: ./.github/workflows/ci.yml
     needs: 
-      - init-vars
+      - init
     secrets:
       github-pat: ${{ secrets.github-pat }}
       github-pak: ${{ secrets.github-pak }}
     with:
-      image: ${{ needs.init-vars.outputs.IMAGE }}
-      mysql-version: ${{ needs.init-vars.outputs.MYSQL-VERSION }}
-      redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
-      influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
+      image: ${{ needs.init.outputs.IMAGE }}
+      mysql-version: ${{ needs.init.outputs.MYSQL-VERSION }}
+      redis-version: ${{ needs.init.outputs.REDIS-VERSION }}
+      influxdb-version: ${{ needs.init.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
       runner: $RUNNER
 
   #start-runner:
   #  uses: ./.github/workflows/start-runner.yml
   #  needs: 
-  #    - init-vars
+  #    - init
   #  secrets:
   #    github-pat: ${{ secrets.github-pat }}
   #  with:
   #    environment: non-prod
   #    env-path: ${{ inputs.env-path }}
-  #    runner: ${{ needs.init-vars.outputs.RUNNER0 }}
+  #    runner: ${{ needs.init.outputs.RUNNER0 }}
       
 
   cd-testing:
     uses: ./.github/workflows/cd.yml
-    if: needs.init-vars.outputs.RELEASE != 'TRUE'
+    if: needs.init.outputs.RELEASE != 'TRUE'
     needs: 
-      - init-vars
+      - init
       - ci
     secrets:
       github-pat: ${{ secrets.github-pat }}
@@ -99,9 +99,9 @@ jobs:
 
   cd-preprod:
     uses: ./.github/workflows/cd.yml
-    if: needs.init-vars.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init-vars.outputs.RELEASE != 'TRUE'
+    if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'TRUE'
     needs: 
-      - init-vars
+      - init
       - ci
     secrets:
       github-pat: ${{ secrets.github-pat }}
@@ -112,7 +112,7 @@ jobs:
 
   #stop-runner:
   #  needs: 
-  #    - init-vars
+  #    - init
   #    - start-runner
   #    - cd-testing
   #    - cd-preprod
@@ -124,36 +124,36 @@ jobs:
   #    label: ${{ needs.start-runner.outputs.label }}
   #    ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
   #    env-path: ${{ inputs.env-path }}
-  #    runner: ${{ needs.init-vars.outputs.RUNNER0 }}
+  #    runner: ${{ needs.init.outputs.RUNNER0 }}
 
   #start-prod-runner:
   #  uses: ./.github/workflows/start-runner.yml
   #  needs: 
-  #    - init-vars
+  #    - init
   #    - ci
-  #  if: needs.init-vars.outputs.IS_PROD_FROZEN == 'unfrozen'
+  #  if: needs.init.outputs.IS_PROD_FROZEN == 'unfrozen'
   #  secrets:
   #    github-pat: ${{ secrets.github-pat }}
   #  with:
   #    environment: prod
   #    env-path: ${{ inputs.env-path }}
-  #    runner: ${{ needs.init-vars.outputs.RUNNER0 }}
+  #    runner: ${{ needs.init.outputs.RUNNER0 }}
 
   cd-prod:
     uses: ./.github/workflows/cd.yml
     needs: 
-      - init-vars
+      - init
       - ci
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: prod
-      runner0: ${{ needs.init-vars.outputs.RUNNER0 }}
+      runner0: ${{ needs.init.outputs.RUNNER0 }}
       runner1: ${{ needs.start-runner.outputs.label }}
       
  #stop-prod-runner:
  #  needs: 
- #    - init-vars
+ #    - init
  #    - start-prod-runner
  #    - cd-prod
  #  if: ${{ always() }} 
@@ -164,4 +164,4 @@ jobs:
  #    label: ${{ needs.start-prod-runner.outputs.label }}
  #    ec2-instance-id: ${{ needs.start-prod-runner.outputs.ec2-instance-id }}
  #    env-path: ${{ inputs.env-path }}
- #    runner: ${{ needs.init-vars.outputs.RUNNER0 }}
+ #    runner: ${{ needs.init.outputs.RUNNER0 }}
