@@ -84,7 +84,7 @@ jobs:
   #    runner: ${{ needs.init.outputs.RUNNER0 }}
       
 
-  cd-testing:
+  testing:
     uses: ./.github/workflows/cd.yml
     if: needs.init.outputs.RELEASE != 'TRUE' && needs.init.outputs.RELEASE != 'TRUE'
     needs: 
@@ -97,7 +97,7 @@ jobs:
       runner0: ${{ needs.ci.outputs.runner }}
       runner1: ${{ needs.start-runner.outputs.label }}
 
-  cd-preprod:
+  preprod:
     uses: ./.github/workflows/cd.yml
     if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'TRUE'
     needs: 
@@ -139,7 +139,7 @@ jobs:
   #    env-path: ${{ inputs.env-path }}
   #    runner: ${{ needs.init.outputs.RUNNER0 }}
 
-  cd-prod:
+  prod:
     uses: ./.github/workflows/cd.yml
     if: needs.init.outputs.IS_PROD_FROZEN == 'unfrozen'
     needs: 
