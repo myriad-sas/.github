@@ -51,6 +51,7 @@ jobs:
          ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT 
          ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_ENV || echo "not a release"
          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
+         echo $RUNNER
      - name: get freeze status
        id: status
        uses: myriad-actions/get-deployment-freeze-status@main
