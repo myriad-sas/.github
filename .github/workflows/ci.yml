@@ -49,6 +49,11 @@ on:
         required: false
         default: latest
         type: string
+    outputs:
+      runner:
+        description: >-
+          pass runner label to cd workflow
+        value: ${{ jobs.build.outputs.runner }}
 
 jobs:
   build:
@@ -63,6 +68,8 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      runner: ${{ steps.set-runner.outputs.label }}
     services: 
       mysql:
         image: mysql:${{ inputs.mysql-version }}
@@ -110,6 +117,10 @@ jobs:
       - name: create logs folder
         run: |
           mkdir /root/logs
+      - name: set runner
+        id: set-runner
+        run: |
+          echo label=${{ inputs.runner }} >> $GITHUB_OUTPUT 
       - name: build and test
         uses: myriad-actions/run@main
         with:
