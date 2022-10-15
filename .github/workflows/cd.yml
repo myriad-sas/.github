@@ -83,7 +83,7 @@ jobs:
       - name: validate installed version
         uses: myriad-actions/run@main
         with:
-          script: ${{ env.SCRIPT4 }} 
+          script: ${{ env.SCRIPT41 }} 
           args: ${{ inputs.environment }}
       - name: set next-env as preprod
         if: inputs.environment == 'testing'
