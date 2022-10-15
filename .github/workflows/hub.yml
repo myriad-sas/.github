@@ -76,6 +76,7 @@ jobs:
     with:
       environment: non-prod
       env-path: ${{ inputs.env-path }}
+      runner: ${{ needs.init-vars.outputs.RUNNER0 }}
       
 
   cd-testing:
@@ -90,7 +91,6 @@ jobs:
       environment: testing
       runner0: ${{ needs.init-vars.outputs.RUNNER0 }}
       runner1: ${{ needs.start-runner.outputs.label }}
-      skip-check: yes
 
   cd-preprod:
     uses: ./.github/workflows/cd.yml
@@ -119,6 +119,7 @@ jobs:
       label: ${{ needs.start-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
       env-path: ${{ inputs.env-path }}
+      runner: ${{ needs.init-vars.outputs.RUNNER0 }}
 
   start-prod-runner:
     uses: ./.github/workflows/start-runner.yml
@@ -131,6 +132,7 @@ jobs:
     with:
       environment: prod
       env-path: ${{ inputs.env-path }}
+      runner: ${{ needs.init-vars.outputs.RUNNER0 }}
 
   cd-prod:
     uses: ./.github/workflows/cd.yml
@@ -156,3 +158,4 @@ jobs:
       label: ${{ needs.start-prod-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-prod-runner.outputs.ec2-instance-id }}
       env-path: ${{ inputs.env-path }}
+      runner: ${{ needs.init-vars.outputs.RUNNER0 }}
