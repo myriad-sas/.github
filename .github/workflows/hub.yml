@@ -32,7 +32,8 @@ jobs:
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
-     RUNNER: self-hosted
+     RUNNER0: self-hosted
+     RUNNER1: "[self-hosted, validation]"
    steps:
      - name: init job  
        uses: myriad-actions/init-job@main
@@ -66,7 +67,7 @@ jobs:
       redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
       influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
-      runner: ${{ needs.init-vars.outputs.RUNNER }}
+      runner: ${{ needs.init-vars.outputs.RUNNER0 }}
 
   start-runner:
     uses: ./.github/workflows/start-runner.yml
@@ -87,7 +88,8 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: testing
-      runner: ${{ needs.start-runner.outputs.label }}
+      runner0: ${{ needs.init-vars.outputs.RUNNER0 }}
+      runner1: ${{ needs.start-runner.outputs.label }}
       skip-check: yes
 
   cd-preprod:
@@ -101,7 +103,8 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: preprod
-      runner: ${{ needs.start-runner.outputs.label }}
+      runner0: ${{ needs.init-vars.outputs.RUNNER0 }}
+      runner1: ${{ needs.start-runner.outputs.label }}
 
   stop-runner:
     needs:
@@ -138,7 +141,8 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: prod
-      runner: ${{ needs.start-prod-runner.outputs.label }}
+      runner0: ${{ needs.init-vars.outputs.RUNNER0 }}
+      runner1: ${{ needs.start-runner.outputs.label }}
       
   stop-prod-runner:
     needs:
