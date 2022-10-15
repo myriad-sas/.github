@@ -8,6 +8,11 @@ on:
           GitHub personal access token
         required: true
     inputs:
+      runner:
+        description: >-
+          runner label on which this workflow will be ran
+        required: true
+        type: string
       environment:
         description: >-
           one of the testing, preprod or prod envinronment, for the workflow running
@@ -42,7 +47,7 @@ on:
 jobs:          
   launch:
     name: launch
-    runs-on: self-hosted
+    runs-on:  ${{ inputs.runner }}
     permissions:
       id-token: write
       contents: read
