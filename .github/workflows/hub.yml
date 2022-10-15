@@ -71,7 +71,7 @@ jobs:
       redis-version: ${{ needs.init.outputs.REDIS-VERSION }}
       influxdb-version: ${{ needs.init.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
-      runner: ${{ env.RUNNER }}
+      runner:  $RUNNER
 
   #start-runner:
   #  uses: ./.github/workflows/start-runner.yml
@@ -95,7 +95,7 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: testing
-      runner0: ${{ env.RUNNER }}
+      runner0: $RUNNER
       runner1: ${{ needs.start-runner.outputs.label }}
 
   cd-preprod:
@@ -108,7 +108,7 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: preprod
-      runner0: ${{ env.RUNNER }}
+      runner0: $RUNNER
       runner1: ${{ needs.start-runner.outputs.label }}
 
   #stop-runner:
@@ -149,7 +149,7 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: prod
-      runner0: ${{ env.RUNNER }}
+      runner0: $RUNNER
       runner1: ${{ needs.start-runner.outputs.label }}
       
  #stop-prod-runner:
