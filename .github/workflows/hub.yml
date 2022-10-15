@@ -1,5 +1,8 @@
 name: main
 
+env:
+  RUNNER: self-hosted
+
 on: 
   workflow_call:
     secrets:
@@ -67,18 +70,18 @@ jobs:
       redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
       influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
-      runner: ${{ needs.init-vars.outputs.RUNNER0 }}
+      runner: $RUNNER
 
-  start-runner:
-    uses: ./.github/workflows/start-runner.yml
-    needs: 
-      - init-vars
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      environment: non-prod
-      env-path: ${{ inputs.env-path }}
-      runner: ${{ needs.init-vars.outputs.RUNNER0 }}
+  #start-runner:
+  #  uses: ./.github/workflows/start-runner.yml
+  #  needs: 
+  #    - init-vars
+  #  secrets:
+  #    github-pat: ${{ secrets.github-pat }}
+  #  with:
+  #    environment: non-prod
+  #    env-path: ${{ inputs.env-path }}
+  #    runner: ${{ needs.init-vars.outputs.RUNNER0 }}
       
 
   cd-testing:
@@ -87,12 +90,11 @@ jobs:
     needs: 
       - init-vars
       - ci
-      - start-runner
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: testing
-      runner0: ${{ needs.init-vars.outputs.RUNNER0 }}
+      runner0: $RUNNER
       runner1: ${{ needs.start-runner.outputs.label }}
 
   cd-preprod:
@@ -101,49 +103,47 @@ jobs:
     needs: 
       - init-vars
       - ci
-      - start-runner
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: preprod
-      runner0: ${{ needs.init-vars.outputs.RUNNER0 }}
+      runner0: $RUNNER
       runner1: ${{ needs.start-runner.outputs.label }}
 
-  stop-runner:
-    needs: 
-      - init-vars
-      - start-runner
-      - cd-testing
-      - cd-preprod
-    if: ${{ always() }} 
-    uses: ./.github/workflows/stop-runner.yml
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      label: ${{ needs.start-runner.outputs.label }}
-      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-      env-path: ${{ inputs.env-path }}
-      runner: ${{ needs.init-vars.outputs.RUNNER0 }}
+  #stop-runner:
+  #  needs: 
+  #    - init-vars
+  #    - start-runner
+  #    - cd-testing
+  #    - cd-preprod
+  #  if: ${{ always() }} 
+  #  uses: ./.github/workflows/stop-runner.yml
+  #  secrets:
+  #    github-pat: ${{ secrets.github-pat }}
+  #  with:
+  #    label: ${{ needs.start-runner.outputs.label }}
+  #    ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+  #    env-path: ${{ inputs.env-path }}
+  #    runner: ${{ needs.init-vars.outputs.RUNNER0 }}
 
-  start-prod-runner:
-    uses: ./.github/workflows/start-runner.yml
-    needs: 
-      - init-vars
-      - ci
-    if: needs.init-vars.outputs.IS_PROD_FROZEN == 'unfrozen'
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      environment: prod
-      env-path: ${{ inputs.env-path }}
-      runner: ${{ needs.init-vars.outputs.RUNNER0 }}
+  #start-prod-runner:
+  #  uses: ./.github/workflows/start-runner.yml
+  #  needs: 
+  #    - init-vars
+  #    - ci
+  #  if: needs.init-vars.outputs.IS_PROD_FROZEN == 'unfrozen'
+  #  secrets:
+  #    github-pat: ${{ secrets.github-pat }}
+  #  with:
+  #    environment: prod
+  #    env-path: ${{ inputs.env-path }}
+  #    runner: ${{ needs.init-vars.outputs.RUNNER0 }}
 
   cd-prod:
     uses: ./.github/workflows/cd.yml
     needs: 
       - init-vars
       - ci
-      - start-prod-runner
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
@@ -151,17 +151,17 @@ jobs:
       runner0: ${{ needs.init-vars.outputs.RUNNER0 }}
       runner1: ${{ needs.start-runner.outputs.label }}
       
-  stop-prod-runner:
-    needs: 
-      - init-vars
-      - start-prod-runner
-      - cd-prod
-    if: ${{ always() }} 
-    uses: ./.github/workflows/stop-runner.yml
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      label: ${{ needs.start-prod-runner.outputs.label }}
-      ec2-instance-id: ${{ needs.start-prod-runner.outputs.ec2-instance-id }}
-      env-path: ${{ inputs.env-path }}
-      runner: ${{ needs.init-vars.outputs.RUNNER0 }}
+ #stop-prod-runner:
+ #  needs: 
+ #    - init-vars
+ #    - start-prod-runner
+ #    - cd-prod
+ #  if: ${{ always() }} 
+ #  uses: ./.github/workflows/stop-runner.yml
+ #  secrets:
+ #    github-pat: ${{ secrets.github-pat }}
+ #  with:
+ #    label: ${{ needs.start-prod-runner.outputs.label }}
+ #    ec2-instance-id: ${{ needs.start-prod-runner.outputs.ec2-instance-id }}
+ #    env-path: ${{ inputs.env-path }}
+ #    runner: ${{ needs.init-vars.outputs.RUNNER0 }}
