@@ -35,7 +35,7 @@ jobs:
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
-     RUNNER0: self-hosted
+     RUNNER0: "[self-hosted, hub]"
      RUNNER1: "[self-hosted, validation]"
    steps:
      - name: init job  
