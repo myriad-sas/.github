@@ -65,7 +65,7 @@ jobs:
     name: validate
     needs:
       - deploy
-    runs-on:  ${{ inputs.runner1 }}
+    runs-on:  ${{ inputs.runner0 }}
     permissions:
       id-token: write
       contents: read
