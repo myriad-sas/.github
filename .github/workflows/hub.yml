@@ -21,7 +21,7 @@ on:
 
 jobs:
   init-vars:
-   runs-on: self-hosted
+   runs-on: ubuntu-latest
    permissions:
      id-token: write
      contents: read
@@ -32,6 +32,7 @@ jobs:
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
+     RUNNER: self-hosted
    steps:
      - name: init job  
        uses: myriad-actions/init-job@main
@@ -50,20 +51,11 @@ jobs:
        uses: myriad-actions/get-deployment-freeze-status@main
        with: 
          github-pat:  ${{ secrets.github-pat }}
-      
-  start-runner:
-    uses: ./.github/workflows/start-runner.yml
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      environment: non-prod
-      env-path: ${{ inputs.env-path }}
-      
+
   ci:
     uses: ./.github/workflows/ci.yml
     needs: 
       - init-vars
-      - start-runner
     secrets:
       github-pat: ${{ secrets.github-pat }}
       github-pak: ${{ secrets.github-pak }}
@@ -73,7 +65,16 @@ jobs:
       redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
       influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
-      runner: ${{ needs.start-runner.outputs.label }}
+      runner: ${{ needs.init-vars.outputs.RUNNER }}
+
+  start-runner:
+    uses: ./.github/workflows/start-runner.yml
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      environment: non-prod
+      env-path: ${{ inputs.env-path }}
+      
 
   cd-testing:
     uses: ./.github/workflows/cd.yml
