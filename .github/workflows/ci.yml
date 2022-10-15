@@ -52,7 +52,7 @@ on:
 
 jobs:
   build:
-    name: build artifacts
+    name: build
     runs-on:  ${{ inputs.runner }}
     permissions:
       id-token: write
