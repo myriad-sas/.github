@@ -13,7 +13,12 @@ on:
           one of the testing, preprod or prod envinronment, for the workflow run
         required: true
         type: string
-      runner:
+      runner0:
+        description: >-
+          runner label on which this workflow will be ran
+        required: true
+        type: string
+      runner1:
         description: >-
           runner label on which this workflow will be ran
         required: true
@@ -34,7 +39,7 @@ on:
 jobs:
   deploy:
     name: deploy
-    runs-on:  ${{ inputs.runner }}
+    runs-on:  ${{ inputs.runner0 }}
     permissions:
       id-token: write
       contents: read
@@ -66,7 +71,7 @@ jobs:
     name: validate
     needs:
       - deploy
-    runs-on:  ${{ inputs.runner }}
+    runs-on:  ${{ inputs.runner1 }}
     permissions:
       id-token: write
       contents: read
