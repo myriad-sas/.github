@@ -45,6 +45,7 @@ jobs:
          ${{ env.MYSQL-VERSION == '' }} && echo "MYSQL-VERSION=latest"  >> $GITHUB_OUTPUT || echo "MYSQL-VERSION=${{ env.MYSQL-VERSION }}"  >> $GITHUB_OUTPUT
          ${{ env.REDIS-VERSION == '' }} && echo "REDIS-VERSION=latest"  >> $GITHUB_OUTPUT || echo "REDIS-VERSION=${{ env.REDIS-VERSION }}"  >> $GITHUB_OUTPUT 
          ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT 
+         ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_ENV || echo "not a release"
          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
      - name: get freeze status
        id: status
@@ -78,6 +79,7 @@ jobs:
 
   cd-testing:
     uses: ./.github/workflows/cd.yml
+    if: needs.init-vars.outputs.RELEASE != 'TRUE'
     needs: 
       - ci
       - start-runner
@@ -90,11 +92,11 @@ jobs:
 
   cd-preprod:
     uses: ./.github/workflows/cd.yml
+    if: needs.init-vars.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init-vars.outputs.RELEASE != 'TRUE'
     needs: 
-      - start-runner
-      - cd-testing
       - init-vars
-    if: needs.init-vars.outputs.IS_PREPROD_FROZEN == 'unfrozen'
+      - ci
+      - start-runner
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
@@ -104,6 +106,7 @@ jobs:
   stop-runner:
     needs:
       - start-runner
+      - cd-testing
       - cd-preprod
     if: ${{ always() }} 
     uses: ./.github/workflows/stop-runner.yml
@@ -130,7 +133,7 @@ jobs:
     uses: ./.github/workflows/cd.yml
     needs: 
       - start-prod-runner
-      - cd-preprod
+      - ci
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
