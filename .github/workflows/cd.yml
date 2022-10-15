@@ -29,12 +29,6 @@ on:
         default: ./.github/.env
         required: false
         type: string
-      skip-check:
-        description: >-
-          whether to skip the check
-        default: false
-        required: false
-        type: string
 
 jobs:
   deploy:
