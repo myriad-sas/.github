@@ -48,6 +48,7 @@ jobs:
           ${{ contains(steps.isMember.outputs.teams, env.GROUP1) || contains(steps.isMember.outputs.teams, env.GROUP2) }} &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "check failed"
           ${{ inputs.status == 'frozen' }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "check failed"
           ${{  inputs.environment == 'prod' && env.NO-PROD == 'true' }}  &&  echo "CHECK_PASSED=false" >> $GITHUB_ENV || echo "continue with prod"
+          ${{  contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_ENV || echo "continue with prod"
         shell: bash 
       - name: check failed
         if: env.CHECK_PASSED != 'true' 
