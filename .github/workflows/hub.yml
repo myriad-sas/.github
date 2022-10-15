@@ -86,7 +86,7 @@ jobs:
 
   cd-testing:
     uses: ./.github/workflows/cd.yml
-    if: needs.init.outputs.RELEASE != 'TRUE'
+    if: needs.init.outputs.RELEASE != 'TRUE' && needs.init.outputs.RELEASE != 'TRUE'
     needs: 
       - init
       - ci
