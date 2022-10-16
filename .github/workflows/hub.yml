@@ -69,7 +69,7 @@ jobs:
       redis-version: ${{ needs.init.outputs.REDIS-VERSION }}
       influxdb-version: ${{ needs.init.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
-      runner: ${{ needs.init.outputs.RUNNER0 }}
+      runner: ${{ needs.init.outputs.RUNNER }}
 
   #start-runner:
   #  uses: ./.github/workflows/start-runner.yml
