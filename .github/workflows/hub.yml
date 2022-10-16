@@ -68,7 +68,7 @@ jobs:
     uses: ./.github/workflows/ci.yml
     needs: 
       - init
-    if: needs.init.outpous.SKIP-BUILD != TRUE
+    if: needs.init.outpous.SKIP-BUILD != 'true'
     secrets:
       github-pat: ${{ secrets.github-pat }}
       github-pak: ${{ secrets.github-pak }}
@@ -82,7 +82,7 @@ jobs:
 
   testing:
     uses: ./.github/workflows/cd.yml
-    if: needs.init.outputs.RELEASE != 'TRUE'
+    if: needs.init.outputs.RELEASE !=  'true'
     needs: 
       - init
       - ci
@@ -95,7 +95,7 @@ jobs:
 
   preprod:
     uses: ./.github/workflows/cd.yml
-    if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'TRUE'
+    if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'true'
     needs: 
       - init
       - ci
