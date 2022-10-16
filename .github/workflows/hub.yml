@@ -35,8 +35,7 @@ jobs:
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
-     RUNNER0: self-hosted
-     RUNNER1: "[self-hosted, validation]"
+     RUNNER: hub
    steps:
      - name: init job  
        uses: myriad-actions/init-job@main
@@ -94,8 +93,9 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: testing
-      runner0: ${{ needs.ci.outputs.runner }}
-      runner1: ${{ needs.start-runner.outputs.label }}
+      runner: ${{ needs.ci.outputs.runner }}
+      image: ${{ needs.init.outputs.IMAGE }}
+
 
   preprod:
     uses: ./.github/workflows/cd.yml
@@ -107,8 +107,8 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: preprod
-      runner0: ${{ needs.ci.outputs.runner }}
-      runner1: ${{ needs.start-runner.outputs.label }}
+      runner: ${{ needs.ci.outputs.runner }}
+      image: ${{ needs.init.outputs.IMAGE }}
 
   #stop-runner:
   #  needs: 
@@ -149,8 +149,8 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: prod
-      runner0: ${{ needs.ci.outputs.runner }}
-      runner1: ${{ needs.start-runner.outputs.label }}
+      runner: ${{ needs.ci.outputs.runner }}
+      image: ${{ needs.init.outputs.IMAGE }}
       
  #stop-prod-runner:
  #  needs: 
