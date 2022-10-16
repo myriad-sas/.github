@@ -59,7 +59,7 @@ jobs:
          mkdir -p main/artifacts
          touch main/artifacts/head.txt
          echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV
-         ${{ env.ARTIFACTS == '' }} && "SKIP-BUILD=false" >> $GITHUB_OUTPUT || echo "SKIP-BUILD=true" >> GITHUB_OUTPUT
+         ${{ env.ARTIFACTS == '' }} && "SKIP-BUILD=false" >> $GITHUB_OUTPUT || echo "SKIP-BUILD=true" >> $GITHUB_OUTPUT 
          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
        shell: bash
      - name: get freeze status
