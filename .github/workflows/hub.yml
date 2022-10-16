@@ -32,7 +32,7 @@ jobs:
      MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
      INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
-     RELASE:  ${{ steps.status.outputs.RELEASE }}
+     RELEASE:  ${{ steps.status.outputs.RELEASE }}
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
