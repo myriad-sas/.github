@@ -56,7 +56,8 @@ jobs:
          ${{ env.REDIS-VERSION == '' }} && echo "REDIS-VERSION=latest"  >> $GITHUB_OUTPUT || echo "REDIS-VERSION=${{ env.REDIS-VERSION }}"  >> $GITHUB_OUTPUT 
          ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT 
          ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
-         $(  [[ -s artifacts/head.txt ]] ) && echo "SKIP-BUILD=true" >> GITHUB_OUTPUT || echo "SKIP-BUILD=false" >> GITHUB_OUTPUT
+         
+         ${{ [[ -s artifacts/head.txt ]] }} && echo "SKIP-BUILD=true" >> GITHUB_OUTPUT || echo "SKIP-BUILD=false" >> GITHUB_OUTPUT
          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
        shell: bash
      - name: get freeze status
