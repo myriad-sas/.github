@@ -41,6 +41,8 @@ jobs:
      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
      RUNNER: hub
    steps:
+     - name: init container
+       uses: myriad-actions/init-container@main
      - name: init job  
        uses: myriad-actions/init-job@main
        with:
