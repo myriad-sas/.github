@@ -18,9 +18,9 @@ on:
           runner label on which this workflow will be ran
         required: true
         type: string
-      runner1:
+      image:
         description: >-
-          runner label on which this workflow will be ran
+          docker image url 
         required: true
         type: string
       env-path:
@@ -37,6 +37,11 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    container:
+      image: ghcr.io/myriad-sas/${{ inputs.image }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: init job  
         uses: myriad-actions/init-job@main
