@@ -24,55 +24,73 @@ on:
 
 jobs:
   init:
-   runs-on: ubuntu-latest
-   container:
-     image: ubuntu:16.04
-   permissions:
-     id-token: write
-     contents: read
-   outputs:
-     MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
-     REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
-     INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
-     RELEASE:  ${{ steps.vars.outputs.RELEASE }}
-     SKIP-BUILD: ${{ steps.vars.outputs.SKIP-BUILD }}
-     IMAGE: ${{ steps.vars.outputs.IMAGE }}
-     IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
-     IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
-     RUNNER: hub
-   steps:
-     - name: init container
-       uses: myriad-actions/init-container@main
-     - name: init job  
-       uses: myriad-actions/init-job@main
-       with:
-         github-pat: ${{ secrets.github-pat }}
-         env-path: ${{ inputs.env-path }}
-     - name: init cache
-       uses: actions/cache@v3
-       with:
-         path: main/${{ env.ARTIFACTS-SRC-PATH }}
-         key: ${{ github.sha }}
-         restore-keys: ${{ github.sha }}
-     - name: set vars
-       id: vars
-       run: |
-         ${{ env.MYSQL-VERSION == '' }} && echo "MYSQL-VERSION=latest"  >> $GITHUB_OUTPUT || echo "MYSQL-VERSION=${{ env.MYSQL-VERSION }}"  >> $GITHUB_OUTPUT
-         ${{ env.REDIS-VERSION == '' }} && echo "REDIS-VERSION=latest"  >> $GITHUB_OUTPUT || echo "REDIS-VERSION=${{ env.REDIS-VERSION }}"  >> $GITHUB_OUTPUT 
-         ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT 
-         ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
-         mkdir -p main/artifacts
-         touch main/artifacts/head.txt
-         echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV
-         ${{ env.ARTIFACTS == '' }} && "SKIP-BUILD=false" >> $GITHUB_OUTPUT || echo "SKIP-BUILD=true" >> $GITHUB_OUTPUT 
-         echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
-       shell: bash
-     - name: get freeze status
-       id: status
-       uses: myriad-actions/get-deployment-freeze-status@main
-       with: 
-         github-pat:  ${{ secrets.github-pat }}
-
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
+      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
+      INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
+      RELEASE:  ${{ steps.vars.outputs.RELEASE }}
+      IMAGE: ${{ steps.vars.outputs.IMAGE }}
+      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
+      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
+      RUNNER: hub
+    steps:
+      - name: init job  
+        uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
+      - name: set vars
+        id: vars
+        run: |
+          ${{ env.MYSQL-VERSION == '' }} && echo "MYSQL-VERSION=latest"  >> $GITHUB_OUTPUT || echo "MYSQL-VERSION=${{ env.MYSQL-VERSION }}"  >> $GITHUB_OUTPUT
+          ${{ env.REDIS-VERSION == '' }} && echo "REDIS-VERSION=latest"  >> $GITHUB_OUTPUT || echo "REDIS-VERSION=${{ env.REDIS-VERSION }}"  >> $GITHUB_OUTPUT 
+          ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT 
+          ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
+          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
+        shell: bash
+      - name: get freeze status
+        id: status
+        uses: myriad-actions/get-deployment-freeze-status@main
+        with: 
+          github-pat:  ${{ secrets.github-pat }}
+         
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+    container:
+      image: ghcr.io/myriad-sas/${{ inputs.image }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      SKIP-BUILD: ${{ steps.vars.outputs.SKIP-BUILD }}
+    steps:
+      - name: init job  
+        uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
+      - name: init cache
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: main/${{ env.ARTIFACTS-SRC-PATH }}
+          key: ${{ github.sha }}
+          restore-keys: ${{ github.sha }}
+      - name: set vars
+        id: vars
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: |
+          echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV
+          ${{ env.ARTIFACTS == '' }} && "SKIP-BUILD=false" >> $GITHUB_OUTPUT || echo "SKIP-BUILD=true" >> $GITHUB_OUTPUT 
+  
   ci:
     uses: ./.github/workflows/ci.yml
     needs: 
