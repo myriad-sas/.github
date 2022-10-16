@@ -98,7 +98,7 @@ jobs:
     needs: 
       - init
       - check
-    if: needs.check.outpous.SKIP-BUILD != 'true'
+    if: needs.check.outputs.SKIP-BUILD != 'true'
     secrets:
       github-pat: ${{ secrets.github-pat }}
       github-pak: ${{ secrets.github-pak }}
