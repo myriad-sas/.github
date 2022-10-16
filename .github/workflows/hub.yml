@@ -63,7 +63,7 @@ jobs:
        id: check-skip
        run: |
          if [[ -s artifacts/head.txt ]]; then
-           echo "SKIP-BUILD=true" >> GITHUB_OUTPUT
+           echo "SKIP-BUILD=true" >> $GITHUB_OUTPUT
          fi
        shell: bash
      - name: get freeze status
