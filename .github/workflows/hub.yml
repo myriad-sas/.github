@@ -36,6 +36,7 @@ jobs:
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
+     SKIP-BUILD: ${{ steps.vars.outputs.SKIP-BUILD }}
      RUNNER: hub
    steps:
      - name: init job  
@@ -43,13 +44,19 @@ jobs:
        with:
          github-pat: ${{ secrets.github-pat }}
          env-path: ${{ inputs.env-path }}
+     - name: init cache
+       uses: actions/cache@v3
+       with:
+         path: main/${{ env.ARTIFACTS-SRC-PATH }}
+         key: ${{ github.sha }}
      - name: set vars
        id: vars
        run: |
          ${{ env.MYSQL-VERSION == '' }} && echo "MYSQL-VERSION=latest"  >> $GITHUB_OUTPUT || echo "MYSQL-VERSION=${{ env.MYSQL-VERSION }}"  >> $GITHUB_OUTPUT
          ${{ env.REDIS-VERSION == '' }} && echo "REDIS-VERSION=latest"  >> $GITHUB_OUTPUT || echo "REDIS-VERSION=${{ env.REDIS-VERSION }}"  >> $GITHUB_OUTPUT 
          ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT 
-         ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_ENV || echo "not a release"
+         ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
+         [[ -s artifacts/head.txt ]] && echo "SKIP-BUILD=true" >> GITHUB_OUTPUT || echo "SKIP-BUILD=false" >> GITHUB_OUTPUT
          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
      - name: get freeze status
        id: status
@@ -61,6 +68,7 @@ jobs:
     uses: ./.github/workflows/ci.yml
     needs: 
       - init
+    if: needs.init.outpous.SKIP-BUILD != TRUE
     secrets:
       github-pat: ${{ secrets.github-pat }}
       github-pak: ${{ secrets.github-pak }}
@@ -72,21 +80,9 @@ jobs:
       env-path: ${{ inputs.env-path }}
       runner: ${{ needs.init.outputs.RUNNER }}
 
-  #start-runner:
-  #  uses: ./.github/workflows/start-runner.yml
-  #  needs: 
-  #    - init
-  #  secrets:
-  #    github-pat: ${{ secrets.github-pat }}
-  #  with:
-  #    environment: non-prod
-  #    env-path: ${{ inputs.env-path }}
-  #    runner: ${{ needs.init.outputs.RUNNER0 }}
-      
-
   testing:
     uses: ./.github/workflows/cd.yml
-    if: needs.init.outputs.RELEASE != 'TRUE' && needs.init.outputs.RELEASE != 'TRUE'
+    if: needs.init.outputs.RELEASE != 'TRUE'
     needs: 
       - init
       - ci
@@ -96,7 +92,6 @@ jobs:
       environment: testing
       runner: ${{ needs.ci.outputs.runner }}
       image: ${{ needs.init.outputs.IMAGE }}
-
 
   preprod:
     uses: ./.github/workflows/cd.yml
@@ -111,35 +106,6 @@ jobs:
       runner: ${{ needs.ci.outputs.runner }}
       image: ${{ needs.init.outputs.IMAGE }}
 
-  #stop-runner:
-  #  needs: 
-  #    - init
-  #    - start-runner
-  #    - cd-testing
-  #    - cd-preprod
-  #  if: ${{ always() }} 
-  #  uses: ./.github/workflows/stop-runner.yml
-  #  secrets:
-  #    github-pat: ${{ secrets.github-pat }}
-  #  with:
-  #    label: ${{ needs.start-runner.outputs.label }}
-  #    ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-  #    env-path: ${{ inputs.env-path }}
-  #    runner: ${{ needs.init.outputs.RUNNER0 }}
-
-  #start-prod-runner:
-  #  uses: ./.github/workflows/start-runner.yml
-  #  needs: 
-  #    - init
-  #    - ci
-  #  if: needs.init.outputs.IS_PROD_FROZEN == 'unfrozen'
-  #  secrets:
-  #    github-pat: ${{ secrets.github-pat }}
-  #  with:
-  #    environment: prod
-  #    env-path: ${{ inputs.env-path }}
-  #    runner: ${{ needs.init.outputs.RUNNER0 }}
-
   prod:
     uses: ./.github/workflows/cd.yml
     if: needs.init.outputs.IS_PROD_FROZEN == 'unfrozen'
@@ -152,18 +118,3 @@ jobs:
       environment: prod
       runner: ${{ needs.ci.outputs.runner }}
       image: ${{ needs.init.outputs.IMAGE }}
-      
- #stop-prod-runner:
- #  needs: 
- #    - init
- #    - start-prod-runner
- #    - cd-prod
- #  if: ${{ always() }} 
- #  uses: ./.github/workflows/stop-runner.yml
- #  secrets:
- #    github-pat: ${{ secrets.github-pat }}
- #  with:
- #    label: ${{ needs.start-prod-runner.outputs.label }}
- #    ec2-instance-id: ${{ needs.start-prod-runner.outputs.ec2-instance-id }}
- #    env-path: ${{ inputs.env-path }}
- #    runner: ${{ needs.init.outputs.RUNNER0 }}
