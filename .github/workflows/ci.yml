@@ -102,11 +102,11 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
-      #- name: init cache
-      #  uses: actions/cache@v3
-      #  with:
-      #    path: main/${{ env.ARTIFACTS-SRC-PATH }}
-      #    key: ${{ github.sha }}
+      - name: init cache
+        uses: actions/cache@v3
+        with:
+          path: main/${{ env.ARTIFACTS-SRC-PATH }}
+          key: ${{ github.sha }}
       - name: check ssh key
         run: ${{ secrets.github-pak != '' }} && echo "CONFIGURE_SSH=true" >> $GITHUB_ENV || continue 
       - name: configure git ssh
@@ -127,9 +127,9 @@ jobs:
         uses: myriad-actions/run@main
         with:
           script: ${{ env.SCRIPT1 }}
-      - name: upload workflow artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.ARTIFACT-NAME }}
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}/
-          retention-days: ${{ env.ARTIFACTS-RETENTION-DURATION-IN-DAY }}
+      #- name: upload workflow artifacts
+      #  uses: actions/upload-artifact@v2
+      #  with:
+      #    name: ${{ env.ARTIFACT-NAME }}
+      #    path: main/${{ env.ARTIFACTS-SRC-PATH }}/
+      #    retention-days: ${{ env.ARTIFACTS-RETENTION-DURATION-IN-DAY }}
