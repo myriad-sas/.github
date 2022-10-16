@@ -56,32 +56,9 @@ on:
         value: ${{ jobs.build.outputs.runner }}
 
 jobs:
-  check:
-    name: check skip
-    runs-on:  ubuntu-latest
-    outputs:
-      SKIP: ${{ steps.check.outputs.SKIP }}
-    steps:
-      - name: init job  
-        uses: myriad-actions/init-job@main
-        with:
-          github-pat: ${{ secrets.github-pat }}
-          env-path: ${{ inputs.env-path }}
-      - name: init cache
-        uses: actions/cache@v3
-        with:
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}
-          key: ${{ github.sha }}
-      - name: extras
-        id: check
-        run: |
-          [[ -s artifacts/head.txt ]] && echo "SKIP=true" >> GITHUB_OUTPUT || echo "SKIP=false" >> GITHUB_OUTPUT
-
   build:
     name: build
     runs-on:  ${{ inputs.runner }}
-    needs: check
-    if: jobs.check.outputs.SKIP != 'true'
     permissions:
       id-token: write
       contents: read
