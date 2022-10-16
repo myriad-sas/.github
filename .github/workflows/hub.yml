@@ -33,7 +33,7 @@ jobs:
      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
      INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
      RELEASE:  ${{ steps.vars.outputs.RELEASE }}
-     SKIP-BUILD: ${{ steps.vars.outputs.SKIP-BUILD }}
+     SKIP-BUILD: ${{ steps.check-skip.outputs.SKIP-BUILD }}
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
@@ -56,9 +56,14 @@ jobs:
          ${{ env.REDIS-VERSION == '' }} && echo "REDIS-VERSION=latest"  >> $GITHUB_OUTPUT || echo "REDIS-VERSION=${{ env.REDIS-VERSION }}"  >> $GITHUB_OUTPUT 
          ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT 
          ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
-         ARTIFACTS=$(cat /tmp/tmp)
-         ${{ $ARTIFACTS != '' }} && echo "SKIP-BUILD=true" >> GITHUB_OUTPUT || echo "SKIP-BUILD=false" >> GITHUB_OUTPUT
          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
+       shell: bash
+     - name: check skip 
+       id: check-skip
+       run: |
+         if [[ -s artifacts/head.txt ]]; then
+           echo "SKIP-BUILD=true" >> GITHUB_OUTPUT
+         fi
        shell: bash
      - name: get freeze status
        id: status
