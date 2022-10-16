@@ -114,12 +114,10 @@ jobs:
         if: env.CONFIGURE_SSH == 'true'
         with:
             ssh-private-key: ${{ secrets.github-pak }}
-      - name: create logs folder
-        run: |
-          mkdir /root/logs
-      - name: set runner
+      - name: extras
         id: set-runner
         run: |
+          mkdir /root/logs
           echo label=${{ inputs.runner }} >> $GITHUB_OUTPUT 
       - name: build and test
         uses: myriad-actions/run@main
@@ -129,9 +127,9 @@ jobs:
         uses: myriad-actions/run@main
         with:
           script: ${{ env.SCRIPT1 }}
-      - name: upload workflow artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.ARTIFACT-NAME }}
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}/
-          retention-days: ${{ env.ARTIFACTS-RETENTION-DURATION-IN-DAY }}
+     #- name: upload workflow artifacts
+     #  uses: actions/upload-artifact@v2
+     #  with:
+     #    name: ${{ env.ARTIFACT-NAME }}
+     #    path: main/${{ env.ARTIFACTS-SRC-PATH }}/
+     #    retention-days: ${{ env.ARTIFACTS-RETENTION-DURATION-IN-DAY }}
