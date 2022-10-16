@@ -57,7 +57,7 @@ jobs:
          ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT 
          ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
          echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV
-         cat main/artifacts/head.txt
+         ls -l main/artifacts 2>/dev/null
          ${{ env.ARTIFACTS == '' }} && "SKIP-BUILD=false" >> $GITHUB_OUTPUT || echo "SKIP-BUILD=true" >> GITHUB_OUTPUT
          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
        shell: bash
