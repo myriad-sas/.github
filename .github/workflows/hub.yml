@@ -60,12 +60,14 @@ jobs:
          
   check:
     runs-on: ubuntu-latest
+    needs: 
+      - init
     permissions:
       id-token: write
       contents: read
       packages: read
     container:
-      image: ghcr.io/myriad-sas/${{ inputs.image }}
+      image: ghcr.io/myriad-sas/${{ needs.init.outputs.IMAGE }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
