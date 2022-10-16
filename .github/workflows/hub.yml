@@ -32,11 +32,11 @@ jobs:
      MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
      INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
-     RELEASE:  ${{ steps.status.outputs.RELEASE }}
+     RELEASE:  ${{ steps.vars.outputs.RELEASE }}
+     SKIP-BUILD: ${{ steps.vars.outputs.SKIP-BUILD }}
      IMAGE: ${{ steps.vars.outputs.IMAGE }}
      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
-     SKIP-BUILD: ${{ steps.vars.outputs.SKIP-BUILD }}
      RUNNER: hub
    steps:
      - name: init job  
@@ -58,6 +58,7 @@ jobs:
          ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
          [[ -s artifacts/head.txt ]] && echo "SKIP-BUILD=true" >> GITHUB_OUTPUT || echo "SKIP-BUILD=false" >> GITHUB_OUTPUT
          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
+       shell: bash
      - name: get freeze status
        id: status
        uses: myriad-actions/get-deployment-freeze-status@main
