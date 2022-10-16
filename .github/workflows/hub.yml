@@ -25,6 +25,11 @@ on:
 jobs:
   init:
    runs-on: ubuntu-latest
+   container:
+     image: ubuntu:16.04
+     credentials:
+       username: ${{ github.actor }}
+       password: ${{ secrets.GITHUB_TOKEN }}
    permissions:
      id-token: write
      contents: read
