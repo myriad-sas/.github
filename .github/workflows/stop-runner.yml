@@ -31,7 +31,7 @@ on:
         
 jobs:
   terminate:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     continue-on-error: true
     permissions:
       id-token: write
