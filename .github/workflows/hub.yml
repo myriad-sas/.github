@@ -1,8 +1,4 @@
 name: main
-
-env:
-  RUNNER: self-hosted
-
 on: 
   workflow_call:
     secrets:
@@ -36,7 +32,7 @@ jobs:
       IMAGE: ${{ steps.vars.outputs.IMAGE }}
       IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
       IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
-      RUNNER: hub
+      RUNNER: ubuntu-latest
     steps:
       - name: init job  
         uses: myriad-actions/init-job@main
