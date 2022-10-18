@@ -54,46 +54,45 @@ jobs:
         with: 
           github-pat:  ${{ secrets.github-pat }}
          
-  check:
-    runs-on: ubuntu-latest
-    needs: 
-      - init
-    permissions:
-      id-token: write
-      contents: read
-      packages: read
-    container:
-      image: ghcr.io/myriad-sas/${{ needs.init.outputs.IMAGE }}
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    outputs:
-      SKIP-BUILD: ${{ steps.vars.outputs.SKIP-BUILD }}
-    steps:
-      - name: init job  
-        uses: myriad-actions/init-job@main
-        with:
-          github-pat: ${{ secrets.github-pat }}
-          env-path: ${{ inputs.env-path }}
-      - name: init cache
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}
-          key: ${{ github.sha }}
-          restore-keys: ${{ github.sha }}
-      - name: set vars
-        id: vars
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: |
-          echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV
-          ${{ env.ARTIFACTS == '' }} && "SKIP-BUILD=false" >> $GITHUB_OUTPUT || echo "SKIP-BUILD=true" >> $GITHUB_OUTPUT 
+  #check:
+  #  runs-on: ubuntu-latest
+  #  needs: 
+  #    - init
+  #  permissions:
+  #    id-token: write
+  #    contents: read
+  #    packages: read
+  #  container:
+  #    image: ghcr.io/myriad-sas/${{ needs.init.outputs.IMAGE }}
+  #    credentials:
+  #      username: ${{ github.actor }}
+  #      password: ${{ secrets.GITHUB_TOKEN }}
+  #  outputs:
+  #    SKIP-BUILD: ${{ steps.vars.outputs.SKIP-BUILD }}
+  #  steps:
+  #    - name: init job  
+  #      uses: myriad-actions/init-job@main
+  #      with:
+  #        github-pat: ${{ secrets.github-pat }}
+  #        env-path: ${{ inputs.env-path }}
+  #    - name: init cache
+  #      id: cache
+  #      uses: actions/cache@v3
+  #      with:
+  #        path: main/${{ env.ARTIFACTS-SRC-PATH }}
+  #        key: ${{ github.sha }}
+  #        restore-keys: ${{ github.sha }}
+  #    - name: set vars
+  #      id: vars
+  #      if: steps.cache.outputs.cache-hit == 'true'
+  #      run: |
+  #        echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV
+  #        ${{ env.ARTIFACTS == '' }} && "SKIP-BUILD=false" >> $GITHUB_OUTPUT || echo "SKIP-BUILD=true" >> $GITHUB_OUTPUT 
   
   ci:
     uses: ./.github/workflows/ci.yml
     needs: 
       - init
-      - check
     if: needs.check.outputs.SKIP-BUILD != 'true'
     secrets:
       github-pat: ${{ secrets.github-pat }}
