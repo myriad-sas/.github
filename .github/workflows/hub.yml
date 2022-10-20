@@ -105,7 +105,7 @@ jobs:
     uses: ./.github/workflows/cd.yml
     needs: 
       - start-runner
-      - cd-testing
+    #  - cd-testing
       - init-vars
     if: needs.init-vars.outputs.IS_PREPROD_FROZEN == 'unfrozen'
     secrets:
