@@ -107,6 +107,7 @@ jobs:
       - start-runner
     #  - cd-testing
       - init-vars
+      - ci
     if: needs.init-vars.outputs.IS_PREPROD_FROZEN == 'unfrozen'
     secrets:
       github-pat: ${{ secrets.github-pat }}
@@ -132,6 +133,7 @@ jobs:
     needs:
     #  - cd-preprod
       - init-vars
+      - ci
     if: needs.init-vars.outputs.IS_PROD_FROZEN == 'unfrozen'
     secrets:
       github-pat: ${{ secrets.github-pat }}
