@@ -87,7 +87,7 @@ jobs:
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
-      #- name: init runner
-      #  uses: myriad-actions/run-launch-scripts@main
-      #  with:
-      #    runner-ssh-key: ${{ env.AWS-RUNNER-SSH-PUBLIC-KEY }}
+      - name: init runner
+        uses: myriad-actions/run-launch-scripts@main
+        with:
+          runner-ssh-key: ${{ env.AWS-RUNNER-SSH-PUBLIC-KEY }}
