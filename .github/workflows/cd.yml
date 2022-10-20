@@ -112,3 +112,10 @@ jobs:
         with:
           script: ${{ env.SCRIPT5 }}
           args: ${{ env.NEXT-ENV }}
+      - name: freeze prod
+        uses: myriad-actions/set-deployment-freeze-status@main
+        if: inputs.environment == 'prod'
+        with:
+          environment: prod
+          github-pat:  ${{ secrets.github-pat }}
+          status: frozen
