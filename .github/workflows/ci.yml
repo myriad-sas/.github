@@ -127,11 +127,11 @@ jobs:
             ssh-private-key: ${{ secrets.github-pak }}
       - name: build and test
         uses: myriad-actions/run@main
-        if: steps.check.outputs.SKIP-BUILD == false 
+        if: steps.check.outputs.SKIP-BUILD == 'false'
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT0 }}
       - name: upload build artifacts
         uses: myriad-actions/run@main
-        if: steps.check.outputs.SKIP-BUILD == false 
+        if: steps.check.outputs.SKIP-BUILD == 'false' 
         with:
           script: ${{ env.SCRIPT1 }}
