@@ -52,23 +52,32 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
-      - name: download artifacts
-        uses: myriad-actions/run@main
+      - name: init cache
+        uses: actions/cache@v3
         with:
-          script: ${{ env.SCRIPT2 }}
-          args: testing
+          path: main/${{ env.ARTIFACTS-SRC-PATH }}
+          key: ${{ github.sha }}
+      - name: set env
+        if: inputs.environment != 'testing'
+        run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
+      - name: tag env
+        uses: myriad-actions/run@main
+        if: inputs.environment != 'testing'
+        with:
+          script: ${{ env.SCRIPT5 }}
+          args: ${{ env.NEXT-ENV }}
       - name: deploy
         uses: myriad-actions/run@main
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT3 }} 
           args: ${{ inputs.environment }}
-      - name: upload artifacts
-        uses: actions/upload-artifact@v2
+      - name: freeze prod
+        uses: myriad-actions/set-deployment-freeze-status@main
+        if: inputs.environment == 'prod'
         with:
-          name: ${{ env.ARTIFACT-NAME }}
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}/
-          retention-days: 1
-
+          environment: prod
+          github-pat:  ${{ secrets.github-pat }}
+          status: frozen
 
   validate:
     name: validate
@@ -100,22 +109,4 @@ jobs:
         with:
           script: ${{ env.SCRIPT41 }} 
           args: ${{ inputs.environment }}
-      - name: set next-env as preprod
-        if: inputs.environment == 'testing'
-        run: echo 'NEXT-ENV=preprod' >> $GITHUB_ENV
-      - name: set next-env as prod
-        if: inputs.environment == 'preprod'
-        run: echo 'NEXT-ENV=prod' >> $GITHUB_ENV
-      - name: tag next env
-        uses: myriad-actions/run@main
-        if: inputs.environment != 'prod'
-        with:
-          script: ${{ env.SCRIPT5 }}
-          args: ${{ env.NEXT-ENV }}
-      - name: freeze prod
-        uses: myriad-actions/set-deployment-freeze-status@main
-        if: inputs.environment == 'prod'
-        with:
-          environment: prod
-          github-pat:  ${{ secrets.github-pat }}
-          status: frozen
+
