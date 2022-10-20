@@ -99,11 +99,11 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
-      - name: download artifacts
-        uses: actions/download-artifact@v2
+      - name: init cache
+        uses: actions/cache@v3
         with:
-          name: ${{ env.ARTIFACT-NAME }}
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}/
+          path: main/${{ env.ARTIFACTS-SRC-PATH }}
+          key: ${{ github.sha }}
       - name: validate installed version
         uses: myriad-actions/run@main
         with:
