@@ -8,6 +8,11 @@ on:
           GitHub personal access token
         required: true
     inputs:
+      runner:
+        description: >-
+          runner label on which this workflow will be ran
+        required: true
+        type: string
       environment:
         description: >-
           one of the testing, preprod or prod envinronment, for the workflow running
@@ -62,7 +67,11 @@ jobs:
         if: "${{  inputs.environment == 'prod' }}"
         run: |
           echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-PROD-CONFIG }})" >> $GITHUB_ENV
-      - name: load prod launch config
+      - name: load specific launch config
+        if: "${{  inputs.environment == 'specific' }}"
+        run: |
+          echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-SPECIFIC-CONFIG }})" >> $GITHUB_ENV
+      - name: load aculab launch config
         if: "${{  inputs.environment == 'aculab' }}"
         run: |
           echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-CSD-ACULAB-RHEL8-CONFIG }})" >> $GITHUB_ENV

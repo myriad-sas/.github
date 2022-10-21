@@ -49,10 +49,15 @@ on:
         required: false
         default: latest
         type: string
+    outputs:
+      runner:
+        description: >-
+          pass runner label to cd workflow
+        value: ${{ jobs.build.outputs.runner }}
 
 jobs:
   build:
-    name: build artifacts
+    name: build
     runs-on:  ${{ inputs.runner }}
     permissions:
       id-token: write
@@ -63,6 +68,8 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      runner: ${{ steps.set-runner.outputs.label }}
     services: 
       mysql:
         image: mysql:${{ inputs.mysql-version }}
@@ -95,6 +102,22 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
+      - name: extras
+        id: set-runner
+        run: |
+          mkdir /root/logs
+          echo label=${{ inputs.runner }} >> $GITHUB_OUTPUT 
+      - name: init cache
+        uses: actions/cache@v3
+        with:
+          path: main/${{ env.ARTIFACTS-SRC-PATH }}
+          key: ${{ github.sha }}
+      - name: check build exists
+        id: check
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: |
+          echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV
+          ${{ env.ARTIFACTS == '' }} && "SKIP-BUILD=false" >> $GITHUB_OUTPUT || echo "SKIP-BUILD=true" >> $GITHUB_OUTPUT 
       - name: check ssh key
         run: ${{ secrets.github-pak != '' }} && echo "CONFIGURE_SSH=true" >> $GITHUB_ENV || continue 
       - name: configure git ssh
@@ -102,20 +125,13 @@ jobs:
         if: env.CONFIGURE_SSH == 'true'
         with:
             ssh-private-key: ${{ secrets.github-pak }}
-      - name: create logs folder
-        run: |
-          mkdir /root/logs
       - name: build and test
         uses: myriad-actions/run@main
+        if: steps.check.outputs.SKIP-BUILD != 'true'
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT0 }}
       - name: upload build artifacts
         uses: myriad-actions/run@main
+        if: steps.check.outputs.SKIP-BUILD != 'true' 
         with:
           script: ${{ env.SCRIPT1 }}
-      - name: upload workflow artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.ARTIFACT-NAME }}
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}/
-          retention-days: ${{ env.ARTIFACTS-RETENTION-DURATION-IN-DAY }}

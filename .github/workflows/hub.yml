@@ -1,5 +1,4 @@
-name: main
-
+name: m
 on: 
   workflow_call:
     secrets:
@@ -20,158 +19,94 @@ on:
         type: string
 
 jobs:
-  init-vars:
-   runs-on: ubuntu-latest
-   permissions:
-     id-token: write
-     contents: read
-   outputs:
-     MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
-     REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
-     INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
-     IMAGE: ${{ steps.vars.outputs.IMAGE }}
-     IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
-     IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
-   steps:
-     - name: init job  
-       uses: myriad-actions/init-job@main
-       with:
-         github-pat: ${{ secrets.github-pat }}
-         env-path: ${{ inputs.env-path }}
-     - name: set vars
-       id: vars
-       run: |
-         ${{ env.MYSQL-VERSION == '' }} && echo "::set-output name=MYSQL-VERSION::latest" || echo "::set-output name=MYSQL-VERSION::${{ env.MYSQL-VERSION }}"
-         ${{ env.REDIS-VERSION == '' }} && echo "::set-output name=REDIS-VERSION::latest" || echo "::set-output name=REDIS-VERSION::${{ env.REDIS-VERSION }}"
-         ${{ env.INFLUXDB-VERSION == '' }} && echo "::set-output name=INFLUXDB-VERSION::latest" || echo "::set-output name=INFLUXDB-VERSION::${{ env.INFLUXDB-VERSION }}"
-         echo "::set-output name=IMAGE::${{ env.DOCKER-RUNNER-IMAGE }}"
-     - name: get freeze status
-       id: status
-       uses: myriad-actions/get-deployment-freeze-status@main
-       with: 
-         github-pat:  ${{ secrets.github-pat }}
-      
+  init:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
+      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
+      INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
+      RELEASE:  ${{ steps.vars.outputs.RELEASE }}
+      IMAGE: ${{ steps.vars.outputs.IMAGE }}
+      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
+      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
+      RUNNER: ubuntu-latest
+    steps:
+      - name: init job  
+        uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
+      - name: set vars
+        id: vars
+        run: |
+          ${{ env.MYSQL-VERSION == '' }} && echo "MYSQL-VERSION=latest"  >> $GITHUB_OUTPUT || echo "MYSQL-VERSION=${{ env.MYSQL-VERSION }}"  >> $GITHUB_OUTPUT
+          ${{ env.REDIS-VERSION == '' }} && echo "REDIS-VERSION=latest"  >> $GITHUB_OUTPUT || echo "REDIS-VERSION=${{ env.REDIS-VERSION }}"  >> $GITHUB_OUTPUT 
+          ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT 
+          ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
+          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT 
+        shell: bash
+      - name: get freeze status
+        id: status
+        uses: myriad-actions/get-deployment-freeze-status@main
+        with: 
+          github-pat:  ${{ secrets.github-pat }}
+  
   ci:
     uses: ./.github/workflows/ci.yml
     needs: 
-      - init-vars
+      - init
+    if: needs.check.outputs.SKIP-BUILD != 'true'
     secrets:
       github-pat: ${{ secrets.github-pat }}
       github-pak: ${{ secrets.github-pak }}
     with:
-      image: ${{ needs.init-vars.outputs.IMAGE }}
-      mysql-version: ${{ needs.init-vars.outputs.MYSQL-VERSION }}
-      redis-version: ${{ needs.init-vars.outputs.REDIS-VERSION }}
-      influxdb-version: ${{ needs.init-vars.outputs.INFLUXDB-VERSION }}
+      image: ${{ needs.init.outputs.IMAGE }}
+      mysql-version: ${{ needs.init.outputs.MYSQL-VERSION }}
+      redis-version: ${{ needs.init.outputs.REDIS-VERSION }}
+      influxdb-version: ${{ needs.init.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
-      runner: ubuntu-latest
+      runner: ${{ needs.init.outputs.RUNNER }}
 
-  start-runner:
-    uses: ./.github/workflows/start-runner.yml
-    needs: 
-      - ci
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      environment: non-prod
-      env-path: ${{ inputs.env-path }}
-
-  cd-testing:
+  a-test:
     uses: ./.github/workflows/cd.yml
+    if: needs.init.outputs.RELEASE !=  'true'
     needs: 
+      - init
       - ci
-      - start-runner
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: testing
-      runner: ${{ needs.start-runner.outputs.label }}
-      skip-check: yes
+      runner: ${{ needs.ci.outputs.runner }}
+      image: ${{ needs.init.outputs.IMAGE }}
 
-  stop-runner-testing:
-    needs:
-      - start-runner
-      - cd-testing
-    if: needs.init-vars.outputs.IS_PREPROD_FROZEN != 'unfrozen'
-    uses: ./.github/workflows/stop-runner.yml
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      label: ${{ needs.start-runner.outputs.label }}
-      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-      env-path: ${{ inputs.env-path }}
 
-  cd-preprod:
+  b-prep:
     uses: ./.github/workflows/cd.yml
+    if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'true'
     needs: 
-      - start-runner
-      - cd-testing
-      - init-vars
-    if: needs.init-vars.outputs.IS_PREPROD_FROZEN == 'unfrozen'
+      - init
+      - ci
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: preprod
-      runner: ${{ needs.start-runner.outputs.label }}
+      runner: ${{ needs.ci.outputs.runner }}
+      image: ${{ needs.init.outputs.IMAGE }}
 
-  stop-runner-preprod:
-    needs:
-      - start-runner
-      - cd-preprod
-    #if: ${{ always() }} 
-    uses: ./.github/workflows/stop-runner.yml
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      label: ${{ needs.start-runner.outputs.label }}
-      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-      env-path: ${{ inputs.env-path }}
 
-  start-prod-runner:
-    uses: ./.github/workflows/start-runner.yml
-    needs:
-      - cd-preprod
-      - init-vars
-    if: needs.init-vars.outputs.IS_PROD_FROZEN == 'unfrozen'
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      environment: prod
-      env-path: ${{ inputs.env-path }}
-
-  cd-prod:
+  c-prod:
     uses: ./.github/workflows/cd.yml
+    if: needs.init.outputs.IS_PROD_FROZEN == 'unfrozen'
     needs: 
-      - start-prod-runner
-      - cd-preprod
+      - init
+      - ci
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: prod
-      runner: ${{ needs.start-prod-runner.outputs.label }}
-
-  freeze_prod:
-    name: freeze prod
-    needs:
-      - cd-prod
-    if: ${{ always() }}
-    uses: myriad-sas/.github/.github/workflows/update-deployment-freeze-status.yml@main
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      environment: prod
-      status: frozen
-
-      
-  stop-prod-runner:
-    needs:
-      - start-prod-runner
-      - cd-prod
-    if: ${{ always() }} 
-    uses: ./.github/workflows/stop-runner.yml
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      label: ${{ needs.start-prod-runner.outputs.label }}
-      ec2-instance-id: ${{ needs.start-prod-runner.outputs.ec2-instance-id }}
-      env-path: ${{ inputs.env-path }}
+      runner: ${{ needs.ci.outputs.runner }}
+      image: ${{ needs.init.outputs.IMAGE }}

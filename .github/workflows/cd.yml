@@ -18,16 +18,15 @@ on:
           runner label on which this workflow will be ran
         required: true
         type: string
+      image:
+        description: >-
+          docker image url 
+        required: true
+        type: string
       env-path:
         description: >-
           path to the configuration file of environment variables
         default: ./.github/.env
-        required: false
-        type: string
-      skip-check:
-        description: >-
-          whether to skip the check
-        default: false
         required: false
         type: string
 
@@ -39,17 +38,25 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      packages: read
+    container:
+      image: ghcr.io/myriad-sas/${{ inputs.image }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - name: init container
+        uses: myriad-actions/init-container@main
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
-      - name: download artifacts
-        uses: myriad-actions/run@main
+      - name: init cache
+        uses: actions/cache@v3
         with:
-          script: ${{ env.SCRIPT2 }}
-          args: testing
+          path: main/${{ env.ARTIFACTS-SRC-PATH }}
+          key: ${{ github.sha }}
       - name: set env
         if: inputs.environment != 'testing'
         run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
@@ -62,37 +69,44 @@ jobs:
       - name: deploy
         uses: myriad-actions/run@main
         with:
-          script: ${{ env.LANG }}/${{ env.SCRIPT3 }} 
+          script: ${{ env.LANG }}/${{ env.SCRIPT31 }} 
           args: ${{ inputs.environment }}
-      - name: upload artifacts
-        uses: actions/upload-artifact@v2
+      - name: freeze prod
+        uses: myriad-actions/set-deployment-freeze-status@main
+        if: inputs.environment == 'prod'
         with:
-          name: ${{ env.ARTIFACT-NAME }}
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}/
-          retention-days: 1
-
+          environment: prod
+          github-pat:  ${{ secrets.github-pat }}
+          status: frozen
 
   validate:
     name: validate
     needs:
       - deploy
     runs-on:  ${{ inputs.runner }}
+    environment: validation
     permissions:
       id-token: write
       contents: read
+      packages: read
+    container:
+      image: ghcr.io/myriad-sas/${{ inputs.image }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
-      - name: download artifacts
-        uses: actions/download-artifact@v2
+      - name: init cache
+        uses: actions/cache@v3
         with:
-          name: ${{ env.ARTIFACT-NAME }}
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}/
+          path: main/${{ env.ARTIFACTS-SRC-PATH }}
+          key: ${{ github.sha }}
       - name: validate installed version
         uses: myriad-actions/run@main
         with:
-          script: ${{ env.SCRIPT4 }} 
+          script: ${{ env.SCRIPT41 }} 
           args: ${{ inputs.environment }}
