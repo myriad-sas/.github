@@ -1,4 +1,4 @@
-name: main
+name: m
 on: 
   workflow_call:
     secrets:
