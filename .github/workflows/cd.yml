@@ -69,7 +69,7 @@ jobs:
       - name: deploy
         uses: myriad-actions/run@main
         with:
-          script: ${{ env.LANG }}/${{ env.SCRIPT3 }} 
+          script: ${{ env.LANG }}/${{ env.SCRIPT31 }} 
           args: ${{ inputs.environment }}
       - name: freeze prod
         uses: myriad-actions/set-deployment-freeze-status@main
