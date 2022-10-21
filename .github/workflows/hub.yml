@@ -70,7 +70,7 @@ jobs:
       env-path: ${{ inputs.env-path }}
       runner: ${{ needs.init.outputs.RUNNER }}
 
-  1-test:
+  a-test:
     uses: ./.github/workflows/cd.yml
     if: needs.init.outputs.RELEASE !=  'true'
     needs: 
@@ -83,7 +83,7 @@ jobs:
       runner: ${{ needs.ci.outputs.runner }}
       image: ${{ needs.init.outputs.IMAGE }}
 
-  2-prep:
+  b-prep:
     uses: ./.github/workflows/cd.yml
     if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'true'
     needs: 
@@ -96,7 +96,7 @@ jobs:
       runner: ${{ needs.ci.outputs.runner }}
       image: ${{ needs.init.outputs.IMAGE }}
 
-  3-prod:
+  c-prod:
     uses: ./.github/workflows/cd.yml
     if: needs.init.outputs.IS_PROD_FROZEN == 'unfrozen'
     needs: 
