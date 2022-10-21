@@ -83,6 +83,7 @@ jobs:
       runner: ${{ needs.ci.outputs.runner }}
       image: ${{ needs.init.outputs.IMAGE }}
 
+
   b-prep:
     uses: ./.github/workflows/cd.yml
     if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'true'
@@ -95,6 +96,7 @@ jobs:
       environment: preprod
       runner: ${{ needs.ci.outputs.runner }}
       image: ${{ needs.init.outputs.IMAGE }}
+
 
   c-prod:
     uses: ./.github/workflows/cd.yml

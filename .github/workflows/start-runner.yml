@@ -47,7 +47,7 @@ on:
 jobs:          
   launch:
     name: launch
-    runs-on:  ${{ inputs.runner }}
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -67,10 +67,14 @@ jobs:
         if: "${{  inputs.environment == 'prod' }}"
         run: |
           echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-PROD-CONFIG }})" >> $GITHUB_ENV
-      - name: load prod launch config
+      - name: load specific launch config
         if: "${{  inputs.environment == 'specific' }}"
         run: |
           echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-SPECIFIC-CONFIG }})" >> $GITHUB_ENV
+      - name: load aculab launch config
+        if: "${{  inputs.environment == 'aculab' }}"
+        run: |
+          echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-CSD-ACULAB-RHEL8-CONFIG }})" >> $GITHUB_ENV
       - name: load instance type
         run: ${{  env.RUNNER-INSTANCE-TYPE == '' }} && echo "RUNNER-INSTANCE-TYPE=t3a.micro" >> $GITHUB_ENV || continue 
       - name: start runner
