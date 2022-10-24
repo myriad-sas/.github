@@ -44,45 +44,57 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      continue: ${{ env.contiune }}
     steps:
       - name: request approval
         uses: trstringer/manual-approval@v1
         if: inputs.environment == 'preprod'
+        id: approval
         timeout-minutes: 20
         with:
           secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: lingfei-wan
           minimum-approvals: 1
           issue-title: "request for preprod deployment, commit code ${GITHUB_SHA::7}"
+        continue-on-error: true
+      - name: check continue
+        if: inputs.environment == 'preprod'
+        run: |
+          ${{ steps.approval.outcome == failure && inputs.environment == preprod }} && echo "continue=false" >> GITHUB_ENV || "continue=true" >> GITHUB_ENV 
       - name: init container
+        if: env.continue != 'false'
         uses: myriad-actions/init-container@main
       - name: init job  
+        if: env.continue != 'false'
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
       - name: init cache
+        if: env.continue != 'false'
         uses: actions/cache@v3
         with:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
       - name: set env
-        if: inputs.environment != 'testing'
+        if: inputs.environment != 'testing' && env.continue != 'false'
         run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
       - name: tag env
         uses: myriad-actions/run@main
-        if: inputs.environment != 'testing'
+        if: inputs.environment != 'testing' && env.continue != 'false'
         with:
           script: ${{ env.SCRIPT5 }}
           args: ${{ env.NEXT-ENV }}
       - name: deploy
         uses: myriad-actions/run@main
+        if: env.continue != 'false'
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT31 }} 
           args: ${{ inputs.environment }}
       - name: freeze prod
         uses: myriad-actions/set-deployment-freeze-status@main
-        if: inputs.environment == 'prod'
+        if: inputs.environment == 'prod' && env.continue != 'false'
         with:
           environment: prod
           github-pat:  ${{ secrets.github-pat }}
@@ -105,16 +117,19 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: init job  
+        if: needs.deploy.outputs.continue != 'false'
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
       - name: init cache
+        if: needs.deploy.outputs.continue != 'false'
         uses: actions/cache@v3
         with:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
       - name: validate installed version
+        if: needs.deploy.outputs.continue != 'false'
         uses: myriad-actions/run@main
         with:
           script: ${{ env.SCRIPT41 }} 
