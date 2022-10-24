@@ -61,7 +61,7 @@ jobs:
       - name: check continue
         if: inputs.environment == 'preprod'
         run: |
-          ${{ steps.approval.outcome == failure && inputs.environment == preprod }} && echo "continue=false" >> GITHUB_ENV || "continue=true" >> GITHUB_ENV 
+          ${{ steps.approval.outcome == 'failure' && inputs.environment == 'preprod' }} && echo "continue=false" >> GITHUB_ENV || "continue=true" >> GITHUB_ENV 
       - name: init container
         if: env.continue != 'false'
         uses: myriad-actions/init-container@main
