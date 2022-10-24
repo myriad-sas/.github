@@ -39,6 +39,7 @@ jobs:
       id-token: write
       contents: read
       packages: read
+      issues: write
     container:
       image: ghcr.io/myriad-sas/${{ inputs.image }}
       credentials:
