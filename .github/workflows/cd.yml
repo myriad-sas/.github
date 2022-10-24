@@ -51,7 +51,7 @@ jobs:
       - name: approval annotation
         if: inputs.environment == 'preprod'
         run: |
-          echo "::notice title={An issue is pending for approval, please check the Issues tab}::{to approve reply 'approve', to deny reply 'deny'}"
+          echo "::notice title='An issue is pending for approval in the Issues tab'::{to approve reply 'approve', to deny reply 'deny'}"
       - name: request approval
         uses: trstringer/manual-approval@v1
         if: inputs.environment == 'preprod'
