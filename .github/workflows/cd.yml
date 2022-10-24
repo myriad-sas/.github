@@ -61,7 +61,7 @@ jobs:
           secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: lingfei-wan
           minimum-approvals: 1
-          issue-title: "request for preprod deployment, commit code ${GITHUB_SHA::7}"
+          issue-title: "commit:${{ github.sha }} request for deployment on preprod, reply with 'approve' or 'deny'"
         continue-on-error: true
       - name: check continue
         id: check-continue
