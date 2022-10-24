@@ -47,7 +47,7 @@ jobs:
     steps:
       - name: request approval
         uses: trstringer/manual-approval@v1
-        if: inputs.environment != 'preprod'
+        if: inputs.environment == 'preprod'
         timeout-minutes: 20
         with:
           secret: ${{ secrets.GITHUB_TOKEN }}
