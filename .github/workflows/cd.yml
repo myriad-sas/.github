@@ -47,12 +47,13 @@ jobs:
     steps:
       - name: request approval
         uses: trstringer/manual-approval@v1
+        if: inputs.environment != 'preprod'
+        timeout-minutes: 20
         with:
           secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: lingfei-wan
           minimum-approvals: 1
           issue-title: "request for preprod deployment, commit code ${GITHUB_SHA::7}"
-          timeout-minutes: 20
       - name: init container
         uses: myriad-actions/init-container@main
       - name: init job  
