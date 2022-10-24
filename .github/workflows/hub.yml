@@ -58,7 +58,6 @@ jobs:
     uses: ./.github/workflows/ci.yml
     needs: 
       - init
-    if: needs.check.outputs.SKIP-BUILD != 'true'
     secrets:
       github-pat: ${{ secrets.github-pat }}
       github-pak: ${{ secrets.github-pak }}
@@ -72,10 +71,10 @@ jobs:
 
   a-test:
     uses: ./.github/workflows/cd.yml
-    if: needs.init.outputs.RELEASE !=  'true'
     needs: 
       - init
       - ci
+    if: needs.init.outputs.RELEASE !=  'true'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
@@ -86,10 +85,10 @@ jobs:
 
   b-prep:
     uses: ./.github/workflows/cd.yml
-    if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'true'
     needs: 
       - init
       - ci
+    if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'true'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
@@ -100,10 +99,10 @@ jobs:
 
   c-prod:
     uses: ./.github/workflows/cd.yml
-    if: needs.init.outputs.IS_PROD_FROZEN == 'unfrozen'
     needs: 
       - init
       - ci
+    if: needs.init.outputs.IS_PROD_FROZEN == 'unfrozen'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:

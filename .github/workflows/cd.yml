@@ -39,41 +39,68 @@ jobs:
       id-token: write
       contents: read
       packages: read
+      issues: write
     container:
       image: ghcr.io/myriad-sas/${{ inputs.image }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
+      - name: approval annotation
+        if: inputs.environment == 'preprod'
+        run: |
+          echo "::notice title='An issue is pending for approval in the Issues tab'::{to approve reply 'approve', to deny reply 'deny'}"
+      - name: request approval
+        uses: trstringer/manual-approval@v1
+        if: inputs.environment == 'preprod'
+        id: approval
+        timeout-minutes: 20
+        with:
+          secret: ${{ secrets.GITHUB_TOKEN }}
+          approvers: lingfei-wan
+          minimum-approvals: 1
+          issue-title: "requested by ${{ github.actor }}"
+        continue-on-error: true
+      - name: check continue
+        id: check-continue
+        if: inputs.environment == 'preprod'
+        run: |
+          ${{ steps.approval.outcome == 'failure' && inputs.environment == 'preprod' }} && echo "continue=false" >> $GITHUB_OUTPUT || echo "continue=true" >> $GITHUB_OUTPUT 
       - name: init container
+        if: steps.check-continue.outputs.continue != 'false'
         uses: myriad-actions/init-container@main
       - name: init job  
+        if: steps.check-continue.outputs.continue != 'false'
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
       - name: init cache
+        if: steps.check-continue.outputs.continue != 'false'
         uses: actions/cache@v3
         with:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
       - name: set env
-        if: inputs.environment != 'testing'
+        if: inputs.environment != 'testing' && steps.check-continue.outputs.continue != 'false'
         run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
       - name: tag env
         uses: myriad-actions/run@main
-        if: inputs.environment != 'testing'
+        if: inputs.environment != 'testing' && steps.check-continue.outputs.continue != 'false'
         with:
           script: ${{ env.SCRIPT5 }}
           args: ${{ env.NEXT-ENV }}
       - name: deploy
         uses: myriad-actions/run@main
+        if: steps.check-continue.outputs.continue != 'false'
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT31 }} 
           args: ${{ inputs.environment }}
       - name: freeze prod
         uses: myriad-actions/set-deployment-freeze-status@main
-        if: inputs.environment == 'prod'
+        if: inputs.environment == 'prod' && steps.check-continue.outputs.continue != 'false'
         with:
           environment: prod
           github-pat:  ${{ secrets.github-pat }}
@@ -83,6 +110,7 @@ jobs:
     name: validate
     needs:
       - deploy
+    if: needs.deploy.outputs.continue != 'false'
     runs-on:  ${{ inputs.runner }}
     environment: validation
     permissions:
@@ -96,16 +124,19 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: init job  
+        if: needs.deploy.outputs.continue != 'false'
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
       - name: init cache
+        if: needs.deploy.outputs.continue != 'false'
         uses: actions/cache@v3
         with:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
       - name: validate installed version
+        if: needs.deploy.outputs.continue != 'false'
         uses: myriad-actions/run@main
         with:
           script: ${{ env.SCRIPT41 }} 
