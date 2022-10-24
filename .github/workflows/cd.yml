@@ -106,6 +106,7 @@ jobs:
     name: validate
     needs:
       - deploy
+    if: needs.deploy.outputs.continue != 'false'
     runs-on:  ${{ inputs.runner }}
     environment: validation
     permissions:
