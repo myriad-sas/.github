@@ -48,6 +48,18 @@ jobs:
     outputs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
+      - name: init container
+        uses: myriad-actions/init-container@main
+      - name: init job  
+        uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
+      - name: init cache
+        uses: actions/cache@v3
+        with:
+          path: main/${{ env.ARTIFACTS-SRC-PATH }}
+          key: ${{ github.sha }}
       - name: approval annotation
         if: inputs.environment == 'preprod'
         run: |
@@ -59,7 +71,7 @@ jobs:
         timeout-minutes: 20
         with:
           secret: ${{ secrets.GITHUB_TOKEN }}
-          approvers: lingfei-wan
+          approvers: ${{ env.PREPROD-APPROVERS }}
           minimum-approvals: 1
           issue-title: "requested by ${{ github.actor }}"
         continue-on-error: true
@@ -68,21 +80,6 @@ jobs:
         if: inputs.environment == 'preprod'
         run: |
           ${{ steps.approval.outcome == 'failure' && inputs.environment == 'preprod' }} && echo "continue=false" >> $GITHUB_OUTPUT || echo "continue=true" >> $GITHUB_OUTPUT 
-      - name: init container
-        if: steps.check-continue.outputs.continue != 'false'
-        uses: myriad-actions/init-container@main
-      - name: init job  
-        if: steps.check-continue.outputs.continue != 'false'
-        uses: myriad-actions/init-job@main
-        with:
-          github-pat: ${{ secrets.github-pat }}
-          env-path: ${{ inputs.env-path }}
-      - name: init cache
-        if: steps.check-continue.outputs.continue != 'false'
-        uses: actions/cache@v3
-        with:
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}
-          key: ${{ github.sha }}
       - name: set env
         if: inputs.environment != 'testing' && steps.check-continue.outputs.continue != 'false'
         run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
