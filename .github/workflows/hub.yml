@@ -55,9 +55,9 @@ jobs:
           github-pat:  ${{ secrets.github-pat }}
       - name: approval annotation
         run: |
-          echo "::notice title=preprod Status:: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}"
-          echo "::notice title=prod Status:: ${{ steps.status.outputs.IS_PROD_FROZEN }}"
-          echo "::notice title=ref Status:: ${{ github.ref_name }}"
+          echo "::notice title=preprod status:: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}"
+          echo "::notice title=prod status:: ${{ steps.status.outputs.IS_PROD_FROZEN }}"
+          echo "::notice title=ref:: ${{ github.ref_name }}"
       - name: approval annotation
         if: steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
         run: |
