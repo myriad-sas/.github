@@ -48,7 +48,7 @@ jobs:
           ${{ contains(steps.isMember.outputs.teams, env.GROUP1) || contains(steps.isMember.outputs.teams, env.GROUP2) }} &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "check failed"
           ${{ inputs.status == 'frozen' }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "target status is not frozen"
           ${{ inputs.environment == 'prod' && env.NO-PROD == 'true' }}  &&  echo "CHECK_PASSED=false" >> $GITHUB_ENV || echo "continue with prod"
-          ${{ env.impact == 'minor' }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "not a minor repo"
+          ${{ env.IMPACT == 'minor' }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "not a minor repo"
         shell: bash 
       - name: set status
         uses: myriad-actions/set-deployment-freeze-status@main
