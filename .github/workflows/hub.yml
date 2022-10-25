@@ -53,6 +53,11 @@ jobs:
         uses: myriad-actions/get-deployment-freeze-status@main
         with: 
           github-pat:  ${{ secrets.github-pat }}
+      - name: approval annotation
+        if: inputs.environment == 'preprod'
+        run: |
+          echo "::notice title=preprod Status:: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}"
+          echo "::notice title=prod Status:: ${{ steps.status.outputs.IS_PROD_FROZEN }}"
   
   ci:
     uses: ./.github/workflows/ci.yml
