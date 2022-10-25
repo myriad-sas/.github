@@ -121,19 +121,16 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: init job  
-        if: needs.deploy.outputs.continue != 'false'
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
       - name: init cache
-        if: needs.deploy.outputs.continue != 'false'
         uses: actions/cache@v3
         with:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
       - name: validate installed version
-        if: needs.deploy.outputs.continue != 'false'
         uses: myriad-actions/run@main
         with:
           script: ${{ env.SCRIPT41 }} 
