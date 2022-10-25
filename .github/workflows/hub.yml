@@ -61,7 +61,7 @@ jobs:
       - name: approval annotation
         if: steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
         run: |
-          echo "::notice title=An issue will be created in the Issues tab::to approve reply 'approve', to deny reply 'deny'"
+          echo "::notice title=An issue will be created in the Issues tab::to approve reply 'approve', to deny reply 'deny'. The timeout minutes of this issues is set to 20 minutes, after which the workflow will continue without deployment. It is possible to re-run the preprod and only the preprod deployment by click on the re-run button right beside the deploy in the jobs panel."
   
   ci:
     uses: ./.github/workflows/ci.yml
