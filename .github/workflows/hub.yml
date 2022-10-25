@@ -58,6 +58,10 @@ jobs:
           echo "::notice title=preprod Status:: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}"
           echo "::notice title=prod Status:: ${{ steps.status.outputs.IS_PROD_FROZEN }}"
           echo "::notice title=ref Status:: ${{ github.ref_name }}"
+      - name: approval annotation
+        if: steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
+        run: |
+          echo "::notice title=An issue will be created in the Issues tab::to approve reply 'approve', to deny reply 'deny'"
   
   ci:
     uses: ./.github/workflows/ci.yml
