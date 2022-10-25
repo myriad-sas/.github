@@ -50,6 +50,12 @@ jobs:
           ${{ inputs.environment == 'prod' && env.NO-PROD == 'true' }}  &&  echo "CHECK_PASSED=false" >> $GITHUB_ENV || echo "continue with prod"
           ${{ env.IMPACT == 'minor' }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "not a minor repo"
         shell: bash 
+      - name: exit if no access 
+        if: env.CHECK_PASSED != 'true' 
+        uses: actions/github-script@v3
+        with:
+          script: |
+              core.setFailed('Access Denied, please contact DevOPS or QA team')
       - name: set status
         uses: myriad-actions/set-deployment-freeze-status@main
         if: env.CHECK_PASSED == 'true' 
