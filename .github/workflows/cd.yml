@@ -64,7 +64,7 @@ jobs:
         uses: trstringer/manual-approval@v1
         if: inputs.environment == 'preprod'
         id: approval
-        timeout-minutes: 20
+        timeout-minutes: 5
         with:
           secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: ${{ env.PREPROD-APPROVERS }}
