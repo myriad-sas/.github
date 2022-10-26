@@ -85,6 +85,12 @@ jobs:
         with:
           script: ${{ env.SCRIPT5 }}
           args: ${{ env.NEXT-ENV }}
+      - name: checkout configurations
+        uses: actions/checkout@v3
+        with:
+          repository:  ${{ env.CI-CONFIG-REPO }}
+          token: ${{ secrets.github-pat }}
+          path: ${{ env.CI-CONFIG-FOLDER-NAME }}
       - name: deploy
         uses: myriad-actions/run@main
         if: steps.check-continue.outputs.continue != 'false'
