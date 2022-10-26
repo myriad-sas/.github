@@ -95,7 +95,7 @@ jobs:
         uses: myriad-actions/run@main
         if: steps.check-continue.outputs.continue != 'false'
         with:
-          script: ${{ env.LANG }}/${{ env.SCRIPT31 }} 
+          script: ${{ env.LANG }}/${{ env.SCRIPT3 }} 
           args: ${{ inputs.environment }}
       - name: freeze prod
         uses: myriad-actions/set-deployment-freeze-status@main
