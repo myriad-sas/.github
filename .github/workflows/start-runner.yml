@@ -11,7 +11,8 @@ on:
       runner:
         description: >-
           runner label on which this workflow will be ran
-        required: true
+        required: false
+        default: ubuntu-latest
         type: string
       environment:
         description: >-
