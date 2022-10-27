@@ -116,6 +116,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      packages: write
     outputs:
       uri: ${{ steps.export.outputs.uri }}
     steps:
