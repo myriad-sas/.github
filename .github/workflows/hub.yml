@@ -20,7 +20,7 @@ on:
 
 jobs:
   init:
-    runs-on: hub
+    runs-on: myriad
     permissions:
       id-token: write
       contents: read
@@ -32,7 +32,7 @@ jobs:
       IMAGE: ${{ steps.vars.outputs.IMAGE }}
       IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
       IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
-      RUNNER: hub
+      RUNNER: myriad
     steps:
       - name: init job  
         uses: myriad-actions/init-job@main
