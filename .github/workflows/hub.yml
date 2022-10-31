@@ -37,7 +37,7 @@ jobs:
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
-          github-pat: 'test'
+          github-pat: ${{ secrets.GH_PAT }}
           env-path: ${{ inputs.env-path }}
       - name: set vars
         id: vars
