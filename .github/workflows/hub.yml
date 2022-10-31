@@ -1,16 +1,17 @@
 name: m
 on: 
   workflow_call:
-    secrets:
+    inputs:
       github-pat:
         description: >-
           GitHub personal access token
         required: true
+        type: string
       github-pak:
         description: >-
           GitHub personal access key
         required: false
-    inputs:
+        type: string
       env-path:
         description: >-
           path to the file for the environment variables
@@ -37,7 +38,7 @@ jobs:
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
-          github-pat: ${{ inputs.github-pat }}
+          github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
       - name: set vars
         id: vars
