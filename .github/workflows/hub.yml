@@ -1,17 +1,16 @@
 name: m
 on: 
   workflow_call:
-    inputs:
+    secrets:
       github-pat:
         description: >-
           GitHub personal access token
-        required: true
-        type: string
+        required: true        
       github-pak:
         description: >-
           GitHub personal access key
-        required: false
-        type: string
+        required: false        
+    inputs:
       env-path:
         description: >-
           path to the file for the environment variables
