@@ -20,7 +20,7 @@ on:
 
 jobs:
   init:
-    runs-on: myriad
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
