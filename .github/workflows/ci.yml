@@ -105,7 +105,7 @@ jobs:
       - name: extras
         id: set-runner
         run: |
-          mkdir /root/logs
+          mkdir -p /root/logs
           echo label=${{ inputs.runner }} >> $GITHUB_OUTPUT 
       - name: init cache
         id: cache
