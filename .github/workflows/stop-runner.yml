@@ -13,12 +13,6 @@ on:
           runner label on which this workflow will be ran
         required: true
         type: string
-      env-path:
-        description: >-
-          path to the configuration file of environment variables
-        default: ./.github/.env
-        required: false
-        type: string
       label:
         description: >-
           Name of the unique label assigned to the runner.
