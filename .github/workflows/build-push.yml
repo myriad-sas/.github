@@ -165,7 +165,7 @@ jobs:
           username: ${{ secrets.ghcr-actor }}
           #TODO: change to {{ secrets.GITHUB_TOKEN }} when subscription is activated
           #password: ${{ secrets.GITHUB_TOKEN }}
-          password: ${{ secrets.ghcr-actor }}
+          password: ${{ secrets.ghcr-pat }}
 
       - name: set ghcr url
         if: ${{ inputs.push_to_ghcr }}
