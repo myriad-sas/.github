@@ -77,7 +77,7 @@ jobs:
         run: |
           echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-CSD-ACULAB-RHEL8-CONFIG }})" >> $GITHUB_ENV
       - name: load cellgate launch config
-        if: "${{  inputs.environment == 'aculab' }}"
+        if: "${{  inputs.environment == 'cellgate' }}"
         run: |
           echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-CSD-CELLGATE-RHEL8-CONFIG }})" >> $GITHUB_ENV
       - name: load instance type
