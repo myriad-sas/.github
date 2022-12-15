@@ -100,7 +100,7 @@ on:
       ghcr-pat:
         description: >-
            GitHub personal access token
-        required: false
+        required: true
       rhpwd:
         description: >-
            redhat password
@@ -137,7 +137,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository:  ${{ env.CI-SCRIPT-REPO }}
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ secrets.ghcr-pat }}
           path: ${{ env.CI-SCRIPT-FOLDER-NAME }}
 
       - name: copy tools
