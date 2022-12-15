@@ -5,8 +5,9 @@ on:
       env-path:
         description: >-
           path to the configuration file of environment variables
-        default: ./.github/.env
         required: false
+        default: ./.github/.env
+        type: string
       config-path:
         description: >-
           path to the ecr.json file which stores the variables for the instance
