@@ -130,7 +130,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: load project env
-        run: sudo sed '/^#/d' main//${{ inputs.env-path }} >> $GITHUB_ENV
+        run: sudo sed '/^#/d' ${{ inputs.env-path }} >> $GITHUB_ENV
         shell: bash
       
       - name: checkout hub tools
