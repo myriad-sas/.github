@@ -6,7 +6,7 @@ on:
         description: >-
           path to the configuration file of environment variables
         required: false
-        default: ./.github/.env
+        default: .github/.env
         type: string
       config-path:
         description: >-
