@@ -140,20 +140,6 @@ jobs:
           token: ${{ secrets.ghcr-pat }}
           path: ${{ env.CI-SCRIPT-FOLDER-NAME }}
 
-      - name: list dir
-        run: |
-          pwd
-          ls -l
-          ls -R /opt/tools
-          ls -R /opt/tools/hub-tools/com.myriadgroup.connect.devops/etc/fluentbit
-        shell: bash
-
-      - name: copy tools
-        run: |
-          sudo mkdir -p ${{ env.CI-SCRIPT-WORKING-DIRECTORY }}
-          sudo cp -r ${{ env.CI-SCRIPT-FOLDER-NAME }} ${{ env.CI-SCRIPT-WORKING-DIRECTORY }}
-        shell: bash
-
       - name: get build args
         run:  echo "IMAGE-TAG=$(date +'%Y%m%d%H%M%S')"  >> $GITHUB_ENV
       
