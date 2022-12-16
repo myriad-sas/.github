@@ -40,29 +40,12 @@ on:
           build-args
         required: false
         type: string
-      push_to_ghcr:
-        description: >-
-          boolean value to check if the image should be pushed to ghcr. 
-        required: false
-        default: false
-        type: boolean
       push_to_ecr:
         description: >-
           boolean value to check if the image should be pushed to ecr. 
         required: false
         default: false
         type: boolean
-      login_to_rhcr:
-        description: >-
-          boolean value to check if the image should be pulled from rhcr. 
-        required: false
-        default: false
-        type: boolean
-      rhuser:
-        description: >-
-           redhat user 
-        required: false
-        type: string
       context:
         description: "Build's context is the set of files located in the specified PATH or URL"
         required: false
@@ -93,18 +76,14 @@ on:
         default: "artifacts/"
         type: string
     secrets:
-      ghcr-actor:
+      gh-actor:
         description: >-
            GitHub personal access user
         required: false
-      ghcr-pat:
+      gh-pat:
         description: >-
            GitHub personal access token
         required: true
-      rhpwd:
-        description: >-
-           redhat password
-        required: false
     outputs:
       uri:
         description: >-
@@ -137,7 +116,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository:  ${{ env.CI-SCRIPT-REPO }}
-          token: ${{ secrets.ghcr-pat }}
+          token: ${{ secrets.gh-pat }}
           path: ${{ env.CI-SCRIPT-FOLDER-NAME }}
 
       - name: get build args
@@ -153,14 +132,6 @@ jobs:
         with:
           name: ${{ inputs.artifacts-name }}
           path: ${{ inputs.artifacts-path }}
-
-      - name: login rhcr
-        if: ${{ inputs.login_to_rhcr }}
-        uses: docker/login-action@v1
-        with:
-          registry: registry.redhat.io
-          username: ${{ inputs.rhuser }}
-          password: ${{ secrets.rhpwd }}
           
       - name: login to ecr
         id: login-ecr
@@ -172,22 +143,7 @@ jobs:
       - name: set ecr url
         if: ${{ inputs.push_to_ecr }}
         run: |
-          echo "ECR=${{ steps.login-ecr.outputs.registry }}/${{ inputs.image-name }}" >> $GITHUB_ENV
-
-      - name: login ghcr
-        if: ${{ inputs.push_to_ghcr }}
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.ghcr-actor }}
-          #TODO: change to {{ secrets.GITHUB_TOKEN }} when subscription is activated
-          #password: ${{ secrets.GITHUB_TOKEN }}
-          password: ${{ secrets.ghcr-pat }}
-
-      - name: set ghcr url
-        if: ${{ inputs.push_to_ghcr }}
-        run: |
-          echo "GHCR=ghcr.io/myriad-sas/${{ inputs.image-name }}" >> $GITHUB_ENV
+          echo "ECR=${{ steps.login-ecr.outputs.registry }}/hub/${{ inputs.image-name }}" >> $GITHUB_ENV
           
       - name: set docker meta
         id: meta
