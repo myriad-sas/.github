@@ -120,7 +120,8 @@ jobs:
     outputs:
       uri: ${{ steps.export.outputs.uri }}
     steps:
-    
+      - uses: AutoModality/action-clean@v1
+      
       - uses: actions/checkout@v2
       
       - name: get build args
