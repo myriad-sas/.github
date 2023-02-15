@@ -13,7 +13,10 @@ jobs:
   build:
 
     name: Formatting, Credo, Sobelow, Deps audit, Tests
-    runs-on: ubuntu-18.04
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu22
+    container: elixir:1.8-otp-22-alpine
 
     steps:
     - uses: actions/checkout@v3
