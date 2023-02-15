@@ -22,6 +22,12 @@ on:
           The id is used to terminate the EC2 instance when the runner is not needed anymore.
         required: true
         type: string
+      config-path:
+        description: >
+          The path to the config file to be loaded as variables
+        default: "./.github/ec2.json"
+        required: true
+        type: string
         
 jobs:
   terminate:
@@ -38,7 +44,7 @@ jobs:
         uses: myriad-actions/stop-runner@main
         if: inputs.ec2-instance-id != ''
         with:
-          config-path: "main/.github/ec2-centos7.json"
+          config-path: ${{ inputs.config-path }}
           github-token: ${{ secrets.github-pat }}
           label: ${{ inputs.label }}
           ec2-instance-id: ${{ inputs.ec2-instance-id }}
