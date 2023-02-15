@@ -39,6 +39,6 @@ jobs:
         if: inputs.ec2-instance-id != ''
         with:
           config-path: "main/.github/.env"
-          github-pat: ${{ secrets.github-pat }}
+          github-token: ${{ secrets.github-pat }}
           label: ${{ inputs.label }}
           ec2-instance-id: ${{ inputs.ec2-instance-id }}
