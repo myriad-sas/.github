@@ -4,12 +4,6 @@ name: Elixir Quality CI
 on:
   workflow_call:
     inputs:
-          env-path:
-            description: >-
-              path to the configuration file of environment variables
-            default: ./.github/.env
-            required: false
-            type: string
           ci-container-version:
             description: Which version of Elixir to use for the CI
             default: elixir:1.8-otp-22-alpine
@@ -58,7 +52,7 @@ jobs:
         run: mix credo --strict
         # Run Credo even if formatting or the unused deps check failed
         if: always()
-        continue-on-error: ${{ inputs.env-path.IGNORE_CREDO }}
+        continue-on-error: ${{ inputs.ignore-credo }}
 
       - name: Check retired packages from hex
         run: mix hex.audit
