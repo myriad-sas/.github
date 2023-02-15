@@ -38,7 +38,7 @@ jobs:
         uses: myriad-actions/stop-runner@main
         if: inputs.ec2-instance-id != ''
         with:
-          config-path: "main/.github/.env"
+          config-path: "main/.github/ec2-centos7.json"
           github-token: ${{ secrets.github-pat }}
           label: ${{ inputs.label }}
           ec2-instance-id: ${{ inputs.ec2-instance-id }}
