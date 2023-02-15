@@ -4,16 +4,24 @@ name: Elixir Quality CI
 on:
   workflow_call:
     inputs:
+          # -- Elixir version -- #
           ci-container-version:
             description: Which version of Elixir to use for the CI
             default: elixir:1.8-otp-22-alpine
             required: false
             type: string
+          # -- Ignore steps -- #
           ignore-credo:
             description: ignore lint
             default: true
             required: false
             type: boolean
+          # -- Services -- #
+          redis-version:
+            description: Redis version to use in tests. Ignored if empty
+            default: ""
+            required: false
+            type: string
             
 permissions:
   contents: read
@@ -24,7 +32,13 @@ jobs:
     runs-on: self-hosted
     env:
       ImageOS: ubuntu22
-    container: ${{ inputs.env-path.ci-container-version }}
+    container: ${{ inputs.ci-container-version }}
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: ${{ inputs.redis-version }}
 
     steps:
       - uses: actions/checkout@v3
