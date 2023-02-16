@@ -73,7 +73,7 @@ jobs:
         if: always()
 
       - name: Run Sobelow
-        run: mix sobelow --skip --exit
+        run: mix sobelow --config
         if: always()
 
       - name: Audit dependencies
