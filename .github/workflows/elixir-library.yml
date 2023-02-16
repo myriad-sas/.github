@@ -1,4 +1,4 @@
-name: Elixir Quality CI
+name: Elixir library CI
 
 
 on:
@@ -73,7 +73,7 @@ jobs:
         if: always()
 
       - name: Run Sobelow
-        run: mix sobelow --skip
+        run: mix sobelow --skip --exit
         if: always()
 
       - name: Audit dependencies
