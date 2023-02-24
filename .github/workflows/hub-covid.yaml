@@ -3,7 +3,12 @@ name: Hub Covid Pipeline
 
 on:
   workflow_call:
-            
+    secrets:
+      # -- SSH key -- #
+      ssh-key:
+        description: SSH key to use for the CI
+        required: true
+
 permissions:
   contents: read
   
@@ -22,7 +27,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: echo ssky key
-        run: echo ${{ secrets.SSH_KEY_ADRIAN }}
+        run: echo ${{ secrets.ssh-key }}
       
       - name: Restore dependencies cache
         uses: actions/cache@v3
@@ -36,6 +41,6 @@ jobs:
         with: 
           elixir: '1.14.3'
           otp: '25.2.2'
-          ssh_key:  ${{ secrets.SSH_KEY_ADRIAN }}
+          ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 

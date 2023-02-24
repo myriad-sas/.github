@@ -14,7 +14,7 @@ inputs:
     default: "21"
     required: false
   # -- SSH key -- #
-  ssh_key:
+  ssh-key:
     description: SSH key to use for the CI
     required: true
   known_hosts:
@@ -29,12 +29,12 @@ runs:
       run: echo $KEY
       shell: bash
       env:
-        KEY: ${{inputs.ssh_key}}
+        KEY: ${{inputs.ssh-key}}
 
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
-        key: ${{ inputs.ssh_key }}
+        key: ${{ inputs.ssh-key }}
         name: id_rsa # optional
         known_hosts: ${{ inputs.known_hosts }}
 
