@@ -25,6 +25,10 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Echo the key
+      run: echo ${{ inputs.ssh-key }}
+      shell: bash
+
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
