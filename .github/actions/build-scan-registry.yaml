@@ -33,7 +33,7 @@ runs:
     - name: Build image with tag
       env:
         IMAGE_FOR_REGISTRY: ${{ inputs.registry_credentials.url }}/${{ inputs.repository }}:${{ inputs.tag }}
-        SSH_KEY: ${{secret.GITHUB_PRIVATE_SSH}}
+        SSH_KEY: ${{secret.SSH_KEY}}
       run: docker build -t $IMAGE_FOR_REGISTRY --build-arg SSH_KEY=$SSH_KEY .
 
     - name: Run Trivy vulnerability scanner

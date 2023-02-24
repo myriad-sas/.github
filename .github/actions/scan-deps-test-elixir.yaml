@@ -12,7 +12,8 @@ runs:
       with:
         key: ${{ secrets.SSH_KEY }}
         name: id_rsa # optional
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+#        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+        known_hosts: "github.com"
 
     - name:  fetch elixir dependencies
       uses: erlef/setup-beam@v1
