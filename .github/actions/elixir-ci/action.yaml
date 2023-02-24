@@ -24,36 +24,44 @@ runs:
       run: | 
         mix local.hex --force 
         mix local.rebar --force
+      shell: bash
 
     - name: Install dependencies
       run: mix deps.get
+      shell: bash
 
     - name: Check code formatting
       run: mix format --check-formatted
+      shell: bash
       # Check formatting even if there were unused deps so that
       # we give devs as much feedback as possible & save some time.
       if: always()
 
     - name: Run Credo
       run: mix credo --strict
+      shell: bash
       # Run Credo even if formatting or the unused deps check failed
       if: always()
       continue-on-error: ${{ inputs.ignore-credo }}
 
     - name: Check retired packages from hex
       run: mix hex.audit
+      shell: bash
       if: always()
 
     - name: Run Sobelow
       run: mix sobelow --config
+      shell: bash
       if: always()
 
     - name: Audit dependencies
       run: mix deps.audit
+      shell: bash
       if: always()
 
     - name: Run tests
       run: mix test
+      shell: bash
       if: always()
 
         
