@@ -3,24 +3,6 @@ name: Hub Covid Pipeline
 
 on:
   workflow_call:
-    inputs:
-          # -- Elixir & Erlang version -- #
-          elixir:
-            description: Which Elixir version to use for the CI
-            default: 1.8.0
-            required: false
-            type: string
-          otp:
-            description: Which OTP version to use for the CI
-            default: 21
-            required: false
-            type: string
-          # -- Ignore steps -- #
-          ignore-credo:
-            description: ignore lint
-            default: true
-            required: false
-            type: boolean
             
 permissions:
   contents: read
@@ -48,3 +30,7 @@ jobs:
       
       - name: Elixir CI
         uses: myriad-sas/.github/.github/actions/elixir-ci@feature/refactor-workflow
+        with: 
+          elixir: '1.14.3'
+          otp: '25.2.2'
+
