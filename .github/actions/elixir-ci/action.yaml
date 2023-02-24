@@ -17,10 +17,6 @@ inputs:
   ssh-key:
     description: SSH key to use for the CI
     required: true
-  known_hosts:
-    description: known_hosts to use for the CI
-    default: ""
-    required: false
 
 runs:
   using: "composite"
@@ -30,7 +26,6 @@ runs:
       with:
         key: ${{ inputs.ssh-key }}
         name: id_rsa # optional
-        known_hosts: ${{ inputs.known_hosts }}
 
     - name:  fetch elixir dependencies
       uses: erlef/setup-beam@v1
