@@ -21,7 +21,7 @@ runs:
       run: echo $KEY
       shell: bash
       env:
-        SSH_KEY: ${{secret.GITHUB_PRIVATE_SSH}}
+        SSH_KEY: ${{secrets.GITHUB_PRIVATE_SSH}}
 
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
