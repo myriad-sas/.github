@@ -39,5 +39,5 @@ jobs:
           elixir: '1.14.3'
           otp: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          known_hosts: github.com #${{ secrets.KNOWN_HOSTS }}
 
