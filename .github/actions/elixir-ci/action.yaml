@@ -29,7 +29,7 @@ runs:
       run: echo $KEY
       shell: bash
       env:
-        KEY: ${{input.ssh_key}}
+        KEY: ${{inputs.ssh_key}}
 
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
