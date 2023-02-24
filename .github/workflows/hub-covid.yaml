@@ -3,6 +3,11 @@ name: Hub Covid Pipeline
 
 on:
   workflow_call:
+    inputs:
+      ssh_key:
+        description: SSH key to use for the CI
+        required: true
+        type: string
             
 permissions:
   contents: read
@@ -33,6 +38,6 @@ jobs:
         with: 
           elixir: '1.14.3'
           otp: '25.2.2'
-          ssh_key:  ${{ secrets.SSH_KEY_ADRIAN }}
+          ssh_key:  ${{ inputs.ssh_key }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
