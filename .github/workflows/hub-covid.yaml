@@ -20,13 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Restore dependencies cache
-        uses: actions/cache@v3
-        with:
-          path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-
-      
       - name: Elixir Setup
         uses: myriad-sas/.github/.github/actions/elixir-setup@feature/refactor-workflow
         with: 
@@ -41,6 +34,8 @@ jobs:
     needs: setup
 
     steps:
+      - uses: actions/checkout@v3
+
       - name: Setup Elixir Project
         uses: ./.github/actions/elixir-setup
         with: 
@@ -58,6 +53,8 @@ jobs:
     needs: setup
 
     steps:
+      - uses: actions/checkout@v3
+
       - name: Setup Elixir Project
         uses: ./.github/actions/elixir-setup
         with: 
@@ -81,6 +78,8 @@ jobs:
         image: redis:latest
     
     steps:
+      - uses: actions/checkout@v3
+
       - name: Setup Elixir Project
         uses: ./.github/actions/elixir-setup
         with: 
