@@ -16,12 +16,6 @@ jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
-
-    services:
-      # Label used to access the service container
-      redis:
-        # Docker Hub image
-        image: redis:latest
     
     steps:
       - uses: actions/checkout@v3
@@ -47,12 +41,13 @@ jobs:
     needs: setup
 
     steps:
-      - name: Restore dependencies cache
-        uses: actions/cache@v3
-        with:
-          path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-
+      - name: Setup Elixir Project
+        uses: ./.github/actions/elixir-setup
+        with: 
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
 
       - name: Elixir Lint
         uses: myriad-sas/.github/.github/actions/elixir-lint@feature/refactor-workflow
@@ -63,12 +58,13 @@ jobs:
     needs: setup
 
     steps:
-      - name: Restore dependencies cache
-        uses: actions/cache@v3
-        with:
-          path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-
+      - name: Setup Elixir Project
+        uses: ./.github/actions/elixir-setup
+        with: 
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
 
       - name: Elixir Security
         uses: myriad-sas/.github/.github/actions/elixir-security@feature/refactor-workflow
@@ -85,12 +81,13 @@ jobs:
         image: redis:latest
     
     steps:
-      - name: Restore dependencies cache
-        uses: actions/cache@v3
-        with:
-          path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-
+      - name: Setup Elixir Project
+        uses: ./.github/actions/elixir-setup
+        with: 
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
 
       - name: Elixir Test
         uses: myriad-sas/.github/.github/actions/elixir-test@feature/refactor-workflow
