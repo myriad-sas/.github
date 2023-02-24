@@ -25,12 +25,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Echo the key
-      run: echo $KEY
-      shell: bash
-      env:
-        KEY: ${{inputs.ssh-key}}
-
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
