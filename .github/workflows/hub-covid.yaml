@@ -47,4 +47,4 @@ jobs:
           restore-keys: ${{ runner.os }}-mix-
       
       - name: Run CI
-        uses: ../actions/scan-deps-test-elixir.yaml@v1
+        uses: ../actions/scan-deps-test-elixir.yaml@feature/refactor-workflow
