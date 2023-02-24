@@ -46,5 +46,5 @@ jobs:
           key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
           restore-keys: ${{ runner.os }}-mix-
       
-      - name: Run CI
-        uses: ./../actions/elixir-ci/
+      - name: Elixir CI
+        uses: ./.github/actions/elixir-ci
