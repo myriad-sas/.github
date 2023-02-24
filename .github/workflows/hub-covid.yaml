@@ -47,4 +47,4 @@ jobs:
           restore-keys: ${{ runner.os }}-mix-
       
       - name: Elixir CI
-        uses: ./.github/actions/elixir-ci
+        uses: myriad-sas/.github/.github/actions/elixir-ci@feature/refactor-workflow
