@@ -1,0 +1,30 @@
+name: "Lint Elixir projects"
+description:  Check credo and format
+
+inputs:
+  # -- Ignore steps -- #
+  ignore-credo:
+    description: Ignore Credo
+    default: "false"
+  ignore-format:
+    description: Ignore format
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Credo
+      run: mix credo
+      shell: bash
+      # Run Credo even if formatting or the unused deps check failed
+      if: always()
+      continue-on-error: ${{ inputs.ignore-credo == 'true' }}
+    
+    - name: Format
+      run: mix format --check-formatted
+      shell: bash
+      if: always()
+      continue-on-error: ${{ inputs.ignore-format == 'true' }}
+
+        
+        
