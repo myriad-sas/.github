@@ -16,22 +16,22 @@ inputs:
   # -- SSH key -- #
   ssh-key:
     description: SSH key to use for the CI
-    default: ${{ secrets.SSH_KEY }}
+    default: ""
     required: false
   known_hosts:
     description: known_hosts to use for the CI
-    default: ${{ secrets.KNOWN_HOSTS }}
+    default: ""
     required: false
 
 runs:
   using: "composite"
   steps:
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ inputs.ssh-key }}
-        name: id_rsa # optional
-        known_hosts: ${{ inputs.known_hosts }}
+    # - name: Install SSH key
+    #   uses: shimataro/ssh-key-action@v2
+    #   with:
+    #     key: ${{ inputs.ssh-key }}
+    #     name: id_rsa # optional
+    #     known_hosts: ${{ inputs.known_hosts }}
 
     - name:  fetch elixir dependencies
       uses: erlef/setup-beam@v1
