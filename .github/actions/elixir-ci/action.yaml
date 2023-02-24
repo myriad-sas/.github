@@ -4,15 +4,34 @@ description:  setup ssh-agent to use the private ssh-key to fetch private depend
 inputs:
   mode:
     description: fetch mode prod or dev
+  # -- Elixir & Erlang version -- #
+  elixir:
+    description: Which Elixir version to use for the CI
+    default: "1.8.0"
+    required: false
+  otp:
+    description: Which OTP version to use for the CI
+    default: "21"
+    required: false
+  # -- SSH key -- #
+  ssh-key:
+    description: SSH key to use for the CI
+    default: ${{ secrets.SSH_KEY }}
+    required: false
+  known_hosts:
+    description: known_hosts to use for the CI
+    default: ${{ secrets.KNOWN_HOSTS }}
+    required: false
+
 runs:
   using: "composite"
   steps:
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
-        key: ${{ secrets.SSH_KEY }}
+        key: ${{ inputs.ssh-key }}
         name: id_rsa # optional
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+        known_hosts: ${{ inputs.known_hosts }}
 
     - name:  fetch elixir dependencies
       uses: erlef/setup-beam@v1
