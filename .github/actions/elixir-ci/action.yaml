@@ -13,6 +13,14 @@ inputs:
     description: Which OTP version to use for the CI
     default: "21"
     required: false
+  # -- SSH key -- #
+  ssh_key:
+    description: SSH key to use for the CI
+    required: true
+  known_hosts:
+    description: known_hosts to use for the CI
+    default: ""
+    required: true
 
 runs:
   using: "composite"
@@ -21,7 +29,7 @@ runs:
       run: echo $KEY
       shell: bash
       env:
-        SSH_KEY: ${{secrets.GITHUB_PRIVATE_SSH}}
+        KEY: ${{input.ssh_key}}
 
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
