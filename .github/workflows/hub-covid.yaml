@@ -33,6 +33,6 @@ jobs:
         with: 
           elixir: '1.14.3'
           otp: '25.2.2'
-          ssh_key: ${{ secrets.SSH_KEY }}
+          ssh_key: ${{ secrets.GITHUB_PRIVATE_SSH }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
