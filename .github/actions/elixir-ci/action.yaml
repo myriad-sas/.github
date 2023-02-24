@@ -20,7 +20,7 @@ inputs:
   known_hosts:
     description: known_hosts to use for the CI
     default: ""
-    required: true
+    required: false
 
 runs:
   using: "composite"
