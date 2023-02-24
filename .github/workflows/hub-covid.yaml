@@ -20,6 +20,9 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
+
+      - name: echo ssky key
+        run: echo ${{ secrets.SSH_KEY_ADRIAN }}
       
       - name: Restore dependencies cache
         uses: actions/cache@v3
