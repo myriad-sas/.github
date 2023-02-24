@@ -1,0 +1,50 @@
+name: Hub Covid Pipeline
+
+
+on:
+  workflow_call:
+    inputs:
+          # -- Elixir & Erlang version -- #
+          elixir:
+            description: Which Elixir version to use for the CI
+            default: 1.8.0
+            required: false
+            type: string
+          otp:
+            description: Which OTP version to use for the CI
+            default: 21
+            required: false
+            type: string
+          # -- Ignore steps -- #
+          ignore-credo:
+            description: ignore lint
+            default: true
+            required: false
+            type: boolean
+            
+permissions:
+  contents: read
+  
+jobs:
+  build:
+    name: CI
+    runs-on: ubuntu-latest
+
+    services:
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis:latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Restore dependencies cache
+        uses: actions/cache@v3
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+      
+      - name: Run CI
+        uses: ./actions/scan-deps-test-elixir.yaml
