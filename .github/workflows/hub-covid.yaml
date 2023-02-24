@@ -47,4 +47,4 @@ jobs:
           restore-keys: ${{ runner.os }}-mix-
       
       - name: Run CI
-        uses: ./../actions/scan-deps-test-elixir.yaml/
+        uses: ./../actions/elixir-ci/
