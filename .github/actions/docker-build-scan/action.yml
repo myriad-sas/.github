@@ -31,5 +31,5 @@ runs:
     - name: Build image with tag
       env:
         DOCKER_BUILDKIT: "1"
-      run: docker build -t ${{ inputs.image }}:${{ inputs.tag }} . --ssh
+      run: docker buildx build -t ${{ inputs.image }}:${{ inputs.tag }} --ssh default=$SSH_AUTH_SOCK .
       shell: bash
