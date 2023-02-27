@@ -17,6 +17,9 @@ inputs:
   dockerhub-username:
     description: Docker Hub username
     required: true
+  dockerhub-token:
+    description: Docker Hub token
+    required: true
 
 runs:
   using: "composite"
@@ -28,6 +31,12 @@ runs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
+    
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.dockerhub-username }}
+        password: ${{ inputs.dockerhub-token }}
 
     - name: Build image
       uses: docker/build-push-action@v2
@@ -36,4 +45,5 @@ runs:
           default=${{ env.SSH_AUTH_SOCK }}
         tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         context: .
-        outputs: type=docker,dest=/tmp/myimage.tar
+        push: true
+        #outputs: type=docker,dest=/tmp/myimage.tar

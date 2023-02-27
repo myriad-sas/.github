@@ -111,12 +111,13 @@ jobs:
           version: '1.0'
           dockerhub-username: ${{ secrets.dockerhub-username }}
           ssh-key: ${{ secrets.ssh-key }}
+          dockerhub-token: ${{ secrets.dockerhub-token }}
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: myimage
-          path: /tmp/myimage.tar
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: myimage
+      #     path: /tmp/myimage.tar
   
   # scan-image:
   #   name: Scan image
