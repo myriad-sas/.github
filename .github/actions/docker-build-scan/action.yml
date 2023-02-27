@@ -30,7 +30,7 @@ runs:
     - name: Collect Git and SSH config files in a directory that is part of the Docker build context
       run: |
         mkdir root-config
-        cp -r ~/.ssh root-config/
+        cp -r ~/.gitconfig /root/.ssh root-config/
       shell: bash
 
     - name: Build image
