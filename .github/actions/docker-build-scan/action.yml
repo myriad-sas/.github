@@ -22,6 +22,14 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ inputs.ssh-key }}
+        name: id_rsa # optional
+        known_hosts: ${{ inputs.known_hosts }}
     - name: Build image with tag
-      run: docker build -t ${{ inputs.image }}:${{ inputs.tag }} . --build-arg SSH_KEY="${{ inputs.ssh-key }}"
+      env:
+        DOCKER_BUILDKIT: "1"
+      run: docker build -t ${{ inputs.image }}:${{ inputs.tag }} . --ssh
       shell: bash
