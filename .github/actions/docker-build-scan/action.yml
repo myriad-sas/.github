@@ -28,8 +28,12 @@ runs:
         key: ${{ inputs.ssh-key }}
         name: id_rsa # optional
         known_hosts: ${{ inputs.known_hosts }}
+
     - name: Build image with tag
       env:
         DOCKER_BUILDKIT: "1"
-      run: docker buildx build -t ${{ inputs.image }}:${{ inputs.tag }} --ssh default=$SSH_AUTH_SOCK .
+      run: |
+        eval $(ssh-agent)
+        ssh-add ~/.ssh/id_rsa
+        docker buildx build -t ${{ inputs.image }}:${{ inputs.tag }} --ssh default=$SSH_AUTH_SOCK .
       shell: bash
