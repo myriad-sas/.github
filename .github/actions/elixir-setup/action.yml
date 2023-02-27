@@ -129,17 +129,6 @@ runs:
       run: mix deps.get
       shell: sh
 
-    # Normally we'd use `mix deps.compile` here, however that incurs a large
-    # performance penalty when the dependencies are already fully compiled:
-    # https://elixirforum.com/t/github-action-cache-elixir-always-recompiles-dependencies-elixir-1-13-3/45994/12
-    #
-    # Accoring to Jose Valim at the above link `mix loadpaths` will check and
-    # compile missing dependencies
-    - name: Compile Dependencies
-      run: mix loadpaths
-      shell: sh
-      if: inputs.build-deps == 'true'
-
     - name: Compile Application
       run: mix compile ${{ inputs.build-flags }}
       shell: sh
