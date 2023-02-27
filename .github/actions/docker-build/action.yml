@@ -1,0 +1,41 @@
+name: "Build the docker"
+description:  build docker
+
+inputs:
+  # -- Docker image -- #
+  image:
+    description: "Name of the image"
+    required: true
+  version:
+    description: "How to tag the image"
+    required: true
+  # -- SSH key -- #
+  ssh-key:
+    description: SSH key to use for the CI
+    required: true
+  # -- Docker registry -- #
+  dockerhub-username:
+    description: Docker Hub username
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup SSH key
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ inputs.ssh-key }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build image
+      uses: docker/build-push-action@v2
+      with:
+        ssh: |
+          default=${{ env.SSH_AUTH_SOCK }}
+        tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
+        context: .
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        outputs: type=docker,dest=/tmp/myimage.tar
