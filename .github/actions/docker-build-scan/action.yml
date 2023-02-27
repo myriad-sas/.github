@@ -22,18 +22,14 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
+    - name: Setup SSH key
+      uses: webfactory/ssh-agent@v0.7.0
       with:
-        key: ${{ inputs.ssh-key }}
-        name: id_rsa # optional
-        known_hosts: ${{ inputs.known_hosts }}
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Build image with tag
-      env:
-        DOCKER_BUILDKIT: "1"
-      run: |
-        eval $(ssh-agent)
-        ssh-add ~/.ssh/id_rsa
-        docker buildx build -t ${{ inputs.image }}:${{ inputs.tag }} --ssh default=$SSH_AUTH_SOCK .
-      shell: bash
+    - name: Build image
+      uses: docker/build-push-action@v2
+      with:
+        ssh: |
+          default=${{ env.SSH_AUTH_SOCK }}
+        tags: ${{ inputs.image }}:${{ inputs.tag }}
