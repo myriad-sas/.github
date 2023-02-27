@@ -23,5 +23,5 @@ runs:
   using: "composite"
   steps:
     - name: Build image with tag
-      run: docker build -t ${{ inputs.image }}:${{ inputs.tag }} . --build-arg SSH_KEY=${{ inputs.ssh-key }}
+      run: docker build -t ${{ inputs.image }}:${{ inputs.tag }} . --build-arg SSH_KEY="${{ inputs.ssh-key }}"
       shell: bash
