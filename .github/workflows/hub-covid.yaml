@@ -103,5 +103,5 @@ jobs:
         with:
           image: 'hub-covid'
           tag: '1.0'
-          ssh-key: "Hello there" #${{ secrets.ssh-key }}
+          ssh-key: ${{ secrets.ssh-key }}
           known_hosts: github.com
