@@ -37,8 +37,6 @@ runs:
           default=${{ env.SSH_AUTH_SOCK }}
         tags: ${{ inputs.image }}:${{ inputs.tag }}
         context: .
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
         load: true
     
     - name: Run Trivy vulnerability scanner

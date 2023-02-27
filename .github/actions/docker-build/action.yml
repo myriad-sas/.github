@@ -36,6 +36,4 @@ runs:
           default=${{ env.SSH_AUTH_SOCK }}
         tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         context: .
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
         outputs: type=docker,dest=/tmp/myimage.tar

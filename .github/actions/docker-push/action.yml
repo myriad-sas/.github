@@ -53,5 +53,3 @@ runs:
         tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
