@@ -111,27 +111,33 @@ jobs:
           version: '1.0'
           dockerhub-username: ${{ secrets.dockerhub-username }}
           ssh-key: ${{ secrets.ssh-key }}
-  
-  scan-image:
-    name: Scan image
-    runs-on: ubuntu-latest
-    needs: build-image
 
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Download artifact
-        uses: actions/download-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
         with:
           name: myimage
-          path: /tmp
+          path: /tmp/myimage.tar
+  
+  # scan-image:
+  #   name: Scan image
+  #   runs-on: ubuntu-latest
+  #   needs: build-image
 
-      - name: Scan Docker image
-        uses: myriad-sas/.github/.github/actions/docker-scan@feature/refactor-workflow
-        with:
-          image: 'hub-covid'
-          version: '1.0'
-          dockerhub-username: ${{ secrets.dockerhub-username }}
+  #   steps:
+  #     - uses: actions/checkout@v3
+      
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: myimage
+  #         path: /tmp
+
+  #     - name: Scan Docker image
+  #       uses: myriad-sas/.github/.github/actions/docker-scan@feature/refactor-workflow
+  #       with:
+  #         image: 'hub-covid'
+  #         version: '1.0'
+  #         dockerhub-username: ${{ secrets.dockerhub-username }}
 
   push-image:
     name: Push Docker image
