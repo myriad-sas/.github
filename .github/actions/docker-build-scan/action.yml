@@ -33,3 +33,4 @@ runs:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
         tags: ${{ inputs.image }}:${{ inputs.tag }}
+        context: .
