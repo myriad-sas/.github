@@ -102,6 +102,6 @@ jobs:
         uses: myriad-sas/.github/.github/actions/docker-build-scan@feature/refactor-workflow
         with:
           image: 'hub-covid'
-          tag: 'latest'
-          ssh-key:  ${{ secrets.ssh-key }}
+          tag: '1.0'
+          ssh-key: "Hello there" #${{ secrets.ssh-key }}
           known_hosts: github.com
