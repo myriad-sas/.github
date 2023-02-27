@@ -39,6 +39,7 @@ runs:
         context: .
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        load: true
     
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
