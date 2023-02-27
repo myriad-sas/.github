@@ -26,6 +26,12 @@ runs:
       uses: webfactory/ssh-agent@v0.7.0
       with:
         ssh-private-key: ${{ inputs.ssh-key }}
+    
+    - name: Collect Git and SSH config files in a directory that is part of the Docker build context
+      run: |
+        mkdir root-config
+        cp -r ~/.gitconfig  ~/.ssh root-config/
+      shell: bash
 
     - name: Build image
       uses: docker/build-push-action@v2
