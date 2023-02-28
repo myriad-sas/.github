@@ -34,7 +34,7 @@ inputs:
     description: By default, we will install Hex (mix local.hex --force).
   cache-key:
     required: false
-    default: 'v1'
+    default: 'v2'
     description: If you need to reset the cache for some reason, you can change this key.
 outputs:
   otp-version:
@@ -69,15 +69,6 @@ runs:
         restore-keys: |
           deps-${{ inputs.cache-key }}-${{ runner.os }}-
 
-    - name: Get build cache
-      uses: actions/cache@v2
-      id: build-cache
-      with:
-        path: _build/
-        key: build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
-        restore-keys: |
-          build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-
-
     - name: Get Hex cache
       uses: actions/cache@v2
       id: hex-cache
@@ -86,18 +77,6 @@ runs:
         key: build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
           build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-
-
-    # In my experience, I have issues with incremental builds maybe 1 in 100
-    # times that are fixed by doing a full recompile.
-    # In order to not waste dev time on such trivial issues (while also reaping
-    # the time savings of incremental builds for *most* day-to-day development),
-    # I force a full recompile only on builds that we retry.
-    # - name: Clean to rule out incremental build as a source of flakiness
-    #   if: github.run_attempt != '1'
-    #   run: | 
-    #     mix deps.clean --all
-    #     mix clean
-    #   shell: sh
 
     - name: Install Rebar
       run: mix local.rebar --force
