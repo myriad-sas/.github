@@ -118,6 +118,12 @@ jobs:
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
 
+      - name: Elixir compile
+        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+
       - name: Run credo
         uses: myriad-sas/.github/.github/actions/elixir-credo@feature/use-cache
 
@@ -137,6 +143,12 @@ jobs:
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
 
+      - name: Elixir compile
+        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+
       - name: Run sobelow
         uses: myriad-sas/.github/.github/actions/elixir-sobelow@feature/use-cache
 
@@ -155,6 +167,12 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+      
+      - name: Elixir compile
+        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
 
       - name: Run deps audit
         uses: myriad-sas/.github/.github/actions/elixir-deps-audit@feature/use-cache
@@ -180,6 +198,14 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+          
+      - name: Elixir compile
+        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+        env:
+          MIX_ENV: test
 
       - name: Run tests
         uses: myriad-sas/.github/.github/actions/elixir-test@feature/use-cache
