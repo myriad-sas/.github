@@ -2,6 +2,10 @@ name: "Build the docker image, scan it and push it"
 description:  build docker image, scan it and push it
 
 inputs:
+  # -- Ignore steps -- #
+  ignore-scan:
+    description: Ignore scan
+    default: "false"
   # -- Docker image -- #
   image:
     description: "Name of the image"
@@ -57,6 +61,7 @@ runs:
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
+      if: ${{ inputs.ignore-scan == 'true' }}
 
     - name: Build and push
       uses: docker/build-push-action@v4

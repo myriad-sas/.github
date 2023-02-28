@@ -16,5 +16,4 @@ runs:
     - name: Run tests
       run: mix test
       shell: bash
-      if: always()
-      continue-on-error: ${{ inputs.ignore-tests == 'true' }}
+      if: ${{ inputs.ignore-tests == 'true' }}

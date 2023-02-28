@@ -16,15 +16,9 @@ runs:
     - name: Credo
       run: mix credo
       shell: bash
-      # Run Credo even if formatting or the unused deps check failed
-      if: always()
-      continue-on-error: ${{ inputs.ignore-credo == 'true' }}
+      if: ${{ inputs.ignore-credo == 'true' }}
     
     - name: Format
       run: mix format --check-formatted
       shell: bash
-      if: always()
-      continue-on-error: ${{ inputs.ignore-format == 'true' }}
-
-        
-        
+      if: ${{ inputs.ignore-format == 'true' }}
