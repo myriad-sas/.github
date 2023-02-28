@@ -61,7 +61,7 @@ runs:
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
-      if: inputs.ignore-scan != 'false'
+      if: inputs.run-scan != 'false'
 
     - name: Build and push
       uses: docker/build-push-action@v4
