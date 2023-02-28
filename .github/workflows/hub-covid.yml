@@ -51,7 +51,7 @@ jobs:
           known_hosts: github.com
 
       - name: Elixir pre compile checks
-        uses: myriad-sas/.github/.github/actions/elixir-lint@feature/use-cache
+        uses: myriad-sas/.github/.github/actions/elixir-no-compile-checks@feature/use-cache
         with:
           run-format: "false"
           run-retired-deps: "true"
@@ -159,6 +159,12 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     needs: compile-test
+    
+    services:
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis:latest
 
     steps:
       - uses: actions/checkout@v3
