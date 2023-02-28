@@ -2,16 +2,16 @@ name: "Security in Elixir projects"
 description:  Check retired deps + security issues in deps and in code
 
 inputs:
-  # -- Ignore steps -- #
-  ignore-hex-audit:
-    description: Ignore Hex Audit
-    default: "false"
-  ignore-deps-audit:
-    description: Ignore Deps Audit
-    default: "false"
-  ignore-sobelow:
-    description: Ignore Sobelow
-    default: "false"
+  # -- Run steps -- #
+  run-hex-audit:
+    description: Run Hex Audit
+    default: "true"
+  run-deps-audit:
+    description: Run Deps Audit
+    default: "true"
+  run-sobelow:
+    description: Run Sobelow
+    default: "true"
 
 runs:
   using: "composite"
@@ -19,14 +19,14 @@ runs:
     - name: Check retired dependencies
       run: mix hex.audit
       shell: bash
-      if: ${{ inputs.ignore-hex-audit == 'true' }}
+      if: ${{ inputs.run-hex-audit != "false" }}
     
     - name: Check security issues in Deps
       run: mix deps.audit
       shell: bash
-      if: ${{ inputs.ignore-deps-audit == 'true' }}
+      if: ${{ inputs.run-deps-audit != "false" }}
 
     - name: Check security issues in code
       run: mix sobelow --config
       shell: bash
-      if: ${{ inputs.ignore-sobelow == 'true' }}
+      if: ${{ inputs.run-sobelow != "false" }}

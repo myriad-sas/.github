@@ -2,13 +2,13 @@ name: "Test code"
 description: Run test suite
 
 inputs:
-  ignore-tests:
-    description: Ignore tests
-    default: "false"
+  run-tests:
+    description: Run tests
+    default: "true"
   # -- not used atm -- #
-  ignore-coverage:
-    description: Ignore coverage
-    default: "false"
+  Run-coverage:
+    description: Run coverage
+    default: "true"
 
 runs:
   using: "composite"
@@ -16,4 +16,4 @@ runs:
     - name: Run tests
       run: mix test
       shell: bash
-      if: ${{ inputs.ignore-tests == 'true' }}
+      if: ${{ inputs.ignore-tests != "false" }}

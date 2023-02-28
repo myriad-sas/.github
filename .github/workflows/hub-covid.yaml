@@ -53,8 +53,8 @@ jobs:
       - name: Elixir Lint
         uses: myriad-sas/.github/.github/actions/elixir-lint@feature/refactor-workflow
         with:
-          ignore-credo: "true"
-          ignore-format: "true"
+          run-credo: "false"
+          run-format: "false"
 
   security:
     name: Security checks
@@ -75,9 +75,9 @@ jobs:
       - name: Elixir Security
         uses: myriad-sas/.github/.github/actions/elixir-security@feature/refactor-workflow
         with:
-          ignore-hex-audit: "true"
-          ignore-deps-audit: "true"
-          ignore-sobelow: "true"
+          run-hex-audit: "false"
+          run-deps-audit: "false"
+          run-sobelow: "false"
 
   test:
     name: Tests
@@ -104,8 +104,8 @@ jobs:
       - name: Elixir Test
         uses: myriad-sas/.github/.github/actions/elixir-test@feature/refactor-workflow
         with:
-          ignore-tests: "true"
-          ignore-coverage: "true"
+          run-tests: "false"
+          run-coverage: "false"
 
   image-build-scan-push:
     name: Build, Scan and Push
@@ -118,7 +118,7 @@ jobs:
       - name: Build, Scan, Push
         uses: myriad-sas/.github/.github/actions/docker-build-scan-push@feature/refactor-workflow
         with:
-          ignore-scan: "true"
+          run-scan: "false"
           image: 'hub-covid'
           version: '1.0'
           ssh-key: ${{ secrets.ssh-key }}

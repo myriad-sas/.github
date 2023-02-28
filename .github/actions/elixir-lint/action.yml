@@ -2,23 +2,23 @@ name: "Lint Elixir projects"
 description:  Check credo and format
 
 inputs:
-  # -- Ignore steps -- #
-  ignore-credo:
-    description: Ignore Credo
-    default: "false"
+  # -- Run steps -- #
+  run-credo:
+    description: Run Credo
+    default: "true"
   ignore-format:
-    description: Ignore format
-    default: "false"
+    description: Run format
+    default: "true"
 
 runs:
   using: "composite"
   steps:
-    - name: Credo
-      run: mix credo
-      shell: bash
-      if: ${{ inputs.ignore-credo == 'true' }}
-    
     - name: Format
       run: mix format --check-formatted
       shell: bash
-      if: ${{ inputs.ignore-format == 'true' }}
+      if: ${{ inputs.run-format != "false" }}
+
+    - name: Credo
+      run: mix credo
+      shell: bash
+      if: ${{ inputs.run-credo != "false" }}
