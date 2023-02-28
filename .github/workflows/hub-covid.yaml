@@ -97,47 +97,15 @@ jobs:
   #     - name: Elixir Test
   #       uses: myriad-sas/.github/.github/actions/elixir-test@feature/refactor-workflow
 
-  build-image:
-    name: Build Docker image
+  image-build-scan-push:
+    name: Build, Scan and Push
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build Docker image
-        uses: myriad-sas/.github/.github/actions/docker-build@feature/refactor-workflow
-        with:
-          image: 'hub-covid'
-          version: '1.0'
-          dockerhub-username: ${{ secrets.dockerhub-username }}
-          ssh-key: ${{ secrets.ssh-key }}
-          dockerhub-token: ${{ secrets.dockerhub-token }}
-  
-  scan-image:
-    name: Scan image
-    runs-on: ubuntu-latest
-    needs: build-image
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Scan Docker image
-        uses: myriad-sas/.github/.github/actions/docker-scan@feature/refactor-workflow
-        with:
-          image: 'hub-covid'
-          version: '1.0'
-          dockerhub-username: ${{ secrets.dockerhub-username }}
-
-  push-image:
-    name: Push Docker image
-    runs-on: ubuntu-latest
-    needs: build-image
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Push Docker image
-        uses: myriad-sas/.github/.github/actions/docker-push@feature/refactor-workflow
+      - name: Build, Scan, Push
+        uses: myriad-sas/.github/.github/actions/docker-build-scan-push@feature/refactor-workflow
         with:
           image: 'hub-covid'
           version: '1.0'

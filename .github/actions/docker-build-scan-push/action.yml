@@ -1,26 +1,29 @@
-name: "Build the docker image and scan it"
-description:  build docker image and scan it
+name: "Build the docker image, scan it and push it"
+description:  build docker image, scan it and push it
 
 inputs:
   # -- Docker image -- #
   image:
     description: "Name of the image"
     required: true
-  tag:
+  version:
     description: "How to tag the image"
     required: true
   # -- SSH key -- #
   ssh-key:
     description: SSH key to use for the CI
     required: true
-  known_hosts:
-    description: known_hosts to use for the CI
-    default: ""
-    required: false
   # -- Docker registry -- #
+  dockerhub-username:
+    description: Docker Hub username
+    required: true
+  dockerhub-token:
+    description: Docker Hub token
+    required: true
 
 runs:
   using: "composite"
+
   steps:
     - name: Setup SSH key
       uses: webfactory/ssh-agent@v0.7.0
@@ -29,22 +32,38 @@ runs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
+    
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.dockerhub-username }}
+        password: ${{ inputs.dockerhub-token }}
 
     - name: Build image
       uses: docker/build-push-action@v2
       with:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
-        tags: ${{ inputs.image }}:${{ inputs.tag }}
+        tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         context: .
         load: true
-    
+
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: '${{ inputs.image }}:${{ inputs.tag }}'
+        image-ref: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
+
+    - name: Build and push
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: .
+        push: true
+        tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
+        ssh: |
+          default=${{ env.SSH_AUTH_SOCK }}
