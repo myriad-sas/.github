@@ -45,5 +45,11 @@ runs:
           default=${{ env.SSH_AUTH_SOCK }}
         tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         context: .
-        push: true
-        #outputs: type=docker,dest=/tmp/myimage.tar
+        push: false
+        outputs: type=docker,dest=/tmp/myimage.tar
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: myimage
+        path: /tmp/myimage.tar

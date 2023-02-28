@@ -112,33 +112,21 @@ jobs:
           dockerhub-username: ${{ secrets.dockerhub-username }}
           ssh-key: ${{ secrets.ssh-key }}
           dockerhub-token: ${{ secrets.dockerhub-token }}
-
-      # - name: Upload artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: myimage
-      #     path: /tmp/myimage.tar
   
-  # scan-image:
-  #   name: Scan image
-  #   runs-on: ubuntu-latest
-  #   needs: build-image
+  scan-image:
+    name: Scan image
+    runs-on: ubuntu-latest
+    needs: build-image
 
-  #   steps:
-  #     - uses: actions/checkout@v3
-      
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: myimage
-  #         path: /tmp
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - name: Scan Docker image
-  #       uses: myriad-sas/.github/.github/actions/docker-scan@feature/refactor-workflow
-  #       with:
-  #         image: 'hub-covid'
-  #         version: '1.0'
-  #         dockerhub-username: ${{ secrets.dockerhub-username }}
+      - name: Scan Docker image
+        uses: myriad-sas/.github/.github/actions/docker-scan@feature/refactor-workflow
+        with:
+          image: 'hub-covid'
+          version: '1.0'
+          dockerhub-username: ${{ secrets.dockerhub-username }}
 
   push-image:
     name: Push Docker image
@@ -147,12 +135,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: myimage
-          path: /tmp
 
       - name: Push Docker image
         uses: myriad-sas/.github/.github/actions/docker-push@feature/refactor-workflow
