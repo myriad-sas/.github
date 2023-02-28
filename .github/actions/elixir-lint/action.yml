@@ -16,9 +16,9 @@ runs:
     - name: Format
       run: mix format --check-formatted
       shell: bash
-      if: ${{ inputs.run-format != "false" }}
+      if: inputs.run-format != 'false'
 
     - name: Credo
       run: mix credo
       shell: bash
-      if: ${{ inputs.run-credo != "false" }}
+      if: inputs.run-credo != 'false'

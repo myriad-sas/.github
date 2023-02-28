@@ -16,4 +16,4 @@ runs:
     - name: Run tests
       run: mix test
       shell: bash
-      if: ${{ inputs.ignore-tests != "false" }}
+      if: inputs.ignore-tests != 'false'

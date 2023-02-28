@@ -19,14 +19,14 @@ runs:
     - name: Check retired dependencies
       run: mix hex.audit
       shell: bash
-      if: ${{ inputs.run-hex-audit != "false" }}
+      if: inputs.run-hex-audit != 'false'
     
     - name: Check security issues in Deps
       run: mix deps.audit
       shell: bash
-      if: ${{ inputs.run-deps-audit != "false" }}
+      if: inputs.run-deps-audit != 'false'
 
     - name: Check security issues in code
       run: mix sobelow --config
       shell: bash
-      if: ${{ inputs.run-sobelow != "false" }}
+      if: inputs.run-sobelow != 'false'
