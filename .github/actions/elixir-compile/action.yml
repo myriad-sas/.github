@@ -11,10 +11,47 @@ inputs:
     build-args:
       description: Build args
       default: "--all-warnings"
+  # -- Optionnal -- #
+    elixir-version:
+      required: true
+      description: Elixir version to set up
+    otp-version:
+      required: true
+      description: OTP version to set up
+    cache-key:
+      required: false
+      default: 'v1'
+      description: If you need to reset the cache for some reason, you can change this key.
 
 runs:
   using: "composite"
   steps:
+  # -- Cache retrieval -- #
+    - name: Get deps cache
+      uses: actions/cache@v2
+      with:
+        path: deps/
+        key: deps-${{ inputs.cache-key }}-${{ runner.os }}-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          deps-${{ inputs.cache-key }}-${{ runner.os }}-
+
+    - name: Get build cache
+      uses: actions/cache@v2
+      id: build-cache
+      with:
+        path: _build/
+        key: build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-
+
+    - name: Get Hex cache
+      uses: actions/cache@v2
+      id: hex-cache
+      with:
+        path: ~/.hex
+        key: build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-   
     # Normally we'd use `mix deps.compile` here, however that incurs a large
     # performance penalty when the dependencies are already fully compiled:
     # https://elixirforum.com/t/github-action-cache-elixir-always-recompiles-dependencies-elixir-1-13-3/45994/12
