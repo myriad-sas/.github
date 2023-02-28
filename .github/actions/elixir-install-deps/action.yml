@@ -1,5 +1,5 @@
-name: Setup Elixir Project
-description: Checks out the code, configures Elixir, fetches dependencies, and manages build caching.
+name: Setup Elixir and download dependencies
+description: Checks out the code, configures Elixir, fetches dependencies
 inputs:
   elixir-version:
     required: true
@@ -7,7 +7,7 @@ inputs:
   otp-version:
     required: true
     description: OTP version to set up
-
+  
   # -- SSH key -- #
   ssh-key:
     description: SSH key to use for the CI
@@ -17,7 +17,6 @@ inputs:
     default: ""
     required: false
 
-  # -- Build options -- #
   #################################################################
   # Everything below this line is optional.
   #
@@ -25,22 +24,13 @@ inputs:
   # codebase "just work," though there may be speed gains to be had
   # by tweaking these flags.
   #################################################################
-
-  build-app:
-    required: false
-    default: "true"
-    description: True if we should compile the application itself
-  build-flags:
-    required: false
-    default: '--all-warnings'
-    description: Flags to pass to mix compile
   install-rebar:
     required: false
-    default: "true"
+    default: 'true'
     description: By default, we will install Rebar (mix local.rebar --force).
   install-hex:
     required: false
-    default: "true"
+    default: 'true'
     description: By default, we will install Hex (mix local.hex --force).
   cache-key:
     required: false
@@ -53,6 +43,7 @@ outputs:
   elixir-version:
     description: "Exact Elixir version selected by the BEAM setup step"
     value: ${{ steps.beam.outputs.elixir-version }}
+
 runs:
   using: "composite"
   steps:
@@ -69,10 +60,9 @@ runs:
       with:
         elixir-version: ${{ inputs.elixir-version }}
         otp-version: ${{ inputs.otp-version }}
-    
-    # -- Cache retrieval -- #
+
     - name: Get deps cache
-      uses: actions/cache@v3
+      uses: actions/cache@v2
       with:
         path: deps/
         key: deps-${{ inputs.cache-key }}-${{ runner.os }}-${{ hashFiles('**/mix.lock') }}
@@ -80,14 +70,23 @@ runs:
           deps-${{ inputs.cache-key }}-${{ runner.os }}-
 
     - name: Get build cache
-      uses: actions/cache@v3
+      uses: actions/cache@v2
       id: build-cache
       with:
-        path: _build/${{env.MIX_ENV}}/
-        key: build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ env.MIX_ENV }}-${{ hashFiles('**/mix.lock') }}
+        path: _build/
+        key: build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
-          build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ env.MIX_ENV }}-
-    
+          build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-
+
+    - name: Get Hex cache
+      uses: actions/cache@v2
+      id: hex-cache
+      with:
+        path: ~/.hex
+        key: build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-
+
     # In my experience, I have issues with incremental builds maybe 1 in 100
     # times that are fixed by doing a full recompile.
     # In order to not waste dev time on such trivial issues (while also reaping
@@ -113,8 +112,3 @@ runs:
     - name: Install Dependencies
       run: mix deps.get
       shell: sh
-
-    - name: Compile Application
-      run: mix compile ${{ inputs.build-flags }}
-      shell: sh
-      if: inputs.build-app == 'true'

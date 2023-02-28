@@ -1,0 +1,16 @@
+name: "Check security vulnerabilities in code"
+description: Check sobelow
+
+inputs:
+  # -- Run steps -- #
+  run-sobelow:
+    description: Run sobelow
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Sobelow
+      run: mix sobelow --config
+      shell: bash
+      if: inputs.run-sobelow != 'false'
