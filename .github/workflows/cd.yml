@@ -7,6 +7,10 @@ on:
         description: >-
           GitHub personal access token
         required: true
+      TESTING_RSA_ENCRYPTION_KEY:
+        description: >-
+          GitHub personal access token
+        required: true
     inputs:
       environment:
         description: >-
