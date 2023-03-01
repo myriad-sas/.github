@@ -90,7 +90,9 @@ jobs:
         with:
           repository:  ${{ env.CI-CONFIG-REPO }}
           token: ${{ secrets.github-pat }}
-          path: ${{ env.CI-CONFIG-FOLDER-NAME }}       
+          path: ${{ env.CI-CONFIG-FOLDER-NAME }}
+      - name: Set env
+        run: echo "ENVIRONMENTS=$( echo ${{ inputs.environment }} | tr '[:lower:]' '[:upper:]' )" >> $GITHUB_ENV
       - name: deploy
         env:
           RSA_ENCRYPTION_KEY: ${{ secrets.[format('{0}_RSA_ENCRYPTION_KEY', inputs.environment)] }}
