@@ -2,6 +2,38 @@ name: Hub Covid Pipeline
 
 on:
   workflow_call:
+    # -- Skip steps/jobs -- #
+    inputs:
+      run-format:
+        description: "Run format, defaults to true"
+        type: boolean
+        default: true
+      run-retired-deps:
+        description: "Run retired deps, defaults to true"
+        type: boolean
+        default: true
+      run-credo:
+        description: "Run credo, defaults to true"
+        type: boolean
+        default: true
+      run-sobelow:
+        description: "Run sobelow, defaults to true"
+        type: boolean
+        default: true
+      run-deps-audit:
+        description: "Run deps audit, defaults to true"
+        type: boolean
+        default: true
+      run-tests:
+        description: "Run tests, defaults to true"
+        type: boolean
+        default: true
+      # -- Docker jobs skips -- #
+      run-scan:
+        description: "Run docker scan, defaults to true"
+        type: boolean
+        default: true
+
     secrets:
       # -- SSH key -- #
       ssh-key:
@@ -53,8 +85,8 @@ jobs:
       - name: Elixir no compile checks
         uses: myriad-sas/.github/.github/actions/elixir-no-compile-checks@feature/use-cache
         with:
-          run-format: "false"
-          run-retired-deps: "true"
+          run-retired-deps: ${{ inputs.run-retired-deps }}
+          run-format: ${{ inputs.run-format }}
 
   compile-dev:
     name: Compile project in dev
@@ -126,6 +158,8 @@ jobs:
 
       - name: Run credo
         uses: myriad-sas/.github/.github/actions/elixir-credo@feature/use-cache
+        with:
+          run-credo: ${{ inputs.run-credo }}
 
   sobelow:
     name: Run sobelow
@@ -151,6 +185,8 @@ jobs:
 
       - name: Run sobelow
         uses: myriad-sas/.github/.github/actions/elixir-sobelow@feature/use-cache
+        with:
+          run-sobelow: ${{ inputs.run-sobelow }}
 
   deps-audit:
     name: Run deps audit
@@ -176,6 +212,8 @@ jobs:
 
       - name: Run deps audit
         uses: myriad-sas/.github/.github/actions/elixir-deps-audit@feature/use-cache
+        with:
+          run-deps-audit: ${{ inputs.run-deps-audit }}
 
   test:
     name: Run tests
@@ -211,6 +249,8 @@ jobs:
 
       - name: Run tests
         uses: myriad-sas/.github/.github/actions/elixir-test@feature/use-cache
+        with:
+          run-tests: ${{ inputs.run-tests }}
   
   image-build-scan-push:
     name: Build, Scan and Push
@@ -223,9 +263,9 @@ jobs:
       - name: Build, Scan, Push
         uses: myriad-sas/.github/.github/actions/docker-build-scan-push@feature/refactor-workflow
         with:
-          run-scan: "false"
           image: 'hub-covid'
           version: '1.0'
           ssh-key: ${{ secrets.ssh-key }}
           dockerhub-username: ${{ secrets.dockerhub-username }}
           dockerhub-token: ${{ secrets.dockerhub-token }}
+          run-scan: ${{ inputs.run-scan }}
