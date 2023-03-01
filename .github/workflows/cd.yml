@@ -92,10 +92,10 @@ jobs:
           token: ${{ secrets.github-pat }}
           path: ${{ env.CI-CONFIG-FOLDER-NAME }}
       - name: Set env
-        run: echo "ENVIRONMENTS=$( echo ${{ inputs.environment }} | tr '[:lower:]' '[:upper:]' )" >> $GITHUB_ENV
+        run: echo "ENVIRONMENT=$( echo ${{ inputs.environment }} | tr '[:lower:]' '[:upper:]' )" >> $GITHUB_ENV
       - name: deploy
         env:
-          RSA_ENCRYPTION_KEY: ${{ secrets.[format('{0}_RSA_ENCRYPTION_KEY', inputs.environment)] }}
+          RSA_ENCRYPTION_KEY: ${{ secrets.[format('{0}-RSA-ENCRYPTION-KEY', ENV.ENVIRONMENT)] }}
         uses: myriad-actions/run@main
         if: steps.check-continue.outputs.continue != 'false'
         with:
