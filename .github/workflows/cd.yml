@@ -95,7 +95,7 @@ jobs:
         run: echo "ENVIRONMENT=$( echo ${{ inputs.environment }} | tr '[:lower:]' '[:upper:]' )" >> $GITHUB_ENV
       - name: deploy
         env:
-          RSA_ENCRYPTION_KEY: ${{ secrets.[format('{0}-RSA-ENCRYPTION-KEY', ENV.ENVIRONMENT)] }}
+          RSA_ENCRYPTION_KEY: ${{ secrets.[format('{0}_RSA_ENCRYPTION_KEY', ENV.ENVIRONMENT)] }}
         uses: myriad-actions/run@main
         if: steps.check-continue.outputs.continue != 'false'
         with:
