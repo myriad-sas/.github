@@ -34,7 +34,7 @@ jobs:
   deploy:
     name: deploy
     runs-on:  ${{ inputs.runner }}
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.environment }}      
     permissions:
       id-token: write
       contents: read
@@ -90,12 +90,14 @@ jobs:
         with:
           repository:  ${{ env.CI-CONFIG-REPO }}
           token: ${{ secrets.github-pat }}
-          path: ${{ env.CI-CONFIG-FOLDER-NAME }}
+          path: ${{ env.CI-CONFIG-FOLDER-NAME }}       
       - name: deploy
+        env:
+          RSA_ENCRYPTION_KEY: ${{ secrets.[format('{0}_RSA_ENCRYPTION_KEY', inputs.environment)] }}
         uses: myriad-actions/run@main
         if: steps.check-continue.outputs.continue != 'false'
         with:
-          script: ${{ env.LANG }}/${{ env.SCRIPT3 }} 
+          script: ${{ env.LANG }}/${{ env.SCRIPT32 }} 
           args: ${{ inputs.environment }}
       - name: freeze prod
         uses: myriad-actions/set-deployment-freeze-status@main
