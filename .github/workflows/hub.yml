@@ -10,6 +10,10 @@ on:
         description: >-
           GitHub personal access key
         required: false
+      TESTING_RSA_ENCRYPTION_KEY:
+        description: >-
+          GitHub personal access token
+        required: false
     inputs:
       env-path:
         description: >-
