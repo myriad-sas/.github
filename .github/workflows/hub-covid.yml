@@ -187,6 +187,8 @@ jobs:
       redis:
         # Docker Hub image
         image: redis:latest
+        ports:
+          - 6379:6379
 
     steps:
       - uses: actions/checkout@v3
