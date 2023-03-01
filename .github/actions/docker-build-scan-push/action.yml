@@ -50,7 +50,7 @@ runs:
           default=${{ env.SSH_AUTH_SOCK }}
         tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         context: .
-        load: true
+        load: inputs.run-scan == 'false'
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
