@@ -63,12 +63,12 @@ runs:
         severity: 'CRITICAL,HIGH'
       if: inputs.run-scan != 'false'
 
-    - name: Build and push
-      uses: docker/build-push-action@v4
+    - name: Push image
+      uses: docker/build-push-action@v2
       with:
-        context: .
-        file: .
-        push: true
-        tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
+        tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
+        context: .
+        load: true
+        push: true
