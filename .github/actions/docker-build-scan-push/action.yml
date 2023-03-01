@@ -69,6 +69,4 @@ runs:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
         tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
-        context: .
-        load: true
         push: true
