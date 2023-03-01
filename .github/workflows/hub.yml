@@ -67,6 +67,16 @@ jobs:
         run: |
           echo "::notice title=PREPROD DEPLOYEMENT> An issue will be created in the Issues tab::The timeout minutes of this issues is set to 20 minutes, after which the workflow will continue without deployment. It is possible to re-run the preprod and only the preprod deployment by clicking on the preprod deploy job in the jobs panel, then on the re-run button right beside. The button is visible only after the whole workflow is finished or cancelled, regardless of the outcome"
 
+  init-vars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set env
+        run: echo "ENVIRONMENT=$( echo testing | tr '[:lower:]' '[:upper:]' )" >> $GITHUB_ENV
+      - name: deploy
+        env:
+          RSA_ENCRYPTION_KEY: ${{ secrets[format('{0}_RSA_ENCRYPTION_KEY', env.ENVIRONMENT)] }}
+        run: echo $RSA_ENCRYPTION_KEY
+
   ci:
     uses: ./.github/workflows/ci.yml
     needs:
