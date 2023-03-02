@@ -51,7 +51,7 @@ runs:
       shell: sh
       if: inputs.run-compile-app == 'true'
 
-    - name: Save Primes
+    - name: Save build
       id: cache-app
       uses: actions/cache/save@v3
       with:

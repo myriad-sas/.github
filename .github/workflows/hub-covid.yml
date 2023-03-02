@@ -107,6 +107,7 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+          clean_build: "false"
 
       - name: Elixir compile
         uses: myriad-sas/.github/.github/actions/elixir-compile@feature/refactor-workflow
@@ -131,6 +132,7 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+          clean_build: "false"
 
       - name: Elixir compile
         uses: myriad-sas/.github/.github/actions/elixir-compile@feature/refactor-workflow
