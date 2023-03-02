@@ -10,7 +10,15 @@ on:
         description: >-
           GitHub personal access key
         required: false
-      TESTING_RSA_ENCRYPTION_KEY:
+      rsa-testing:
+        description: >-
+          GitHub personal access token
+        required: false
+      rsa-preprod:
+        description: >-
+          GitHub personal access token
+        required: false
+      rsa-prod:
         description: >-
           GitHub personal access token
         required: false
@@ -90,7 +98,7 @@ jobs:
     if: needs.init.outputs.RELEASE !=  'true' && github.ref_name != 'feature/*'
     secrets:
       github-pat: ${{ secrets.github-pat }}
-      TESTING_RSA_ENCRYPTION_KEY: ${{ secrets.TESTING_RSA_ENCRYPTION_KEY }}
+      rsa-encryption-key: ${{ secrets.rsa-testing }}
     with:
       environment: testing
       runner: ${{ needs.ci.outputs.runner }}
@@ -105,6 +113,7 @@ jobs:
     if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'true' && github.ref_name != 'feature/*'
     secrets:
       github-pat: ${{ secrets.github-pat }}
+      rsa-encryption-key: ${{ secrets.rsa-preprod }}
     with:
       environment: preprod
       runner: ${{ needs.ci.outputs.runner }}
@@ -119,6 +128,7 @@ jobs:
     if: needs.init.outputs.IS_PROD_FROZEN == 'unfrozen' && github.ref_name != 'feature/*'
     secrets:
       github-pat: ${{ secrets.github-pat }}
+      rsa-encryption-key: ${{ secrets.rsa-prod }}
     with:
       environment: prod
       runner: ${{ needs.ci.outputs.runner }}
