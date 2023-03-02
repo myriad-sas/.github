@@ -52,6 +52,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
   
 jobs:
   setup:
@@ -220,7 +221,7 @@ jobs:
           otp-version: '25.2.2'
         env:
           MIX_ENV: dev
-          
+
       - name: Run deps audit
         uses: myriad-sas/.github/.github/actions/elixir-deps-audit@feature/refactor-workflow
         with:
