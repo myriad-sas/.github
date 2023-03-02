@@ -1,23 +1,15 @@
 name: "Lint Elixir projects"
-description:  Check credo and format
+description:  Check credo
 
 inputs:
   # -- Run steps -- #
   run-credo:
     description: Run Credo
     default: "true"
-  ignore-format:
-    description: Run format
-    default: "true"
 
 runs:
   using: "composite"
   steps:
-    - name: Format
-      run: mix format --check-formatted
-      shell: bash
-      if: inputs.run-format != 'false'
-
     - name: Credo
       run: mix credo
       shell: bash

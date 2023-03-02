@@ -8,7 +8,7 @@ inputs:
   # -- not used atm -- #
   Run-coverage:
     description: Run coverage
-    default: "true"
+    default: "false"
 
 runs:
   using: "composite"
@@ -16,4 +16,5 @@ runs:
     - name: Run tests
       run: mix test
       shell: bash
-      if: inputs.ignore-tests != 'false'
+      if: inputs.run-tests != 'false'
+

@@ -1,0 +1,22 @@
+name: Setup Elixir and download dependencies
+description: Checks out the code, configures Elixir, fetches dependencies
+inputs:
+  # -- Run steps -- #
+    run-format:
+      description: Run format check
+      default: "true"
+    run-retired-deps:
+      description: Run retired deps with mix `hex.audit`
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run retired deps hex.audit
+      run: mix hex.audit
+      shell: bash
+      if: inputs.run-retired-deps != 'false'
+
+    - name: Check format
+      run: mix format --check-formatted
+      shell: bash
+      if: inputs.run-format != 'false'

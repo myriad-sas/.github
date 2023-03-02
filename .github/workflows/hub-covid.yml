@@ -1,0 +1,316 @@
+name: Hub Covid Pipeline
+
+on:
+  workflow_call:
+    # -- Skip steps/jobs -- #
+    inputs:
+      run-format:
+        description: "Run format, defaults to true"
+        type: boolean
+        default: true
+      run-retired-deps:
+        description: "Run retired deps, defaults to true"
+        type: boolean
+        default: true
+      run-credo:
+        description: "Run credo, defaults to true"
+        type: boolean
+        default: true
+      run-sobelow:
+        description: "Run sobelow, defaults to true"
+        type: boolean
+        default: true
+      run-deps-audit:
+        description: "Run deps audit, defaults to true"
+        type: boolean
+        default: true
+      run-tests:
+        description: "Run tests, defaults to true"
+        type: boolean
+        default: true
+      # -- Docker jobs skips -- #
+      run-scan:
+        description: "Run docker scan, defaults to true"
+        type: boolean
+        default: true
+
+    secrets:
+      # -- SSH key -- #
+      ssh-key:
+        description: SSH key to use for the CI
+        required: true
+      # -- Docker registry -- #
+      dockerhub-username:
+        description: Docker Hub username
+        required: true
+      dockerhub-token:
+        description: Docker Hub token
+        required: true
+
+permissions:
+  contents: read
+  
+jobs:
+  setup:
+    name: Setup Elixir & install deps
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Elixir Setup
+        uses: myriad-sas/.github/.github/actions/elixir-install-deps@feature/use-cache
+        with: 
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
+
+  no-compile-checks:
+    name: Check format and retired packages
+    runs-on: ubuntu-latest
+    needs: setup
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Elixir setup
+        uses: myriad-sas/.github/.github/actions/elixir-install-deps@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
+
+      - name: Elixir no compile checks
+        uses: myriad-sas/.github/.github/actions/elixir-no-compile-checks@feature/use-cache
+        with:
+          run-retired-deps: ${{ inputs.run-retired-deps }}
+          run-format: ${{ inputs.run-format }}
+
+  compile-dev:
+    name: Compile project in dev
+    runs-on: ubuntu-latest
+    needs: setup
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Elixir setup
+        uses: myriad-sas/.github/.github/actions/elixir-install-deps@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
+
+      - name: Elixir compile
+        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+        env:
+          MIX_ENV: dev
+
+  compile-test:
+    name: Compile project in test
+    runs-on: ubuntu-latest
+    needs: setup
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Elixir setup
+        uses: myriad-sas/.github/.github/actions/elixir-install-deps@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
+
+      - name: Elixir compile
+        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+        env:
+          MIX_ENV: test
+
+  lint:
+    name: Run credo
+    runs-on: ubuntu-latest
+    needs: compile-dev
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Elixir setup
+        uses: myriad-sas/.github/.github/actions/elixir-install-deps@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
+
+      - name: Elixir compile
+        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+
+      - name: Run credo
+        uses: myriad-sas/.github/.github/actions/elixir-credo@feature/use-cache
+        with:
+          run-credo: ${{ inputs.run-credo }}
+
+  sobelow:
+    name: Run sobelow
+    runs-on: ubuntu-latest
+    needs: compile-dev
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Elixir setup
+        uses: myriad-sas/.github/.github/actions/elixir-install-deps@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
+
+      - name: Elixir compile
+        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+
+      - name: Run sobelow
+        uses: myriad-sas/.github/.github/actions/elixir-sobelow@feature/use-cache
+        with:
+          run-sobelow: ${{ inputs.run-sobelow }}
+
+  deps-audit:
+    name: Run deps audit
+    runs-on: ubuntu-latest
+    needs: compile-dev
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Elixir setup
+        uses: myriad-sas/.github/.github/actions/elixir-install-deps@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
+      
+      - name: Elixir compile
+        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+
+      - name: Run deps audit
+        uses: myriad-sas/.github/.github/actions/elixir-deps-audit@feature/use-cache
+        with:
+          run-deps-audit: ${{ inputs.run-deps-audit }}
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    needs: compile-test
+    
+    # Service containers to run with `runner-job`
+    services:
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Elixir setup
+        uses: myriad-sas/.github/.github/actions/elixir-install-deps@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+          ssh-key:  ${{ secrets.ssh-key }}
+          known_hosts: github.com
+        env:
+          MIX_ENV: test
+          
+      - name: Elixir compile
+        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/use-cache
+        with:
+          elixir-version: '1.14.3'
+          otp-version: '25.2.2'
+        env:
+          MIX_ENV: test
+
+      - name: Run tests
+        uses: myriad-sas/.github/.github/actions/elixir-test@feature/use-cache
+        with:
+          run-tests: ${{ inputs.run-tests }}
+  
+  image-build-scan-push:
+    name: Build scan and push
+    runs-on: ubuntu-latest
+    needs: [no-compile-checks, lint, sobelow, deps-audit, test]
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup SSH key
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.ssh-key }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.dockerhub-username }}
+        password: ${{ secrets.dockerhub-token }}
+
+    - name: Build image
+      uses: docker/build-push-action@v4
+      with:
+        ssh: |
+          default=${{ env.SSH_AUTH_SOCK }}
+        tags: ${{ secrets.dockerhub-username }}/${{ github.event.repository.name }}:${{ github.sha }}
+        context: .
+        load: true
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ secrets.dockerhub-username }}/${{ github.event.repository.name }}:${{ github.sha }}
+        format: 'table'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Push image
+      uses: docker/build-push-action@v4
+      with:
+        ssh: |
+          default=${{ env.SSH_AUTH_SOCK }}
+        tags: ${{ secrets.dockerhub-username }}/${{ github.event.repository.name }}:${{ github.sha }}
+        #platforms: linux/amd64 # can't use QEMU to build OTP 25 so no linux/arm64 for now...
+        context: .
+        push: true

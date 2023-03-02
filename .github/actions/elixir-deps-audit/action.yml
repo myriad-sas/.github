@@ -1,0 +1,16 @@
+name: "Check security vulnerabilities in dependencies"
+description: Run mix deps.audit
+
+inputs:
+  # -- Run steps -- #
+  run-deps-audit:
+    description: Run deps audit
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run deps audit
+      run: mix deps.audit
+      shell: bash
+      if: inputs.run-deps-audit != 'false'

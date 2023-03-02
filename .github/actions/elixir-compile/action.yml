@@ -1,0 +1,52 @@
+name: Setup Elixir and download dependencies
+description: Checks out the code, configures Elixir, fetches dependencies
+inputs:
+  # -- Run steps -- #
+    run-compile-deps:
+      description: Compile the deps
+      default: "true"
+    run-compile-app:
+      description: Compile the app
+      default: "true"
+    build-args:
+      description: Build args
+      default: "--all-warnings"
+  # -- Optionnal -- #
+    elixir-version:
+      required: true
+      description: Elixir version to set up
+    otp-version:
+      required: true
+      description: OTP version to set up
+    cache-key:
+      required: false
+      default: 'v1'
+      description: If you need to reset the cache for some reason, you can change this key.
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get build cache
+      uses: actions/cache@v2
+      id: build-cache
+      with:
+        path: _build/${{env.MIX_ENV}}/
+        key: build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ env.MIX_ENV }}-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ env.MIX_ENV }}-
+
+    # Normally we'd use `mix deps.compile` here, however that incurs a large
+    # performance penalty when the dependencies are already fully compiled:
+    # https://elixirforum.com/t/github-action-cache-elixir-always-recompiles-dependencies-elixir-1-13-3/45994/12
+    #
+    # Accoring to Jose Valim at the above link `mix loadpaths` will check and
+    # compile missing dependencies
+    - name: Compile Dependencies
+      run: mix loadpaths
+      shell: sh
+      if: inputs.run-compile-deps == 'true'
+
+    - name: Compile Application
+      run: mix compile ${{ inputs.build-flags }}
+      shell: sh
+      if: inputs.run-compile-app == 'true'
