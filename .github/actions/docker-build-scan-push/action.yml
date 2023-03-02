@@ -33,6 +33,9 @@ runs:
       uses: webfactory/ssh-agent@v0.7.0
       with:
         ssh-private-key: ${{ inputs.ssh-key }}
+    
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -41,7 +44,7 @@ runs:
       uses: docker/login-action@v2
       with:
         username: ${{ inputs.dockerhub-username }}
-        password: ${{ inputs.dockerhub-token }}
+        password: ${{ inputs.dockerhub-token }} 
 
     - name: Build image
       uses: docker/build-push-action@v4
@@ -69,5 +72,6 @@ runs:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
         tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
+        platforms: linux/amd64,linux/arm64
         context: .
         push: true
