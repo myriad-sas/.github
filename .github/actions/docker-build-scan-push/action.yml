@@ -66,6 +66,10 @@ runs:
         severity: 'CRITICAL,HIGH'
       if: inputs.run-scan != 'false'
 
+    - name: path
+      run: pwd
+      shell: bash
+
     - name: Push image
       uses: docker/build-push-action@v4
       with:
