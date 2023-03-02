@@ -295,6 +295,10 @@ jobs:
       with:
         aws-region: ${{ secrets.aws_region }}
         role-to-assume: ${{ secrets.aws_role_to_assume }}
+        
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build image
       uses: docker/build-push-action@v4
