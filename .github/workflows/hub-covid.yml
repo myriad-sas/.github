@@ -264,20 +264,76 @@ jobs:
         with:
           run-tests: ${{ inputs.run-tests }}
   
+  # image-build-scan-push:
+  #   name: Build, Scan and Push
+  #   runs-on: ubuntu-latest
+  #   needs: [no-compile-checks, lint, sobelow, deps-audit, test]
+
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Build, Scan, Push
+  #       uses: myriad-sas/.github/.github/actions/docker-build-scan-push@feature/refactor-workflow
+  #       with:
+  #         image: 'hub-covid'
+  #         version: '2.0'
+  #         ssh-key: ${{ secrets.ssh-key }}
+  #         dockerhub-username: ${{ secrets.dockerhub-username }}
+  #         dockerhub-token: ${{ secrets.dockerhub-token }}
+  #         run-scan: ${{ inputs.run-scan }}
+
   image-build-scan-push:
-    name: Build, Scan and Push
+    name: Build scan and push
     runs-on: ubuntu-latest
-    needs: [no-compile-checks, lint, sobelow, deps-audit, test]
-
+    
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - name: Build, Scan, Push
-        uses: myriad-sas/.github/.github/actions/docker-build-scan-push@feature/refactor-workflow
-        with:
-          image: 'hub-covid'
-          version: '2.0'
-          ssh-key: ${{ secrets.ssh-key }}
-          dockerhub-username: ${{ secrets.dockerhub-username }}
-          dockerhub-token: ${{ secrets.dockerhub-token }}
-          run-scan: ${{ inputs.run-scan }}
+    - name: Setup SSH key
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.ssh-key }}
+    
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.dockerhub-username }}
+        password: ${{ secrets.dockerhub-token }}
+
+    - name: Build image
+      uses: docker/build-push-action@v4
+      with:
+        ssh: |
+          default=${{ env.SSH_AUTH_SOCK }}
+        tags: ${{ secrets.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
+        context: .
+        load: true
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ secrets.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
+        format: 'table'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+
+    - name: echo
+      run: echo "Scan completed"
+      shell: bash
+
+    - name: Push image
+      uses: docker/build-push-action@v4
+      with:
+        ssh: |
+          default=${{ env.SSH_AUTH_SOCK }}
+        tags: ${{ secrets.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
+        context: .
+        push: true
