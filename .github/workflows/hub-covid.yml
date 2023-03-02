@@ -311,14 +311,14 @@ jobs:
       with:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
-        tags: ${{ secrets.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
+        tags: ${{ secrets.dockerhub-username }}/hubcovid:3.0
         context: .
         load: true
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ secrets.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
+        image-ref: ${{ secrets.dockerhub-username }}/hubcovid:3.0
         format: 'table'
         exit-code: '0'
         ignore-unfixed: true
@@ -334,6 +334,6 @@ jobs:
       with:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
-        tags: ${{ secrets.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
+        tags: ${{ secrets.dockerhub-username }}/hubcovid:3.0
         context: .
         push: true
