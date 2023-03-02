@@ -7,7 +7,7 @@ on:
         description: >-
           GitHub personal access token
         required: true
-      TESTING_RSA_ENCRYPTION_KEY:
+      rsa-encryption-key:
         description: >-
           GitHub personal access token
         required: false
@@ -95,17 +95,11 @@ jobs:
           repository:  ${{ env.CI-CONFIG-REPO }}
           token: ${{ secrets.github-pat }}
           path: ${{ env.CI-CONFIG-FOLDER-NAME }}
-      - name: UPPERCASER ENV
-        run: echo "ENVIRONMENT=$( echo ${{ inputs.environment }} | tr '[:lower:]' '[:upper:]' )" >> $GITHUB_ENV
-      - name: test env variable
-        env:
-          RSA_ENCRYPTION_KEY: ${{ secrets[format('{0}_RSA_ENCRYPTION_KEY', env.ENVIRONMENT)] }}
-        run: echo $RSA_ENCRYPTION_KEY
       - name: deploy
-        env:
-          RSA_ENCRYPTION_KEY: ${{ secrets[format('{0}_RSA_ENCRYPTION_KEY', env.ENVIRONMENT)] }}
         uses: myriad-actions/run@main
         if: steps.check-continue.outputs.continue != 'false'
+        env:
+          RSA_ENCRYPTION_KEY: ${{ secrets.rsa-encryption-key }}
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT32 }} 
           args: ${{ inputs.environment }}
