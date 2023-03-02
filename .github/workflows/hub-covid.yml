@@ -39,12 +39,15 @@ on:
       ssh-key:
         description: SSH key to use for the CI
         required: true
-      # -- Docker registry -- #
-      dockerhub-username:
-        description: Docker Hub username
+      # -- Docker registory -- #
+      aws_role_to_assume:
+        description: AWS role to assume
         required: true
-      dockerhub-token:
-        description: Docker Hub token
+      aws_repo_url:
+        description: AWS repo url
+        required: true
+      aws_region:
+        description: AWS region
         required: true
 
 permissions:
@@ -279,26 +282,26 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
-    
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        username: ${{ secrets.dockerhub-username }}
-        password: ${{ secrets.dockerhub-token }}
+        aws-region: ${{ secrets.aws_region }}
+        role-to-assume: ${{ secrets.aws_role_to_assume }}
 
     - name: Build image
       uses: docker/build-push-action@v4
       with:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
-        tags: ${{ secrets.dockerhub-username }}/${{ github.event.repository.name }}:${{ github.sha }}
+        tags: ${{ secrets.aws_repo_url }}/${{ github.event.repository.name }}:${{ github.sha }}
         context: .
         load: true
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ secrets.dockerhub-username }}/${{ github.event.repository.name }}:${{ github.sha }}
+        image-ref: ${{ secrets.aws_repo_url }}/${{ github.event.repository.name }}:${{ github.sha }}
         format: 'table'
         exit-code: '0'
         ignore-unfixed: true
@@ -310,7 +313,7 @@ jobs:
       with:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
-        tags: ${{ secrets.dockerhub-username }}/${{ github.event.repository.name }}:${{ github.sha }}
+        tags: ${{ secrets.aws_repo_url }}/${{ github.event.repository.name }}:${{ github.sha }}
         #platforms: linux/amd64 # can't use QEMU to build OTP 25 so no linux/arm64 for now...
         context: .
         push: true
