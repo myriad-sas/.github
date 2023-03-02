@@ -29,6 +29,8 @@ runs:
   using: "composite"
 
   steps:
+    - uses: actions/checkout@v3
+
     - name: Setup SSH key
       uses: webfactory/ssh-agent@v0.7.0
       with:
@@ -58,19 +60,6 @@ runs:
         tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         context: .
         load: true
-    
-    - name: path
-      run: pwd
-      shell: bash
-
-    - name: push image
-      uses: docker/build-push-action@v4
-      with:
-        ssh: |
-          default=${{ env.SSH_AUTH_SOCK }}
-        tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
-        context: .
-        push: true
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
