@@ -68,7 +68,11 @@ runs:
         severity: 'CRITICAL,HIGH'
       #if: inputs.run-scan != 'false'
 
-    - name: Pu image
+    - name: echo
+      run: echo "Scan completed"
+      shell: bash
+
+    - name: Push image
       uses: docker/build-push-action@v4
       with:
         ssh: |
