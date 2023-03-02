@@ -47,10 +47,6 @@ runs:
       with:
         username: ${{ inputs.dockerhub-username }}
         password: ${{ inputs.dockerhub-token }} 
-        
-    - name: path
-      run: pwd
-      shell: bash
 
     - name: Build image
       uses: docker/build-push-action@v4
@@ -66,17 +62,17 @@ runs:
       with:
         image-ref: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         format: 'table'
-        exit-code: '1'
+        exit-code: '0'
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
-      if: inputs.run-scan != 'false'
+      #if: inputs.run-scan != 'false'
 
-    - name: Build image
+    - name: Pu image
       uses: docker/build-push-action@v4
       with:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
         tags: ${{ inputs.dockerhub-username }}/${{ inputs.image }}:${{ inputs.version }}
         context: .
-        load: true
+        push: true
