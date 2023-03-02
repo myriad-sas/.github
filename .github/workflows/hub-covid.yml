@@ -274,7 +274,7 @@ jobs:
         uses: myriad-sas/.github/.github/actions/docker-build-scan-push@feature/refactor-workflow
         with:
           image: 'hub-covid'
-          version: '1.0'
+          version: '2.0'
           ssh-key: ${{ secrets.ssh-key }}
           dockerhub-username: ${{ secrets.dockerhub-username }}
           dockerhub-token: ${{ secrets.dockerhub-token }}
