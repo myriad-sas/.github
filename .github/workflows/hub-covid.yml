@@ -160,6 +160,8 @@ jobs:
         with:
           elixir-version: '1.14.3'
           otp-version: '25.2.2'
+        env:
+          MIX_ENV: dev
 
       - name: Run credo
         uses: myriad-sas/.github/.github/actions/elixir-credo@feature/refactor-workflow
@@ -187,6 +189,8 @@ jobs:
         with:
           elixir-version: '1.14.3'
           otp-version: '25.2.2'
+        env:
+          MIX_ENV: dev
 
       - name: Run sobelow
         uses: myriad-sas/.github/.github/actions/elixir-sobelow@feature/refactor-workflow
@@ -214,7 +218,9 @@ jobs:
         with:
           elixir-version: '1.14.3'
           otp-version: '25.2.2'
-
+        env:
+          MIX_ENV: dev
+          
       - name: Run deps audit
         uses: myriad-sas/.github/.github/actions/elixir-deps-audit@feature/refactor-workflow
         with:
