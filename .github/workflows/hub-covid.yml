@@ -236,7 +236,7 @@ jobs:
     runs-on: self-hosted
     env:
       ImageOS: ubuntu22
-    needs: compile-test
+    needs: setup
     
     # Service containers to run with `runner-job`
     services:
