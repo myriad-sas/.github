@@ -339,6 +339,7 @@ jobs:
 
     - name: Push image
       uses: docker/build-push-action@v4
+      if: ${{ github.event_name == 'push' || github.event.pull_request.merged == true }}
       with:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
