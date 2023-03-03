@@ -326,6 +326,8 @@ jobs:
         tags: ${{ secrets.aws_repo_url }}/${{ github.event.repository.name }}:1.0
         context: .
         load: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
