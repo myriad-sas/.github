@@ -7,13 +7,6 @@ inputs:
   otp-version:
     required: true
     description: OTP version to set up
-  
-  clean_build:
-    description: "Clean the image when retrying pipeline"
-    required: false
-    default: "true"
-
-  
   # -- SSH key -- #
   ssh-key:
     description: SSH key to use for the CI
@@ -80,7 +73,7 @@ runs:
       id: hex-cache
       with:
         path: ~/.hex
-        key: build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}
+        key: build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}-${{ github.run_id }}
         restore-keys: |
           build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-
 
@@ -100,7 +93,7 @@ runs:
     # the time savings of incremental builds for *most* day-to-day development),
     # I force a full recompile only on builds that we retry.
     - name: Clean to rule out incremental build as a source of flakiness
-      if: github.run_attempt != '1' && inputs.clean_build == 'true'
+      if: github.run_attempt != '1'
       run: | 
         mix deps.clean --all
         mix clean

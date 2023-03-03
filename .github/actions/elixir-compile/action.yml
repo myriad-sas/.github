@@ -31,7 +31,7 @@ runs:
       id: build-cache
       with:
         path: _build/${{env.MIX_ENV}}/
-        key: build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ env.MIX_ENV }}-${{ hashFiles('**/mix.lock') }}
+        key: build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ env.MIX_ENV }}-${{ hashFiles('**/mix.lock') }}-${{ github.run_id }}
         restore-keys: |
           build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ env.MIX_ENV }}-
 
@@ -50,10 +50,3 @@ runs:
       run: mix compile ${{ inputs.build-flags }}
       shell: sh
       if: inputs.run-compile-app == 'true'
-
-    - name: Save build
-      id: cache-app
-      uses: actions/cache/save@v3
-      with:
-        path: _build/${{env.MIX_ENV}}/
-        key: build-${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ env.MIX_ENV }}-${{ hashFiles('**/mix.lock') }}
