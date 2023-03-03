@@ -51,4 +51,6 @@ runs:
     - name: Compile Application
       run: mix compile ${{ inputs.build-flags }}
       shell: sh
+      env:
+        MIX_ENV: ${{env.MIX_ENV}}/
       if: inputs.run-compile-app == 'true'
