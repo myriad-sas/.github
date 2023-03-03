@@ -61,7 +61,7 @@ runs:
         otp-version: ${{ inputs.otp-version }}
 
     - name: Get deps cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: deps/
         key: deps-${{ inputs.cache-key }}-${{ runner.os }}-${{ hashFiles('**/mix.lock') }}
@@ -69,7 +69,7 @@ runs:
           deps-${{ inputs.cache-key }}-${{ runner.os }}-
 
     - name: Get Hex cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: hex-cache
       with:
         path: ~/.hex
