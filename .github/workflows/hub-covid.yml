@@ -39,21 +39,27 @@ on:
       ssh-key:
         description: SSH key to use for the CI
         required: true
-      # -- Docker registry -- #
-      dockerhub-username:
-        description: Docker Hub username
+      # -- Docker registory -- #
+      aws_role_to_assume:
+        description: AWS role to assume
         required: true
-      dockerhub-token:
-        description: Docker Hub token
+      aws_repo_url:
+        description: AWS repo url
+        required: true
+      aws_region:
+        description: AWS region
         required: true
 
 permissions:
   contents: read
+  id-token: write
   
 jobs:
   setup:
     name: Setup Elixir & install deps
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu22
 
     steps:
       - uses: actions/checkout@v3
@@ -68,7 +74,9 @@ jobs:
 
   no-compile-checks:
     name: Check format and retired packages
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu22
     needs: setup
 
     steps:
@@ -90,7 +98,9 @@ jobs:
 
   compile-dev:
     name: Compile project in dev
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu22
     needs: setup
 
     steps:
@@ -114,7 +124,9 @@ jobs:
 
   compile-test:
     name: Compile project in test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu22
     needs: setup
 
     steps:
@@ -138,7 +150,9 @@ jobs:
 
   lint:
     name: Run credo
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu22
     needs: compile-dev
 
     steps:
@@ -157,6 +171,8 @@ jobs:
         with:
           elixir-version: '1.14.3'
           otp-version: '25.2.2'
+        env:
+          MIX_ENV: dev
 
       - name: Run credo
         uses: myriad-sas/.github/.github/actions/elixir-credo@feature/refactor-workflow
@@ -165,7 +181,9 @@ jobs:
 
   sobelow:
     name: Run sobelow
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu22
     needs: compile-dev
 
     steps:
@@ -184,6 +202,8 @@ jobs:
         with:
           elixir-version: '1.14.3'
           otp-version: '25.2.2'
+        env:
+          MIX_ENV: dev
 
       - name: Run sobelow
         uses: myriad-sas/.github/.github/actions/elixir-sobelow@feature/refactor-workflow
@@ -192,7 +212,9 @@ jobs:
 
   deps-audit:
     name: Run deps audit
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu22
     needs: compile-dev
 
     steps:
@@ -211,6 +233,8 @@ jobs:
         with:
           elixir-version: '1.14.3'
           otp-version: '25.2.2'
+        env:
+          MIX_ENV: dev
 
       - name: Run deps audit
         uses: myriad-sas/.github/.github/actions/elixir-deps-audit@feature/refactor-workflow
@@ -219,7 +243,9 @@ jobs:
 
   test:
     name: Run tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu22
     needs: compile-test
     
     # Service containers to run with `runner-job`
@@ -266,7 +292,9 @@ jobs:
   
   image-build-scan-push:
     name: Build scan and push
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu22
     needs: [no-compile-checks, lint, sobelow, deps-audit, test]
     
     steps:
@@ -279,26 +307,30 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
-    
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        username: ${{ secrets.dockerhub-username }}
-        password: ${{ secrets.dockerhub-token }}
+        aws-region: ${{ secrets.aws_region }}
+        role-to-assume: ${{ secrets.aws_role_to_assume }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build image
       uses: docker/build-push-action@v4
       with:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
-        tags: ${{ secrets.dockerhub-username }}/${{ github.event.repository.name }}:${{ github.sha }}
+        tags: ${{ secrets.aws_repo_url }}/${{ github.event.repository.name }}:1.0
         context: .
         load: true
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ secrets.dockerhub-username }}/${{ github.event.repository.name }}:${{ github.sha }}
+        image-ref: ${{ secrets.aws_repo_url }}/${{ github.event.repository.name }}:1.0
         format: 'table'
         exit-code: '0'
         ignore-unfixed: true
@@ -310,7 +342,7 @@ jobs:
       with:
         ssh: |
           default=${{ env.SSH_AUTH_SOCK }}
-        tags: ${{ secrets.dockerhub-username }}/${{ github.event.repository.name }}:${{ github.sha }}
+        tags: ${{ secrets.aws_repo_url }}/${{ github.event.repository.name }}:1.0
         #platforms: linux/amd64 # can't use QEMU to build OTP 25 so no linux/arm64 for now...
         context: .
         push: true
