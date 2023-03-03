@@ -33,6 +33,12 @@ on:
         description: "Run docker scan, defaults to true"
         type: boolean
         default: true
+      
+      cache-key:
+        required: false
+        default: 'v1'
+        description: If you need to reset the cache for some reason, you can change this key.
+        type: boolean
 
     secrets:
       # -- SSH key -- #
@@ -71,6 +77,7 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+          cache-key: ${{ inputs.cache-key }}
 
   no-compile-checks:
     name: Check format and retired packages
@@ -89,6 +96,7 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+          cache-key: ${{ inputs.cache-key }}
 
       - name: Elixir no compile checks
         uses: myriad-sas/.github/.github/actions/elixir-no-compile-checks@feature/refactor-workflow
@@ -113,40 +121,16 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+          cache-key: ${{ inputs.cache-key }}
 
       - name: Elixir compile
         uses: myriad-sas/.github/.github/actions/elixir-compile@feature/refactor-workflow
         with:
           elixir-version: '1.14.3'
           otp-version: '25.2.2'
+          cache-key: ${{ inputs.cache-key }}
         env:
           MIX_ENV: dev
-
-  compile-test:
-    name: Compile project in test
-    runs-on: self-hosted
-    env:
-      ImageOS: ubuntu22
-    needs: setup
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Elixir setup
-        uses: myriad-sas/.github/.github/actions/elixir-install-deps@feature/refactor-workflow
-        with:
-          elixir-version: '1.14.3'
-          otp-version: '25.2.2'
-          ssh-key:  ${{ secrets.ssh-key }}
-          known_hosts: github.com
-
-      - name: Elixir compile
-        uses: myriad-sas/.github/.github/actions/elixir-compile@feature/refactor-workflow
-        with:
-          elixir-version: '1.14.3'
-          otp-version: '25.2.2'
-        env:
-          MIX_ENV: test
 
   lint:
     name: Run credo
@@ -165,12 +149,14 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+          cache-key: ${{ inputs.cache-key }}
 
       - name: Elixir compile
         uses: myriad-sas/.github/.github/actions/elixir-compile@feature/refactor-workflow
         with:
           elixir-version: '1.14.3'
           otp-version: '25.2.2'
+          cache-key: ${{ inputs.cache-key }}
         env:
           MIX_ENV: dev
 
@@ -196,12 +182,14 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+          cache-key: ${{ inputs.cache-key }}
 
       - name: Elixir compile
         uses: myriad-sas/.github/.github/actions/elixir-compile@feature/refactor-workflow
         with:
           elixir-version: '1.14.3'
           otp-version: '25.2.2'
+          cache-key: ${{ inputs.cache-key }}
         env:
           MIX_ENV: dev
 
@@ -227,12 +215,14 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+          cache-key: ${{ inputs.cache-key }}
       
       - name: Elixir compile
         uses: myriad-sas/.github/.github/actions/elixir-compile@feature/refactor-workflow
         with:
           elixir-version: '1.14.3'
           otp-version: '25.2.2'
+          cache-key: ${{ inputs.cache-key }}
         env:
           MIX_ENV: dev
 
@@ -274,6 +264,7 @@ jobs:
           otp-version: '25.2.2'
           ssh-key:  ${{ secrets.ssh-key }}
           known_hosts: github.com
+          cache-key: ${{ inputs.cache-key }}
         env:
           MIX_ENV: test
 
