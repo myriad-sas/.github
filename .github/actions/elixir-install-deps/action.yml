@@ -64,9 +64,11 @@ runs:
       uses: actions/cache@v3
       with:
         path: deps/
-        key: deps-${{ inputs.cache-key }}-${{ runner.os }}-${{ hashFiles('**/mix.lock') }}
+        key: deps-${{ inputs.cache-key }}-${{ runner.os }}-${{ hashFiles('**/mix.lock') }}-${{ github.run_id }}
         restore-keys: |
           deps-${{ inputs.cache-key }}-${{ runner.os }}-
+          deps-${{ inputs.cache-key }}-${{ runner.os }}-${{ hashFiles('**/mix.lock') }}-
+          deps-${{ inputs.cache-key }}-${{ runner.os }}-${{ hashFiles('**/mix.lock') }}-${{ github.run_id }}
 
     - name: Get Hex cache
       uses: actions/cache@v3
@@ -76,6 +78,8 @@ runs:
         key: build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}-${{ github.run_id }}
         restore-keys: |
           build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-
+          build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}-
+          build-${{ runner.os }}-${{ inputs.otp-version }}-${{ inputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}-${{ github.run_id }}
 
     - name: Install Rebar
       run: mix local.rebar --force
