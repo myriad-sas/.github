@@ -121,6 +121,8 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - name: init container
+        uses: myriad-actions/init-container@main
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
