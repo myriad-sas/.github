@@ -1,0 +1,39 @@
+name: "Deploy Helm chart to ks8"
+description: "deploy the version to related environment"
+
+inputs:
+
+  image:
+    description: "The new image published"
+    required: true
+  branch: 
+    description: "The current branch to target the environment"
+    required: true
+
+
+runs:
+  # allow you to bundle multiple workflow steps into a single action, combining multiple run commands into a single reusable action.
+  using: "composite"
+  steps:
+    - uses: clowdhaus/argo-cd-action/@main
+      with:
+        version: 2.5.5
+    - name: Login to Argocd server
+      shell: bash
+      run: argocd login ${{ secrets.ARGOCD_SERVER }} --userame=${{secret.ARGOCD_USER}} --password=${{secret.ARGOCD_PASS}}
+     
+    - name: set app image tag from Prod env
+      shell: bash
+      if: inputs.branch == 'main'
+      run: argocd app set ${{ inputs.appName }} -p image.tag=${{ inputs.image }} --dest-name CLUSTERNAME
+    
+    - name: set app image tag from Testing env
+      shell: bash
+      if: inputs.branch == 'testing'
+      run: argocd app set ${{ inputs.appName }} -p image.tag=${{ inputs.image }} --dest-name CLUSTERNAME
+
+    - name: set app image tag from QA env
+      shell: bash
+      if: inputs.branch == 'preprod'
+      run: argocd app set ${{ inputs.appName }} -p image.tag=${{ inputs.image }} --dest-name CLUSTERNAME
+      

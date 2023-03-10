@@ -1,0 +1,53 @@
+name: "Build Scan and Publish Image to Registry"
+description: It's build tag , scan before publish the image on registry
+
+inputs:
+  url:
+    description: "the registry url"
+    required: true
+  username:
+    description: "AWS ACCESS_KEY"
+    required: true
+  password:
+    description: "AWS ACCESS_SECRET_KEY"
+    required: true
+  ssh_key:
+    description: "ssh private key to fetch dependencies during the image build"
+    required: true
+  repository:
+    description: "App Name or the repository in the registry"
+    required: true
+  tag:
+    description: "tag of the image or app version"
+    required: true
+
+runs:
+  # allow you to bundle multiple workflow steps into a single action, combining multiple run commands into a single reusable action.
+  using: "composite"
+  steps:
+    - name: Connect to the registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.url }}
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
+
+    - name: Build image with tag
+      shell: bash
+      env:
+        IMAGE_FOR_REGISTRY: ${{ inputs.url }}/${{ inputs.repository }}:${{ inputs.tag }}
+        KEY: ${{ inputs.ssh_key }}
+      run:  docker build  --build-arg SSH_KEY=$KEY -t $IMAGE_FOR_REGISTRY .
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ inputs.url }}/${{ inputs.repository }}:${{ inputs.tag }}
+        format: 'table'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+    #        severity: 'CRITICAL,HIGH'
+
+    - name: Publish image built and scanned to the registry
+      shell: bash
+      run: docker push ${{ inputs.url }}/${{ inputs.repository }}:${{ inputs.tag }}

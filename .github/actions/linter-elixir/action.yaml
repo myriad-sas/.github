@@ -1,0 +1,48 @@
+name: "Fetch dependencies across Elixir"
+description:  setup ssh-agent to use the private ssh-key to fetch private dependencies
+
+inputs:
+  #  mode:
+  #    description: fetch mode prod or dev
+  ssh_key:
+    description: ssh private key
+    required: true
+  known_hosts:
+    description: example github.com
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name:  Set up Elixir
+      uses: erlef/setup-beam@v1
+      with:
+        otp-version: '25.2.2'
+        elixir-version: '1.14.3'
+
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ inputs.ssh_key }}
+        name: id_rsa
+        known_hosts: ${{ inputs.known_hosts }}
+        if_key_exists: ignore
+
+    - name:  fetch elixir dependencies
+      shell: bash
+      run: |
+        mix deps.clean --all
+        mix deps.get
+# have to check dependencies' setup something wrong
+#    - name: Code linting
+#      shell: bash
+#      run: |
+#        mix format --check-formatted
+#        mix credo --strict
+#        mix sobelow --config
+#      if: always()
+#
+#    - name: Run tests
+#      shell: bash
+#      run: mix test
+#      if: always()
