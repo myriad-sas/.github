@@ -7,7 +7,7 @@ on:
         description: >-
           GitHub personal access token
         required: true
-      rsa-encryption-key:
+      encryption-key:
         description: >-
           GitHub personal access token
         required: false
@@ -99,7 +99,7 @@ jobs:
         uses: myriad-actions/run@main
         if: steps.check-continue.outputs.continue != 'false'
         env:
-          RSA_ENCRYPTION_KEY: ${{ secrets.rsa-encryption-key }}
+          ENCRYPTION_KEY: ${{ secrets.encryption-key }}
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT32 }} 
           args: ${{ inputs.environment }}
