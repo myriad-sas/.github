@@ -29,8 +29,6 @@ on:
         required: true
       REGISTRY_HOST:
         required: true
-      ARGO_SERVER:
-        required: true
 jobs:
     TestAndBuildArtifact:
       name: Test and build the artifact
@@ -67,19 +65,8 @@ jobs:
             ssh_key: ${{ secrets.SSH_AGENT }}
             repository: hub-covid
             tag: ${{ inputs.current_branch }}-${{ inputs.hash_commit }}
-    DeployNewImage: 
-      name: Set App image tag
-      runs-on: ubuntu-latest
-      needs: BuildScanAndPublish
-      if: contains(join(needs.BuildScanAndPublish.result, ','), 'success') && inputs.current_branch == 'gamma' 
-      steps: 
-      - uses: myriad-sas/.github/.github/actions/set-image@cicd-refactor-process
-        with:
-          image: ${{ inputs.current_branch }}-${{ inputs.hash_commit }}
-          branch: ${{inputs.current_branch }}
-          
-
-        
+  
+      
 #    DeployHelmChart:
 #        name: Deploy the helm chart to k8s by argoCD
 #        needs: BuildScanAndPublish
