@@ -61,10 +61,11 @@ runs:
       env:
         VERSION: ${{ inputs.version }}
         S3_URL: ${{ inputs.url }}
+        APPNAME: ${{ inputs.app }}
       working-directory: ${{ inputs.app }}
       run: |
         helm lint .
         helm package --app-version=$VERSION --version=$VERSION .
-        helm s3 init s3://$S3_URL
-        helm s3 push ./$CHART_NAME-$version.tgz 
+        helm s3 init s3://$S3_URL/$APPNAME
+        helm s3 push ./$APPNAME-$VERSION.tgz 
     
