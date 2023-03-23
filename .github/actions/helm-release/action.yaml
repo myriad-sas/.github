@@ -11,11 +11,11 @@ inputs:
   password:
     description: "AWS ACCESS_SECRET_KEY"
     required: true
-  imageRef:
-    description: "The new image published"
+  version:
+    description: "The tag of the image / app version + hash commit"
     required: true
   app:
-    description: "The sub folder where the chart is stored"
+    description: "The sub folder where the chart is stored / name of the application"
     required: true
 
 
