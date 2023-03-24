@@ -28,7 +28,7 @@ runs:
     - name: Install helm-s3 plugin
       shell: bash
       run: |
-        helm plugin install https://github.com/hypnoglow/helm-s3.git --version ${version}
+        helm plugin install https://github.com/hypnoglow/helm-s3.git 
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
