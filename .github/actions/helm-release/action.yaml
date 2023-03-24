@@ -35,7 +35,7 @@ runs:
       with:
         aws-access-key-id: ${{ inputs.username }}
         aws-secret-access-key: ${{ inputs.password }}
-        aws-region: eu-west-3
+        aws-region: eu-west-1
    
     - name: Release and Publish on s3
       shell: bash
@@ -47,7 +47,7 @@ runs:
       run: |
         helm lint .
         helm package --app-version=$VERSION --version=$VERSION .
-        echo $S3_URL
         helm s3 init s3://$S3_URL/$APPNAME
-        helm s3 push ./$APPNAME-$VERSION.tgz 
-    
+        helm add repo s3://$S3_URL/$APPNAME
+        helm s3 push ./$APPNAME-$VERSION.tgz $APPNAME
+      

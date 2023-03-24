@@ -32,7 +32,7 @@ on:
 jobs:
     TestAndBuildArtifact:
       name: Test and build the artifact
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
       permissions:
         id-token: write
         contents: read
@@ -51,7 +51,7 @@ jobs:
       name: Build Scan and Publish the image
       needs: TestAndBuildArtifact
       if: contains(join(needs.TestAndBuildArtifact.result, ','), 'success') && ${{ inputs.current_branch }} == 'gamma'  || ${{ inputs.current_branch }} == 'main' || ${{ inputs.current_branch }} == 'testing' || ${{ inputs.current_branch }} == 'preprod'
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
       permissions:
         id-token: write
         contents: read

@@ -10,7 +10,6 @@ inputs:
     description: "The current branch to target the environment"
     required: true
 
-
 runs:
   # allow you to bundle multiple workflow steps into a single action, combining multiple run commands into a single reusable action.
   using: "composite"

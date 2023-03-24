@@ -19,7 +19,8 @@ runs:
       with:
         otp-version: '25.2.2'
         elixir-version: '1.14.3'
-
+      env:
+        ImageOS: 'ubuntu22'
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
