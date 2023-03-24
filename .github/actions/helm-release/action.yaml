@@ -24,10 +24,7 @@ runs:
   using: "composite"
   steps:
     - uses: azure/setup-helm@v3
-      with:
-         version: 3
-      id: install
-
+ 
     - name: Install helm-s3 plugin
       shell: bash
       run: |
