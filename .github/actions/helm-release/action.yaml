@@ -23,30 +23,14 @@ runs:
   # allow you to bundle multiple workflow steps into a single action, combining multiple run commands into a single reusable action.
   using: "composite"
   steps:
-    - name: Install helm
-      shell: bash
-      run: |
-        helm_version="3.10.1"
-        tar_filename="helm-v${helm_version}-linux-amd64.tar.gz"
-        checksum_filename="helm-v${helm_version}-linux-amd64.tar.gz.sha256sum"
-        curl -sSL https://get.helm.sh/${tar_filename} -O
-        curl -sSL https://get.helm.sh/${checksum_filename} -O
-        cat ${checksum_filename} | sha256sum -c
-        
-        tar xzf ${tar_filename}
-        sudo mv linux-amd64/helm /usr/local/bin/helm
-        rm -rf linux-amd64 ${tar_filename} ${checksum_filename}
+    - uses: azure/setup-helm@v3
+      with:
+         version: 3
+      id: install
 
     - name: Install helm-s3 plugin
       shell: bash
       run: |
-        version="${GITHUB_SHA}"
-        export HELM_S3_PLUGIN_NO_INSTALL_HOOK=true
-        if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-          version="${GITHUB_REF_NAME#v*}"
-          export HELM_S3_PLUGIN_NO_INSTALL_HOOK=
-        fi
-        echo "Check installation of version ${version}"
         helm plugin install https://github.com/hypnoglow/helm-s3.git --version ${version}
 
     - name: Configure AWS Credentials
