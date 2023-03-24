@@ -48,6 +48,6 @@ runs:
         helm lint .
         helm package --app-version=$VERSION --version=$VERSION .
         echo $S3_URL
-        helm s3 init s3://$S3_URL/argocd
+        helm s3 init s3://$S3_URL/$S3_URL
         helm s3 push ./$APPNAME-$VERSION.tgz 
     
