@@ -1,0 +1,40 @@
+name: "Fetch dependencies across nodejs"
+description:  setup ssh-agent to use the private ssh-key to fetch private dependencies and execute units tests
+
+inputs:
+  #  mode:
+  #    description: fetch mode prod or dev
+  ssh_key:
+    description: ssh private key
+    required: true
+  known_hosts:
+    description: example github.com
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ inputs.ssh_key }}
+        name: id_rsa
+        known_hosts: ${{ inputs.known_hosts }}
+        if_key_exists: ignore
+    
+    - name: Install Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14.x'
+     
+    - name: Fetch dependencies
+      shell: bash
+      run: | 
+        npm install
+        npm ci 
+
+    - name: Execute unit tests
+      shell: bash
+      run: npm test
+      if: always()
+

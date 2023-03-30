@@ -1,5 +1,5 @@
 name: "Fetch dependencies across Elixir"
-description:  setup ssh-agent to use the private ssh-key to fetch private dependencies
+description:  setup ssh-agent to use the private ssh-key to fetch private dependencies and execute units tests
 
 inputs:
   #  mode:

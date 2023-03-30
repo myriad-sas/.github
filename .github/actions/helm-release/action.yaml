@@ -3,7 +3,7 @@ description: set the chart file with the new image and generate the chart.tgz fi
 
 inputs:
   url:
-    description: "aws s3 bucket endpoint"
+    description: "helm chart repo"
     required: true
   username:
     description: "AWS ACCESS_KEY"
@@ -17,37 +17,46 @@ inputs:
   app:
     description: "The sub folder where the chart is stored / name of the application"
     required: true
-
+  project:
+    description: "The project from harbor registry"
+    required: true
 
 runs:
   # allow you to bundle multiple workflow steps into a single action, combining multiple run commands into a single reusable action.
   using: "composite"
   steps:
     - uses: azure/setup-helm@v3
- 
     - name: Install helm-s3 plugin
       shell: bash
       run: |
-        helm plugin install https://github.com/hypnoglow/helm-s3.git 
+        helm plugin install https://github.com/chartmuseum/helm-push
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ inputs.username }}
-        aws-secret-access-key: ${{ inputs.password }}
-        aws-region: eu-west-1
-   
-    - name: Release and Publish on s3
+  # if [ "${{ inputs.project }}" == 'testing' ]; 
+  # then 
+  #   cat testing.values.yaml > values.yaml 
+  
+  # if [ "${{ inputs.project }}" == 'preprod' ]; 
+  # then 
+  #   cat preprod.values.yaml > values.yaml
+
+  # if [ "${{ inputs.project }}" == 'main' ]; 
+  # then 
+  #   cat preprod.values.yaml > values.yaml
+
+
+    - name: Release and Publish on harbor chartmuseum
       shell: bash
       env:
         VERSION: ${{ inputs.version }}
-        S3_URL: ${{ inputs.url }}
+        CHARTREPO: ${{ inputs.url }}/chartrepo/${{ inputs.project }}
         APPNAME: ${{ inputs.app }}
+        HELM_REPO_USERNAME: ${{ inputs.username}}
+        HELM_REPO_PASSWORD: ${{ inputs.password }}
       working-directory: ${{ inputs.app }}
       run: |
         helm lint .
+        cat ${{ inputs.project }}.values.yaml > values.yaml
         helm package --app-version=$VERSION --version=$VERSION .
-        helm s3 init s3://$S3_URL/$APPNAME
-        helm add repo s3://$S3_URL/$APPNAME
-        helm s3 push ./$APPNAME-$VERSION.tgz $APPNAME
+        helm repo add $APPNAME https://${{env.CHARTREPO}} --username=$HELM_REPO_USERNAME --password=$HELM_REPO_PASSWORD  
+        helm cm-push ./$APPNAME-$VERSION.tgz $APPNAME
       

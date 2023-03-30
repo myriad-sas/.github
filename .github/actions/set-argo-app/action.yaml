@@ -1,0 +1,60 @@
+name: "Update the helm chart release version"
+description: "the argocd application source helm chart version will update in these steps"
+
+inputs:
+  repo: 
+    description: "Gitops repo where ArgoCD app are stored"
+    required: true
+  app: 
+    description: "The app Name / workdir"
+    required: true
+  version:
+    description: "The new version published to the s3"
+    required: true
+  environment: 
+    description: "The current branch to target the environment"
+    required: true
+  token: 
+    description: "The github token "
+    required: true
+
+
+runs:
+   # allow you to bundle multiple workflow steps into a single action, combining multiple run commands into a single reusable action.
+  using: "composite"
+  steps:
+  - uses: actions/checkout@v3
+    with:
+      repository: ${{ inputs.repo }}
+      token: ${{ inputs.token }}
+
+  - name: Update Version
+    shell: bash
+    working-directory: ${{ inputs.environment }}/${{ inputs.app }}
+    env: 
+      VERSION: ${{ inputs.version }}
+    run: |
+      wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O ./yq
+      chmod +x ./yq
+      ./yq e '.version="'$VERSION'"' -i manifest.yaml
+  - name: Update ArgoCD Application
+    shell: bash
+    env:
+      CI_COMMIT_MESSAGE: ArgoCD Application Version Updated 
+      CI_COMMIT_AUTHOR: Continuous Deployment
+    run: |
+      git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+      git config --global user.email "username@users.noreply.github.com"
+      git add .
+      git commit -m "${{ env.CI_COMMIT_MESSAGE }} ${{env.VERSION}}"
+      git push
+
+  # - name: Update ArgoCD Application
+  #   uses: devops-infra/action-commit-push@master
+  #   with:
+  #    github_token: ${{ inputs.token }}
+  #    target_branch: main
+  #    force: true
+  #    add_timestamp: true
+  #    commit_prefix: ${{ inputs.environment }}/${{ inputs.app }}
+  #    commit_message: "update version"

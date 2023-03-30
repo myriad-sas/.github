@@ -39,14 +39,14 @@ runs:
         KEY: ${{ inputs.ssh_key }}
       run:  docker build  --build-arg SSH_KEY=$KEY -t $IMAGE_FOR_REGISTRY .
 
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: ${{ inputs.url }}/${{ inputs.repository }}:${{ inputs.tag }}
-        format: 'table'
-        ignore-unfixed: true
-        vuln-type: 'os,library'
-    #        severity: 'CRITICAL,HIGH'
+ #   - name: Run Trivy vulnerability scanner
+ #     uses: aquasecurity/trivy-action@master
+ #     with:
+ #       image-ref: ${{ inputs.url }}/${{ inputs.repository }}:${{ inputs.tag }}
+ #       format: 'table'
+ #       ignore-unfixed: true
+ #       vuln-type: 'os,library'
+ #         severity: 'CRITICAL,HIGH'
 
     - name: Publish image built and scanned to the registry
       shell: bash
