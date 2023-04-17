@@ -49,6 +49,12 @@ on:
         required: false
         default: latest
         type: string
+      rabbitmq-version:
+        description: >-
+          rabbitmq service container version 
+        required: false
+        default: latest
+        type: string
     outputs:
       runner:
         description: >-
@@ -94,6 +100,18 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
+        ports:
+          - 8086:8086
+      rabbitmq:
+        image: rabbitmq:${{ inputs.rabbitmq-version }}
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 5672:5672
+          
     steps:
       - name: init container
         uses: myriad-actions/init-container@main
