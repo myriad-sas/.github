@@ -57,6 +57,6 @@ runs:
         helm lint .
         cat ${{ inputs.project }}.values.yaml > values.yaml
         helm package --app-version=$VERSION --version=$VERSION .
-        helm repo add $APPNAME ${{env.CHARTREPO}} --username=$HELM_REPO_USERNAME --password=$HELM_REPO_PASSWORD  
+        helm repo add $APPNAME https://${{env.CHARTREPO}} --username=$HELM_REPO_USERNAME --password=$HELM_REPO_PASSWORD  
         helm cm-push ./$APPNAME-$VERSION.tgz $APPNAME
       
