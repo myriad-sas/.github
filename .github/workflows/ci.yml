@@ -136,7 +136,7 @@ jobs:
         if: steps.cache.outputs.cache-hit == 'true'
         run: |
           echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV
-          ${{ env.ARTIFACTS == '' }} && "SKIP-BUILD=false" >> $GITHUB_OUTPUT || echo "SKIP-BUILD=true" >> $GITHUB_OUTPUT 
+          #${{ env.ARTIFACTS == '' }} && "SKIP-BUILD=false" >> $GITHUB_OUTPUT || echo "SKIP-BUILD=true" >> $GITHUB_OUTPUT 
       - name: check ssh key
         run: ${{ secrets.github-pak != '' }} && echo "CONFIGURE_SSH=true" >> $GITHUB_ENV || continue 
       - name: configure git ssh
