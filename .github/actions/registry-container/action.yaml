@@ -28,7 +28,7 @@ runs:
     - name: Connect to the registry
       uses: docker/login-action@v2
       with:
-        registry: ${{ inputs.url }}
+        registry: https://${{ inputs.url }}
         username: ${{ inputs.username }}
         password: ${{ inputs.password }}
 
