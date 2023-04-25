@@ -10,10 +10,10 @@ inputs:
   known_hosts:
     description: example github.com
     required: true
-  otp-version:
+  otp_version:
     description: OTP version
     required: true
-  elixir-version:
+  elixir_version:
     description: elixir version
     required: true
 
@@ -23,8 +23,8 @@ runs:
     - name:  Set up Elixir
       uses: erlef/setup-beam@v1
       with:
-        otp-version: ${{ inputs.otp-version }}
-        elixir-version: ${{ inputs.elixir-version }}
+        otp-version: ${{ inputs.otp_version }}
+        elixir-version: ${{ inputs.elixir_version }}
       env:
         ImageOS: 'ubuntu20'
     - name: Install SSH key
