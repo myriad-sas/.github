@@ -26,7 +26,7 @@ runs:
   using: "composite"
   steps:
     - uses: azure/setup-helm@v3
-    - name: Install helm-s3
+      name: Install helm-s3
 
   # if [ "${{ inputs.project }}" == 'testing' ]; 
   # then 
@@ -40,7 +40,7 @@ runs:
   # then 
   #   cat preprod.values.yaml > values.yaml
 
-    - name: Release and Publish on harbor chartmuseum
+    - name: Release and Publish on harbor OCI
       shell: bash
       env:
         VERSION: ${{ inputs.version }}
