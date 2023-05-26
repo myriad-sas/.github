@@ -44,7 +44,7 @@ runs:
       shell: bash
       env:
         VERSION: ${{ inputs.version }}
-        CHARTREPO: ${{ inputs.url }}/${{ inputs.project }}
+        CHARTREPO: ${{ inputs.url }}/${{ inputs.project }}/chart
         APPNAME: ${{ inputs.app }}
         HELM_REPO_USERNAME: ${{ inputs.username}}
         HELM_REPO_PASSWORD: ${{ inputs.password }}
