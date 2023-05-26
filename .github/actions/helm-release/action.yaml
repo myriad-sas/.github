@@ -26,10 +26,7 @@ runs:
   using: "composite"
   steps:
     - uses: azure/setup-helm@v3
-    - name: Install helm-s3 plugin
-      shell: bash
-      run: |
-        helm plugin install https://github.com/chartmuseum/helm-push
+    - name: Install helm-s3
 
   # if [ "${{ inputs.project }}" == 'testing' ]; 
   # then 
@@ -43,12 +40,11 @@ runs:
   # then 
   #   cat preprod.values.yaml > values.yaml
 
-
     - name: Release and Publish on harbor chartmuseum
       shell: bash
       env:
         VERSION: ${{ inputs.version }}
-        CHARTREPO: ${{ inputs.url }}/chartrepo/${{ inputs.project }}
+        CHARTREPO: ${{ inputs.url }}/${{ inputs.project }}/chart
         APPNAME: ${{ inputs.app }}
         HELM_REPO_USERNAME: ${{ inputs.username}}
         HELM_REPO_PASSWORD: ${{ inputs.password }}
@@ -56,7 +52,6 @@ runs:
       run: |
         helm lint .
         cat ${{ inputs.project }}.values.yaml > values.yaml
-        helm package --app-version=$VERSION --version=$VERSION .
-        helm repo add $APPNAME https://${{env.CHARTREPO}} --username=$HELM_REPO_USERNAME --password=$HELM_REPO_PASSWORD  
-        helm cm-push ./$APPNAME-$VERSION.tgz $APPNAME
-      
+        helm registry login https://harbor.tools.mgrp.mobi -u ${HELM_REPO_USERNAME} -p ${HELM_REPO_PASSWORD}
+        helm package --app-version=${VERSION} --version=${VERSION} .
+        helm push ./${APPNAME}-${VERSION}.tgz oci://${{env.CHARTREPO}}
