@@ -9,6 +9,9 @@ inputs:
     required: true
     type: string
     description: OTP version to set up
+  ssh-key:
+    description: SSH key to use for the CI
+    required: true
   #################################################################
   # Everything below this line is optional.
   #
@@ -110,6 +113,11 @@ runs:
       run: mix local.hex --force
       shell: sh
       if: inputs.install-hex == 'true'
+
+    - name: Setup SSH key
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.ssh-key }}
 
     - name: Install Dependencies
       run: mix deps.get
