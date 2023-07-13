@@ -20,7 +20,7 @@ runs:
       uses: actions/checkout@v2
 
     - name: Setup Elixir Project
-      uses: ./.github/actions/elixir-setup
+      uses: .github/actions/elixir-setup
       with:
         elixir-version: ${{ inputs.elixir-version }}
         otp-version: ${{ inputs.otp-version }}
