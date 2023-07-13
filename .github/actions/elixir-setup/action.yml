@@ -117,7 +117,7 @@ runs:
     - name: Setup SSH key
       uses: webfactory/ssh-agent@v0.7.0
       with:
-        ssh-private-key: ${{ secrets.ssh-key }}
+        ssh-private-key: ${{ secrets.SSH_KEY }}
 
     - name: Install Dependencies
       run: mix deps.get
