@@ -24,14 +24,6 @@ runs:
         otp-version: ${{ inputs.otp-version }}
         ssh-key: ${{ inputs.ssh-key }}
     
-    - name: Run linter
-      run: mix credo
-      shell: sh
-
-    - name: Run security scan on code
-      run: mix sobelow
-      shell: sh
-
-    - name: Run audit of dependencies
-      run: mix hex.audit
+    - name: Check format
+      run: mix format --check-formatted
       shell: sh

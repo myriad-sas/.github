@@ -3,11 +3,9 @@ description: Checks out the code and runs the test
 inputs:
   elixir-version:
     required: true
-    type: string
     description: Elixir version to set up
   otp-version:
     required: true
-    type: string
     description: OTP version to set up
   ssh-key:
     description: SSH key to use for the CI
