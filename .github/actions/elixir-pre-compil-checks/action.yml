@@ -36,6 +36,8 @@ runs:
         ssh-key: ${{ inputs.ssh-key }}
         build-deps: 'false'
         build-app: 'false'
+      env:
+        MIX_ENV: dev
     
     - name: Check format
       run: mix format --check-formatted
