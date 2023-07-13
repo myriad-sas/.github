@@ -35,3 +35,7 @@ runs:
     - name: Run audit of dependencies
       run: mix hex.audit
       shell: sh
+
+    - name: Run doc coverage
+      run: mix doctor
+      shell: sh
