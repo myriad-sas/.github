@@ -13,7 +13,7 @@ runs:
     - name: Setup SSH key
       uses: webfactory/ssh-agent@v0.7.0
       with:
-        ssh-private-key: ${{ secrets.ssh-key }}
+        ssh-private-key: ${{ inputs.ssh-key }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
