@@ -1,0 +1,36 @@
+name: Run Elixir Project
+description: Checks out the code and runs the test
+inputs:
+  elixir-version:
+    required: true
+    type: string
+    description: Elixir version to set up
+  otp-version:
+    required: true
+    type: string
+    description: OTP version to set up
+  ssh-key:
+    description: SSH key to use for the CI
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Elixir Project
+      uses: myriad-sas/.github/.github/actions/elixir-setup@hub-security
+      with:
+        elixir-version: ${{ inputs.elixir-version }}
+        otp-version: ${{ inputs.otp-version }}
+        ssh-key: ${{ inputs.ssh-key }}
+    
+    - name: Run tests
+      run: mix credo
+      shell: sh
+
+    - name: Run tests
+      run: mix sobelow
+      shell: sh
+        
