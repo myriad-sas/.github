@@ -10,6 +10,17 @@ inputs:
   ssh-key:
     description: SSH key to use for the CI
     required: true
+  #################################################################
+  # Everything below this line is optional.
+  #################################################################
+  check-format:
+    description: "Run format check"
+    default: "true"
+    required: false
+  check-deps-audit:
+    description: "Run deps.audit"
+    default: "true"
+    required: false
 
 runs:
   using: "composite"
@@ -29,7 +40,9 @@ runs:
     - name: Check format
       run: mix format --check-formatted
       shell: sh
+      if: ${{ inputs.check-format }} == 'true'
     
     - name: Check deps audit
       run: mix deps.audit
       shell: sh
+      if: ${{ inputs.check-deps-audit }} == 'true'

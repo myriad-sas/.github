@@ -10,6 +10,17 @@ inputs:
   ssh-key:
     description: SSH key to use for the CI
     required: true
+  #################################################################
+  # Everything below this line is optional.
+  #################################################################
+  check-test:
+    description: "Run test"
+    default: "true"
+    required: false
+  check-test-coverage:
+    description: "Run test coverage"
+    default: "false"
+    required: false
 
 runs:
   using: "composite"
@@ -27,4 +38,10 @@ runs:
     - name: Run tests
       run: mix test
       shell: sh
+      if: ${{ inputs.check-test }} == 'true'
+
+    - name: Run test coverage
+      run: mix coveralls.json
+      shell: sh
+      if: ${{ inputs.check-test-coverage }} == 'true'
         
