@@ -15,11 +15,11 @@ inputs:
   #################################################################
   check-format:
     description: "Run format check"
-    default: "true"
+    default: 'true'
     required: false
   check-deps-audit:
     description: "Run deps.audit"
-    default: "true"
+    default: 'true'
     required: false
 
 runs:
@@ -34,8 +34,8 @@ runs:
         elixir-version: ${{ inputs.elixir-version }}
         otp-version: ${{ inputs.otp-version }}
         ssh-key: ${{ inputs.ssh-key }}
-        build-deps: false
-        build-app: false
+        build-deps: 'false'
+        build-app: 'false'
     
     - name: Check format
       run: mix format --check-formatted

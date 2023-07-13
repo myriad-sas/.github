@@ -15,11 +15,7 @@ inputs:
   #################################################################
   check-test:
     description: "Run test"
-    default: "true"
-    required: false
-  check-test-coverage:
-    description: "Run test coverage"
-    default: "false"
+    default: 'true'
     required: false
 
 runs:
@@ -39,9 +35,3 @@ runs:
       run: mix test
       shell: sh
       if: ${{ inputs.check-test }} == 'true'
-
-    - name: Run test coverage
-      run: mix coveralls.json
-      shell: sh
-      if: ${{ inputs.check-test-coverage }} == 'true'
-        

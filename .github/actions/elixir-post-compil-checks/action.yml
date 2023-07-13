@@ -15,19 +15,19 @@ inputs:
   #################################################################
   check-credo:
     description: "Run credo"
-    default: "true"
+    default: 'true'
     required: false
   check-sobelow:
     description: "Run sobelow"
-    default: "true"
+    default: 'true'
     required: false
   check-deps-audit:
     description: "Run deps.audit"
-    default: "true"
+    default: 'true'
     required: false
   check-doc-coverage:
     description: "Run doc coverage"
-    default: "true"
+    default: 'true'
     required: false
 
 runs:
