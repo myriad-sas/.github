@@ -26,3 +26,4 @@ runs:
         tags: ${{ github.event.repository.name }}:1.0
         context: .
         push: false
+        cache-from: type=registry,ref=user/${{ github.event.repository.name }}:latest
