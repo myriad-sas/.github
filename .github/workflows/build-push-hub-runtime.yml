@@ -118,9 +118,6 @@ jobs:
           repository:  ${{ env.CI-SCRIPT-REPO }}
           token: ${{ secrets.gh-pat }}
           path: ${{ env.CI-SCRIPT-FOLDER-NAME }}
-
-      - name: get build args
-        run:  echo "IMAGE-TAG=$(date +'%Y%m%d%H%M%S')"  >> $GITHUB_ENV
       
       - name: set up Docker Buildx # docker build action
         id: buildx
@@ -143,7 +140,7 @@ jobs:
       - name: set ecr url
         if: ${{ inputs.push_to_ecr }}
         run: |
-          echo "ECR=hub/${{ inputs.image-name }}" >> $GITHUB_ENV
+          echo 'ECR="hub/${{ inputs.image-name }}"' >> $GITHUB_ENV
           
       - name: set docker meta
         id: meta
@@ -155,7 +152,7 @@ jobs:
           flavor: |
             latest=auto
           tags: |
-            type=raw,value=${{ env.IMAGE-TAG }}
+            type=raw,value=${{ inputs.image-tag }}
             type=raw,value=latest,enable={{is_default_branch}}
           
       - name: Build and push
