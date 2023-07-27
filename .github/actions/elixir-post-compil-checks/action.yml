@@ -29,6 +29,14 @@ inputs:
     description: "Run doc coverage"
     default: 'true'
     required: false
+  check-xref-graph:
+    description: "Run xref graph"
+    default: 'true'
+    required: false
+  xref-graph-fail-above:
+    description: "Fail if xref graph has more than this number of warnings"
+    default: '0'
+    required: false
 
 runs:
   using: "composite"
@@ -64,3 +72,8 @@ runs:
       run: mix doctor
       shell: sh
       if: ${{ inputs.check-doc-coverage }} == 'true'
+
+    - name: Run xref graph
+      run: mix xref graph --label compile-connected --fail-above ${{ inputs.xref-graph-fail-above }}
+      shell: sh
+      if: ${{ inputs.check-xref-graph }} == 'true'
