@@ -101,7 +101,7 @@ on:
 jobs:          
   build-n-push:
     name: build & push
-    runs-on: hub-covid
+    runs-on: self-hosted
     permissions:
       id-token: write
       contents: read
