@@ -35,11 +35,6 @@ on:
           build-args
         required: false
         type: string
-      SSH_KEY:
-        description: >-
-          build-args
-        required: false
-        type: string
       OTP_VERSION:
         description: >-
           build-args
@@ -81,6 +76,10 @@ on:
         default: "artifacts/"
         type: string
     secrets:
+      SSH_KEY:
+        description: >-
+          build-args
+        required: false
       gh-actor:
         description: >-
            GitHub personal access user
