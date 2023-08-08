@@ -173,4 +173,3 @@ jobs:
             OTP_VERSION=${{ inputs.OTP_VERSION }}
             SSH_KEY=${{ secrets.ssh-key }}
           tags: ${{ steps.meta.outputs.tags }}
-
