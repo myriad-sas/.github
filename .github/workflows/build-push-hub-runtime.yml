@@ -167,7 +167,8 @@ jobs:
           context: ${{ inputs.context }}
           file: ${{ inputs.file }}
           build-contexts:  ${{ inputs.build-contexts }}
-          github-token: ${{ secrets.gh-pat }}
+          secrets: |
+            key=${{ secrets.SSK_KEY }}
           build-args: |
             APP_NAME=${{ inputs.APP_NAME }}
             APP_VSN=${{ inputs.APP_VSN }}
