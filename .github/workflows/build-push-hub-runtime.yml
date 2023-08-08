@@ -167,7 +167,7 @@ jobs:
           context: ${{ inputs.context }}
           file: ${{ inputs.file }}
           build-contexts:  ${{ inputs.build-contexts }}
-          secrets: |
+          ssh: |
             key=${{ secrets.SSK_KEY }}
           build-args: |
             APP_NAME=${{ inputs.APP_NAME }}
