@@ -101,7 +101,8 @@ on:
 jobs:          
   build-n-push:
     name: build & push
-    runs-on: Organization
+    runs-on: 
+      group: default
     permissions:
       id-token: write
       contents: read
