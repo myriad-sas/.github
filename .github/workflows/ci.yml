@@ -58,7 +58,8 @@ on:
 jobs:
   build:
     name: build
-    runs-on:  ${{ inputs.runner }}
+    runs-on:  
+      group: default
     permissions:
       id-token: write
       contents: read
