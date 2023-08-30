@@ -110,6 +110,9 @@ jobs:
     outputs:
       uri: ${{ steps.export.outputs.uri }}
     steps:
+      - name: clean runner workspace
+        uses: AutoModality/action-clean@v1
+
       - name: checkout repo
         uses: actions/checkout@v3
 
