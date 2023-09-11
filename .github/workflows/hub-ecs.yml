@@ -1,0 +1,121 @@
+name: hub
+on:
+  workflow_call:
+    secrets:
+      github-pat:
+        description: >-
+          GitHub personal access token
+        required: true
+    inputs:
+      environment:
+        description: >-
+          environment for deployment
+        default: preprod
+        required: true
+        type: string
+      runner:
+        description: >-
+          runner label on which this workflow will be run
+        required: true
+        type: string
+      task_name:
+        description: >
+          ecs task name
+        required: true
+        type: string
+      container_name:
+        description: >
+          ecs task container name
+        default: ''
+        required: true
+        type: string
+      image_name:
+        description: >
+          fully qualified image registry name
+        default: ''
+        required: true
+        type: string
+      cluster_name:
+        description: >
+          ecs cluster name
+        default: ''
+        required: true
+        type: string
+      ecs_service_name:
+        description: >
+          ecs service name
+        default: ''
+        required: true
+        type: string
+      env-path:
+        description: >-
+          path to the configuration file of environment variables
+        default: ./.github/.env
+        required: false
+        type: string
+      config-path:
+        description: >-
+          path to the configuration file of environment variables
+        default: .github/ecr.json
+        required: false
+        type: string
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      RELEASE:  ${{ steps.vars.outputs.RELEASE }}
+      IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
+      IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
+      RUNNER: ghr-aws
+    steps:
+      - name: init job
+        uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
+      - name: set vars
+        id: vars
+        run: |
+          ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
+        shell: bash
+      - name: get freeze status
+        id: status
+        uses: myriad-actions/get-deployment-freeze-status@main
+        with:
+          github-pat:  ${{ secrets.github-pat }}
+          environment: ${{ inputs.environment }}
+      - name: approval annotation
+        run: |
+          if [ "${{ inputs.environment }}" == "preprod" ]
+            then 
+              echo "::notice title=preprod status:: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}"
+          fi
+          if [ "${{ inputs.environment }}" == "prod" ]
+            then
+              echo "::notice title=prod status:: ${{ steps.status.outputs.IS_PROD_FROZEN }}"
+          fi
+          echo "::notice title=ref:: ${{ github.ref_name }}"
+      - name: approval annotation
+        if: steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
+        run: |
+          echo "::notice title=PREPROD DEPLOYMENT> An issue will be created in the Issues tab::The timeout minutes of this issues is set to 20 minutes, after which the workflow will continue without deployment. It is possible to re-run the preprod deployment by clicking on the preprod deploy job in the jobs panel, then on the re-run button right beside it. The button is visible only after the whole workflow is finished or cancelled, regardless of the outcome."
+
+  deploy-ecs:
+    uses: myriad-sas/.github/.github/workflows/cd-ecs.yml@transition-project
+    needs: init
+    if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'true' && github.ref_name != 'feature/*'
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      environment: ${{ inputs.environment }}
+      runner: ${{ inputs.runner }}
+      task_name: ${{ inputs.task_name }}
+      container_name: ${{ inputs.container_name }}
+      image_name: ${{ inputs.image_name }}
+      cluster_name: ${{ inputs.cluster_name }}
+      ecs_service_name: ${{ inputs.ecs_service_name }}
+      config-path: ${{ inputs.config-path }}
