@@ -158,9 +158,6 @@ jobs:
           token: ${{ secrets.github-pat }}
           path: ${{ env.CI-CONFIG-FOLDER-NAME }}
       - name: deploy
-        permissions:
-          id-token: write
-          contents: read
         uses: myriad-actions/deploy@main
         if: steps.check-continue.outputs.continue != 'false'
         with:
