@@ -87,7 +87,6 @@ jobs:
         uses: myriad-actions/get-deployment-freeze-status@main
         with:
           github-pat:  ${{ secrets.github-pat }}
-          environment: ${{ inputs.environment }}
       - name: approval annotation
         run: |
           if [ "${{ inputs.environment }}" == "preprod" ]
