@@ -1,4 +1,4 @@
-name: hub
+name: hub-ecs
 on:
   workflow_call:
     secrets:
