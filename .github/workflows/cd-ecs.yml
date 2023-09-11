@@ -67,7 +67,7 @@ on:
         type: string
 
 jobs:
-  init:
+  init_cd_ecs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -111,9 +111,9 @@ jobs:
         run: |
           echo "::notice title=PREPROD DEPLOYEMENT> An issue will be created in the Issues tab::The timeout minutes of this issues is set to 20 minutes, after which the workflow will continue without deployment. It is possible to re-run the preprod and only the preprod deployment by clicking on the preprod deploy job in the jobs panel, then on the re-run button right beside. The button is visible only after the whole workflow is finished or cancelled, regardless of the outcome"
   
-  deploy:
-    name: deploy
-    needs: init
+  deploy_cd_ecs:
+    name: deploy_cd_ecs
+    needs: init_cd_ecs
     runs-on:  ${{ inputs.runner }}
     environment: ${{ inputs.environment }}
     permissions:
@@ -126,8 +126,8 @@ jobs:
     outputs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
-      - name: init container
-        uses: myriad-actions/init-container@main
+      # - name: init container
+      #   uses: myriad-actions/init-container@main
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
@@ -180,8 +180,8 @@ jobs:
 
   validate:
     name: validate
-    needs: deploy
-    if: needs.deploy.outputs.continue != 'false'
+    needs: deploy_cd_ecs
+    if: needs.deploy_cd_ecs.outputs.continue != 'false'
     runs-on:  ${{ inputs.runner }}
     permissions:
       id-token: write

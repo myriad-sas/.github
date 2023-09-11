@@ -61,7 +61,7 @@ on:
         type: string
 
 jobs:
-  init:
+  init_hub_ecs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -87,7 +87,7 @@ jobs:
         uses: myriad-actions/get-deployment-freeze-status@main
         with:
           github-pat:  ${{ secrets.github-pat }}
-      - name: approval annotation
+      - name: approval annotation env check
         run: |
           if [ "${{ inputs.environment }}" == "preprod" ]
             then 
@@ -105,8 +105,8 @@ jobs:
 
   deploy-ecs:
     uses: myriad-sas/.github/.github/workflows/cd-ecs.yml@transition-project
-    needs: init
-    if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'true' && github.ref_name != 'feature/*'
+    needs: init_hub_ecs
+    if: needs.init_hub_ecs.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init_hub_ecs.outputs.RELEASE != 'true' && github.ref_name != 'feature/*'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
