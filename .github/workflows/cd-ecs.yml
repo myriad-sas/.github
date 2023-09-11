@@ -29,9 +29,15 @@ on:
         default: ''
         required: true
         type: string
+      image:
+        description: >
+          image registry name for actions
+        default: ''
+        required: true
+        type: string
       image_name:
         description: >
-          fully qualified image registry name
+          fully qualified image registry name for Hub application
         default: ''
         required: true
         type: string
@@ -116,10 +122,7 @@ jobs:
       packages: read
       issues: write
     container:
-      image: ghcr.io/myriad-sas/${{ inputs.image }}
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      image: ${{ inputs.image }}
     outputs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
