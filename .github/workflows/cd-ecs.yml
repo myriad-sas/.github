@@ -188,13 +188,13 @@ jobs:
       contents: read
       packages: read
     container:
-      image: ghcr.io/myriad-sas/${{ inputs.image }}
+      image: ${{ inputs.image }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      # - name: init container
-      #   uses: myriad-actions/init-container@main
+      - name: init container
+        uses: myriad-actions/init-container-al@main
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
