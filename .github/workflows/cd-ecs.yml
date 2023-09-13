@@ -62,7 +62,7 @@ on:
       config-path:
         description: >-
           path to the configuration file of environment variables
-        default: ./.github/ec2-non-prod.json
+        default: ./.github/ecr.json
         required: false
         type: string
 
