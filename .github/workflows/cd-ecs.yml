@@ -205,5 +205,5 @@ jobs:
       - name: validate installed version
         uses: myriad-actions/run@main
         with:
-          script: ${{ env.SCRIPT41 }} 
+          script: ${{ env.SCRIPT42 }} 
           args: ${{ inputs.environment }}
