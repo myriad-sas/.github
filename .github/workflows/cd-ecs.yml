@@ -10,7 +10,7 @@ on:
     inputs:
       environment:
         description: >-
-          one of the testing, preprod or prod envinronment, for the workflow run
+          one of the testing, preprod or prod environment, for the workflow run
         required: true
         type: string
       runner:
@@ -73,9 +73,6 @@ jobs:
       id-token: write
       contents: read
     outputs:
-      MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
-      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
-      INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
       RELEASE:  ${{ steps.vars.outputs.RELEASE }}
       IMAGE: ${{ steps.vars.outputs.IMAGE }}
       IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
@@ -90,9 +87,6 @@ jobs:
       - name: set vars
         id: vars
         run: |
-          ${{ env.MYSQL-VERSION == '' }} && echo "MYSQL-VERSION=latest"  >> $GITHUB_OUTPUT || echo "MYSQL-VERSION=${{ env.MYSQL-VERSION }}"  >> $GITHUB_OUTPUT
-          ${{ env.REDIS-VERSION == '' }} && echo "REDIS-VERSION=latest"  >> $GITHUB_OUTPUT || echo "REDIS-VERSION=${{ env.REDIS-VERSION }}"  >> $GITHUB_OUTPUT
-          ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT
           ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
           echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT
         shell: bash
@@ -110,7 +104,12 @@ jobs:
         if: steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
         run: |
           echo "::notice title=PREPROD DEPLOYEMENT> An issue will be created in the Issues tab::The timeout minutes of this issues is set to 20 minutes, after which the workflow will continue without deployment. It is possible to re-run the preprod and only the preprod deployment by clicking on the preprod deploy job in the jobs panel, then on the re-run button right beside. The button is visible only after the whole workflow is finished or cancelled, regardless of the outcome"
-  
+      - name: approval annotation
+        if: steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
+        run: |
+          echo "::notice title=PROD DEPLOYEMENT> An issue will be created in the Issues tab::The timeout minutes of this issues is set to 5 minutes, after which the workflow will continue without deployment. It is possible to re-run the prod by clicking on the deploy/init_hub_ecs job in the jobs panel, then on the re-run button. The button is visible only after the whole workflow is finished or cancelled, regardless of the outcome"
+
+
   deploy_cd_ecs:
     name: deploy_cd_ecs
     needs: init_cd_ecs
@@ -138,22 +137,33 @@ jobs:
         with:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
-      - name: request approval
+      - name: request approval preprod
         uses: trstringer/manual-approval@v1
         if: inputs.environment == 'preprod'
-        id: approval
+        id: approval-preprod
         timeout-minutes: 20
         with:
           secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: ${{ env.PREPROD-APPROVERS }}
           minimum-approvals: 1
-          issue-title: "requested by ${{ github.actor }}"
+          issue-title: "Release for ${{ inputs.environment }} requested by ${{ github.actor }}"
+        continue-on-error: true
+      - name: request approval prod
+        uses: trstringer/manual-approval@v1
+        if: inputs.environment == 'prod'
+        id: approval-prod
+        timeout-minutes: 5
+        with:
+          secret: ${{ secrets.GITHUB_TOKEN }}
+          approvers: ${{ env.PROD-APPROVERS }}
+          minimum-approvals: 1
+          issue-title: "Release for ${{ inputs.environment }} requested by ${{ github.actor }}"
         continue-on-error: true
       - name: check continue
         id: check-continue
-        if: inputs.environment == 'preprod'
+        if: ${{ inputs.environment == 'preprod' || inputs.environment == 'prod' }}
         run: |
-          ${{ steps.approval.outcome == 'failure' && inputs.environment == 'preprod' }} && echo "continue=false" >> $GITHUB_OUTPUT || echo "continue=true" >> $GITHUB_OUTPUT 
+          ${{ steps.approval-preprod.outcome == 'failure' || steps.approval-prod.outcome == 'failure' }} && echo "continue=false" >> $GITHUB_OUTPUT || echo "continue=true" >> $GITHUB_OUTPUT
       - name: checkout configurations
         uses: actions/checkout@v3
         with:

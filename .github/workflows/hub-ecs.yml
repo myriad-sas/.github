@@ -98,15 +98,35 @@ jobs:
               echo "::notice title=prod status:: ${{ steps.status.outputs.IS_PROD_FROZEN }}"
           fi
           echo "::notice title=ref:: ${{ github.ref_name }}"
-      - name: approval annotation
+      - name: approval annotation preprod
         if: steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
         run: |
           echo "::notice title=PREPROD DEPLOYMENT> An issue will be created in the Issues tab::The timeout minutes of this issues is set to 20 minutes, after which the workflow will continue without deployment. It is possible to re-run the preprod deployment by clicking on the preprod deploy job in the jobs panel, then on the re-run button right beside it. The button is visible only after the whole workflow is finished or cancelled, regardless of the outcome."
+      - name: approval annotation prod
+        if: steps.status.outputs.IS_PROD_FROZEN == 'unfrozen'
+        run: |
+          echo "::notice title=PROD DEPLOYMENT> An issue will be created in the Issues tab::The timeout minutes of this issues is set to 5 minutes, after which the workflow will continue without deployment. It is possible to re-run the prod deployment by clicking on the prod deploy/init_hub_ecs job in the jobs panel, then on the re-run button. The button is visible only after the whole workflow is finished or cancelled, regardless of the outcome."
 
-  deploy-ecs:
+  deploy-ecs-preprod:
     uses: myriad-sas/.github/.github/workflows/cd-ecs.yml@transition-project
     needs: init_hub_ecs
     if: needs.init_hub_ecs.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init_hub_ecs.outputs.RELEASE != 'true' && github.ref_name != 'feature/*'
+    secrets:
+      github-pat: ${{ secrets.github-pat }}
+    with:
+      environment: ${{ inputs.environment }}
+      runner: ${{ inputs.runner }}
+      image: "amazon/aws-cli"
+      task_name: ${{ inputs.task_name }}
+      container_name: ${{ inputs.container_name }}
+      image_name: ${{ inputs.image_name }}
+      cluster_name: ${{ inputs.cluster_name }}
+      ecs_service_name: ${{ inputs.ecs_service_name }}
+
+  deploy-ecs-prod:
+    uses: myriad-sas/.github/.github/workflows/cd-ecs.yml@transition-project
+    needs: init_hub_ecs
+    if: needs.init_hub_ecs.outputs.IS_PROD_FROZEN == 'unfrozen' && needs.init_hub_ecs.outputs.RELEASE == 'true'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
