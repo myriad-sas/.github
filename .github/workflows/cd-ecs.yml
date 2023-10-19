@@ -59,12 +59,6 @@ on:
         default: ./.github/.env
         required: false
         type: string
-      config-path:
-        description: >-
-          path to the configuration file of environment variables
-        default: ./.github/ecr.json
-        required: false
-        type: string
 
 jobs:
   init_cd_ecs:
@@ -179,7 +173,6 @@ jobs:
           image_name: ${{ inputs.image_name }}
           cluster_name: ${{ inputs.cluster_name }}
           ecs_service_name: ${{ inputs.ecs_service_name }}
-          config-path: ${{ inputs.config-path }}
       - name: freeze prod
         uses: myriad-actions/set-deployment-freeze-status@main
         if: inputs.environment == 'prod' && steps.check-continue.outputs.continue != 'false'
