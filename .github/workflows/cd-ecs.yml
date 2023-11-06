@@ -168,6 +168,7 @@ jobs:
           image_name: ${{ inputs.image_name }}
           cluster_name: ${{ inputs.cluster_name }}
           ecs_service_name: ${{ inputs.ecs_service_name }}
+          config-path: "./main/.github/ecr.json"
       - name: freeze prod
         uses: myriad-actions/set-deployment-freeze-status@main
         if: inputs.environment == 'prod' && steps.check-continue.outputs.continue != 'false'
