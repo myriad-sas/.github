@@ -1,0 +1,50 @@
+name: wingardium leviosa
+
+on: 
+  workflow_call:
+    secrets:
+      AWS_ROLE_TO_ASSUME:
+        description: >-
+          aws role to assume
+        required: true
+    inputs:
+      apply:
+        description: >-
+          whether to apply the change
+        required: true
+        default: false
+        type: boolean
+
+
+jobs: 
+  plan:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Setup AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: eu-west-1
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+      
+      - name: Terraform Prepare
+        run: |
+          terraform fmt -check -recursive 
+          terraform init -input=false
+          terraform validate -no-color
+          terraform plan -no-color -input=false
+        continue-on-error: false
+        
+      - name: Terraform Apply
+        id: apply
+        if: ${{ inputs.apply == 'true' }}
+        run: terraform apply --auto-approve
