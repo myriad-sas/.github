@@ -95,6 +95,7 @@ jobs:
     name: build
     needs:
       - check
+    if: needs.check.outputs.continue == 'true'
     runs-on:  
       group: default
     permissions:
