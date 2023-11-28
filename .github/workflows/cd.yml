@@ -66,8 +66,8 @@ jobs:
           ${{ inputs.environment == 'testing' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip testbed"
           ${{ inputs.environment == 'preprod' }} && echo "::notice title=preprod status:: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}" || echo "continue"
           ${{ inputs.environment == 'preprod' && steps.approval.outcome == 'success' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'}} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip preprod" 
-          ${{ inputs.environment == 'prod' }} && echo "::notice title=prod status:: ${{ steps.status.outputs.IS_PROD_FROZEN }}"
-          ${{ inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT  || echo "contnue"
+          ${{ inputs.environment == 'prod' }} && echo "::notice title=prod status:: ${{ steps.status.outputs.IS_PROD_FROZEN }}" || echo "contnue"
+          ${{ inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT  || echo "skip prod"
       - name: approval annotation
         if: inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
         run: |
