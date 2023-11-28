@@ -111,7 +111,7 @@ jobs:
     needs:
       - init
       - ci
-    if: needs.init.outputs.IS_PROD_FROZEN == 'unfrozen' && github.ref_name != 'feature/*'
+    if: github.ref_name == 'master' || github.ref_name != 'DH-*'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
