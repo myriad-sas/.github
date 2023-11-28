@@ -70,7 +70,7 @@ jobs:
     needs:
       - init
       - ci
-    if: needs.init.outputs.RELEASE !=  'true' && github.ref_name != 'feature/*'
+    if: needs.init.outputs.RELEASE !=  'true'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
@@ -84,7 +84,7 @@ jobs:
     needs:
       - init
       - ci
-    if: needs.init.outputs.IS_PREPROD_FROZEN == 'unfrozen' && needs.init.outputs.RELEASE != 'true' && github.ref_name != 'feature/*'
+    if: needs.init.outputs.RELEASE != 'true'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
