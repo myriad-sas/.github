@@ -75,7 +75,7 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: testing
-      runner: ${{ needs.ci.outputs.runner }}
+      runner: ${{ needs.init.outputs.RUNNER }}
       image: ${{ needs.init.outputs.IMAGE }}
 
 
@@ -89,7 +89,7 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: preprod
-      runner: ${{ needs.ci.outputs.runner }}
+      runner: ${{ needs.init.outputs.RUNNER }}
       image: ${{ needs.init.outputs.IMAGE }}
 
 
@@ -103,5 +103,5 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
     with:
       environment: prod
-      runner: ${{ needs.ci.outputs.runner }}
+      runner: ${{ needs.init.outputs.RUNNER }}
       image: ${{ needs.init.outputs.IMAGE }}
