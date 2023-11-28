@@ -48,23 +48,11 @@ jobs:
     outputs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
-      - name: init container
-        uses: myriad-actions/init-container@main
       - name: get freeze status
         id: status
         uses: myriad-actions/get-deployment-freeze-status@main
         with:
           github-pat:  ${{ secrets.github-pat }}
-      - name: init job  
-        uses: myriad-actions/init-job@main
-        with:
-          github-pat: ${{ secrets.github-pat }}
-          env-path: ${{ inputs.env-path }}
-      - name: init cache
-        uses: actions/cache@v3
-        with:
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}
-          key: ${{ github.sha }}
       - name: request approval
         uses: trstringer/manual-approval@v1
         if: inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
@@ -83,6 +71,21 @@ jobs:
           ${{ inputs.environment == 'preprod' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip testbed"
           ${{ inputs.environment == 'preprod' && steps.approval.outcome == 'success' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'}} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip preprod" 
           ${{ inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT  || echo "skip prod" 
+      - name: init container
+        if: steps.check-continue.outputs.continue != 'false'
+        uses: myriad-actions/init-container@main
+      - name: init job  
+        uses: myriad-actions/init-job@main
+        if: steps.check-continue.outputs.continue != 'false'
+        with:
+          github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
+      - name: init cache
+        uses: actions/cache@v3
+        if: steps.check-continue.outputs.continue != 'false'
+        with:
+          path: main/${{ env.ARTIFACTS-SRC-PATH }}
+          key: ${{ github.sha }}
       - name: set env
         if: inputs.environment != 'testing' && steps.check-continue.outputs.continue != 'false'
         run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
@@ -94,6 +97,7 @@ jobs:
           args: ${{ env.NEXT-ENV }}
       - name: checkout configurations
         uses: actions/checkout@v3
+        if: steps.check-continue.outputs.continue != 'false'
         with:
           repository:  ${{ env.CI-CONFIG-REPO }}
           token: ${{ secrets.github-pat }}
