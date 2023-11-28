@@ -87,6 +87,7 @@ jobs:
   
   build:
     name: build
+    if: needs.check.outputs.continue != 'false'
     runs-on:  
       group: default
     permissions:
