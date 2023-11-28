@@ -87,6 +87,8 @@ jobs:
   
   build:
     name: build
+    needs:
+      - check
     if: needs.check.outputs.continue != 'false'
     runs-on:  
       group: default
