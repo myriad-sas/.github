@@ -31,20 +31,15 @@ on:
         type: string
 
 jobs:
-  deploy:
-    name: deploy
-    runs-on:  ${{ inputs.runner }}
+  check:
+    name: check
+    runs-on:  ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
       contents: read
       packages: read
       issues: write
-    container:
-      image: ghcr.io/myriad-sas/${{ inputs.image }}
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
@@ -71,46 +66,62 @@ jobs:
           ${{ inputs.environment == 'testing' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip testbed"
           ${{ inputs.environment == 'preprod' && steps.approval.outcome == 'success' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'}} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip preprod" 
           ${{ inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT  || echo "skip prod" 
+          
+  deploy:
+    name: deploy
+    needs:
+      - check
+    if: needs.check.outputs.continue != 'false'
+    runs-on:  ${{ inputs.runner }}
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+      issues: write
+    container:
+      image: ghcr.io/myriad-sas/${{ inputs.image }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      continue:  ${{ steps.check-continue.outputs.continue }}
+    steps:
       - name: init container
-        if: steps.check-continue.outputs.continue != 'false'
         uses: myriad-actions/init-container@main
       - name: init job  
         uses: myriad-actions/init-job@main
-        if: steps.check-continue.outputs.continue != 'false'
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
       - name: init cache
         uses: actions/cache@v3
-        if: steps.check-continue.outputs.continue != 'false'
         with:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
       - name: set env
-        if: inputs.environment != 'testing' && steps.check-continue.outputs.continue != 'false'
+        if: inputs.environment != 'testing' 
         run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
       - name: tag env
         uses: myriad-actions/run@main
-        if: inputs.environment != 'testing' && steps.check-continue.outputs.continue != 'false'
+        if: inputs.environment != 'testing' 
         with:
           script: ${{ env.SCRIPT5 }}
           args: ${{ env.NEXT-ENV }}
       - name: checkout configurations
         uses: actions/checkout@v3
-        if: steps.check-continue.outputs.continue != 'false'
         with:
           repository:  ${{ env.CI-CONFIG-REPO }}
           token: ${{ secrets.github-pat }}
           path: ${{ env.CI-CONFIG-FOLDER-NAME }}
       - name: deploy
         uses: myriad-actions/run@main
-        if: steps.check-continue.outputs.continue != 'false'
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT3 }} 
           args: ${{ inputs.environment }}
       - name: freeze prod
         uses: myriad-actions/set-deployment-freeze-status@main
-        if: inputs.environment == 'prod' && steps.check-continue.outputs.continue != 'false'
+        if: inputs.environment == 'prod'
         with:
           environment: prod
           github-pat:  ${{ secrets.github-pat }}
@@ -120,7 +131,7 @@ jobs:
     name: validate
     needs:
       - deploy
-    if: needs.deploy.outputs.continue != 'false'
+    if: needs.check.outputs.continue != 'false'
     runs-on:  ${{ inputs.runner }}
     permissions:
       id-token: write
