@@ -68,7 +68,7 @@ jobs:
         id: check-continue
         run: |
           echo "continue=false" >> $GITHUB_OUTPUT
-          ${{ inputs.environment == 'preprod' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip testbed"
+          ${{ inputs.environment == 'testing' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip testbed"
           ${{ inputs.environment == 'preprod' && steps.approval.outcome == 'success' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'}} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip preprod" 
           ${{ inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT  || echo "skip prod" 
       - name: init container
