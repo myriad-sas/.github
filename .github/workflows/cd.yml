@@ -77,7 +77,7 @@ jobs:
     name: deploy
     needs:
       - check
-    if: needs.check.outputs.continue != 'false'
+    if: needs.check.outputs.continue == 'true'
     runs-on:  ${{ inputs.runner }}
     environment: ${{ inputs.environment }}
     permissions:
