@@ -137,7 +137,6 @@ jobs:
     name: validate
     needs:
       - deploy
-    if: needs.check.outputs.continue != 'false'
     runs-on:  ${{ inputs.runner }}
     permissions:
       id-token: write
