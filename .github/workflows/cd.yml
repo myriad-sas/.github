@@ -77,8 +77,8 @@ jobs:
     name: deploy
     needs:
       - check
-    runs-on:  ${{ inputs.runner }}
     if: needs.check.outputs.continue == 'true'
+    runs-on:  ${{ inputs.runner }}
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
