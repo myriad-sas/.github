@@ -48,20 +48,6 @@ jobs:
           ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
           echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT
         shell: bash
-      - name: get freeze status
-        id: status
-        uses: myriad-actions/get-deployment-freeze-status@main
-        with:
-          github-pat:  ${{ secrets.github-pat }}
-      - name: approval annotation
-        run: |
-          echo "::notice title=preprod status:: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}"
-          echo "::notice title=prod status:: ${{ steps.status.outputs.IS_PROD_FROZEN }}"
-          echo "::notice title=ref:: ${{ github.ref_name }}"
-      - name: approval annotation
-        if: steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
-        run: |
-          echo "::notice title=PREPROD DEPLOYEMENT> An issue will be created in the Issues tab::The timeout minutes of this issues is set to 20 minutes, after which the workflow will continue without deployment. It is possible to re-run the preprod and only the preprod deployment by clicking on the preprod deploy job in the jobs panel, then on the re-run button right beside. The button is visible only after the whole workflow is finished or cancelled, regardless of the outcome"
 
   ci:
     uses: ./.github/workflows/ci.yml
