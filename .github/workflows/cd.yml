@@ -86,7 +86,7 @@ jobs:
     steps:
       - name: request approval
         uses: trstringer/manual-approval@v1
-        if: inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
+        if: inputs.environment == 'preprod' 
         id: approval
         timeout-minutes: 20
         with:
