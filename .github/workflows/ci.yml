@@ -71,7 +71,8 @@ jobs:
         id: cache
         run: |
           gh extension install actions/gh-actions-cache
-          gh cache list
+          gh cache list 
+          echo cache-hit="false" >> $GITHUB_OUTPUT 
       - name: check continue
         id: check-continue
         run: |
