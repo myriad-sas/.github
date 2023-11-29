@@ -84,6 +84,13 @@ jobs:
     outputs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
+      - name: init container
+        uses: myriad-actions/init-container@main
+      - name: init job  
+        uses: myriad-actions/init-job@main
+        with:
+          github-pat: ${{ secrets.github-pat }}
+          env-path: ${{ inputs.env-path }}
       - name: request approval
         uses: trstringer/manual-approval@v1
         if: inputs.environment == 'preprod' 
@@ -94,13 +101,6 @@ jobs:
           approvers: ${{ env.PREPROD-APPROVERS }}
           minimum-approvals: 1
           issue-title: "requested by ${{ github.actor }}"
-      - name: init container
-        uses: myriad-actions/init-container@main
-      - name: init job  
-        uses: myriad-actions/init-job@main
-        with:
-          github-pat: ${{ secrets.github-pat }}
-          env-path: ${{ inputs.env-path }}
       - name: init cache
         uses: actions/cache@v3
         with:
