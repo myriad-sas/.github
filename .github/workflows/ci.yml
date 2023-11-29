@@ -72,9 +72,9 @@ jobs:
         run: |
           gh extension install actions/gh-actions-cache
           CACHE=$(gh cache list | grep ${{ github.sha }})
-          echo cache-hit="false" >> $GITHUB_OUTPUT 
+          echo cache-hit="false" >> $GITHUB_OUTPUT
         env:
-          GH_TOKEN: ${{ secrets.github-pat }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: check continue
         id: check-continue
         run: |
