@@ -50,7 +50,6 @@ jobs:
         with:
           github-pat:  ${{ secrets.github-pat }}
       - name: annotations
-        if: inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
         run: |
           ${{ inputs.environment == 'preprod' }} && echo "::notice title=PREPROD:: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}" || echo "continue" 
           ${{ inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'  }} && echo "::notice title=PREPROD DEPLOYEMENT> An issue will be created in the Issues tab::The timeout minutes of this issues is set to 20 minutes, after which the workflow will continue without deployment. It is possible to re-run the preprod and only the preprod deployment by clicking on the preprod deploy job in the jobs panel, then on the re-run button right beside. The button is visible only after the whole workflow is finished or cancelled, regardless of the outcome" || echo "continue"
