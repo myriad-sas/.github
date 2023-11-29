@@ -73,6 +73,7 @@ jobs:
           cd main
           gh extension install actions/gh-actions-cache
           CACHE=$(gh cache list | grep ${{ github.sha }})
+          echo $CACHE
           echo cache-hit="false" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
