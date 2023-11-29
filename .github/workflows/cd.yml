@@ -34,7 +34,6 @@ jobs:
   check:
     name: check
     runs-on:  ubuntu-latest
-    if: inputs.environment != 'testing'
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
@@ -45,6 +44,7 @@ jobs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
       - name: get freeze status
+        if: inputs.environment != 'testing' 
         id: status
         uses: myriad-actions/get-deployment-freeze-status@main
         with:
@@ -60,7 +60,8 @@ jobs:
         id: check-continue
         run: |
           echo "continue=false" >> $GITHUB_OUTPUT
-          ${{ inputs.environment == 'preprod'&& steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'}} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip preprod"
+          ${{ inputs.environment == 'preprod' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "continue"
+          ${{ inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'}} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip preprod"
           ${{ inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT  || echo "skip prod"
           
   deploy:
