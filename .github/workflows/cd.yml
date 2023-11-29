@@ -36,6 +36,11 @@ jobs:
     runs-on:  ubuntu-latest
     if: inputs.environment != 'testing'
     environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+      issues: write
     outputs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
