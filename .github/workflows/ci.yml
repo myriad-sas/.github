@@ -2,6 +2,7 @@ name: ci
 
 env:
   CI_COMMIT_SHA: ${{ github.sha }}
+  GH_TOKEN: ${{ github.token }}
 
 on: 
   workflow_call:
