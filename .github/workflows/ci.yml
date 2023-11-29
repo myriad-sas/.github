@@ -76,7 +76,7 @@ jobs:
       - name: check continue
         id: check-continue
         run: |
-          ${{ steps.cache.outputs.cache-hit  == 'true'  }} && echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV || echo "::notice title=BUILD SKIPPED>cache not found"
+          ${{ steps.cache.outputs.cache-hit  == 'true'  }} && echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV || echo "::notice title=Cache:: not found" 
           ${{ steps.cache.outputs.cache-hit  == 'true' && env.ARTIFACTS != '' }} && "continue=false" >> $GITHUB_OUTPUT || echo "continue=true" >> $GITHUB_OUTPUT 
 
           
