@@ -70,6 +70,7 @@ jobs:
       - name: init cache
         id: cache
         run: |
+          cd main
           gh extension install actions/gh-actions-cache
           CACHE=$(gh cache list | grep ${{ github.sha }})
           echo cache-hit="false" >> $GITHUB_OUTPUT
