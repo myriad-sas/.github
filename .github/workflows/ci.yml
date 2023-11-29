@@ -2,7 +2,6 @@ name: ci
 
 env:
   CI_COMMIT_SHA: ${{ github.sha }}
-  GH_TOKEN: ${{ github.token }}
 
 on: 
   workflow_call:
@@ -74,6 +73,8 @@ jobs:
           gh extension install actions/gh-actions-cache
           gh cache list 
           echo cache-hit="false" >> $GITHUB_OUTPUT 
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: check continue
         id: check-continue
         run: |
