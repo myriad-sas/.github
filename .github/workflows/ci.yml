@@ -71,7 +71,7 @@ jobs:
         id: cache
         run: |
           gh extension install actions/gh-actions-cache
-          gh cache list 
+          gh cache list | grep ${{ github.sha }}
           echo cache-hit="false" >> $GITHUB_OUTPUT 
         env:
           GH_TOKEN: ${{ github.token }}
