@@ -74,21 +74,19 @@ jobs:
           gh extension install actions/gh-actions-cache
           CACHE=$(gh cache list | grep ${{ github.sha }})
           echo $CACHE
-          echo cache-hit="false" >> $GITHUB_OUTPUT
+          ${{ $CACHE  != ''  }} && echo cache-hit="true" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: check continue
         id: check-continue
         run: |
-          ${{ steps.cache.outputs.cache-hit  == 'true'  }} && echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV || echo "::notice title=Cache:: not found" 
-          ${{ steps.cache.outputs.cache-hit  == 'true' && env.ARTIFACTS != '' }} && "continue=false" >> $GITHUB_OUTPUT || echo "continue=true" >> $GITHUB_OUTPUT 
-
+          ${{ steps.cache.outputs.cache-hit  == 'true'  }} && echo "continue=false" >> $GITHUB_OUTPUT || echo "::notice title=Cache:: not found" 
           
   build:
     name: build
     needs:
       - check
-    if: needs.check.outputs.continue == 'true'
+    if: needs.check.outputs.continue != 'false'
     runs-on:  
       group: default
     permissions:
