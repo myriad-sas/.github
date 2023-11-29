@@ -62,6 +62,17 @@ jobs:
           ${{ inputs.environment == 'testing' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "continue"
           ${{ inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'}} && echo "continue=true" >> $GITHUB_OUTPUT || echo "skip preprod"
           ${{ inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT  || echo "skip prod"
+      - name: request approval
+        uses: trstringer/manual-approval@v1
+        if: inputs.environment == 'preprod' 
+        id: approval
+        timeout-minutes: 20
+        with:
+          secret: ${{ secrets.GITHUB_TOKEN }}
+          approvers: ${{ env.PREPROD-APPROVERS }}
+          minimum-approvals: 1
+          issue-title: "requested by ${{ github.actor }}"
+        continue-on-error: true
           
   deploy:
     name: deploy
@@ -90,18 +101,9 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
-      - name: request approval
-        uses: trstringer/manual-approval@v1
-        if: inputs.environment == 'preprod' 
-        id: approval
-        timeout-minutes: 20
-        with:
-          secret: ${{ secrets.GITHUB_TOKEN }}
-          approvers: ${{ env.PREPROD-APPROVERS }}
-          minimum-approvals: 1
-          issue-title: "requested by ${{ github.actor }}"
       - name: init cache
         uses: actions/cache@v3
+        if: steps.approval.outcome == 'success' 
         with:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
