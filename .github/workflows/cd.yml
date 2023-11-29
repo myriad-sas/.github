@@ -34,6 +34,7 @@ jobs:
   check:
     name: check
     runs-on:  ubuntu-latest
+    if: inputs.environment != 'testing'
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
