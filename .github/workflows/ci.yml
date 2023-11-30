@@ -76,26 +76,18 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
-      - name: test cache
-        id: test-cache
+      - name: init cache
+        id: cache
         uses: actions/cache@v3
         with:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
-      - name: init cache
-        id: cache
-        run: |
-          cd main
-          gh extension install actions/gh-actions-cache
-          echo "CACHE=$(gh cache list | grep ${{ github.sha }})" >> $GITHUB_ENV
-          ${{ env.CACHE == '' }} && echo cache-hit="true" >> $GITHUB_OUTPUT || echo "::notice title=Cache:: not found"
-          echo cache-hit="false" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: check continue
         id: check-continue
         run: |
-          ${{ steps.cache.outputs.cache-hit  != 'true'  }} &&  echo "::notice title=Cache:: found"  || echo "continue=false" >> $GITHUB_OUTPUT
+          echo "continue=true" >> $GITHUB_OUTPUT
+          ${{ steps.cache.outputs.cache-hit  == 'true'  }} && echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV || echo "::notice title=Cache:: not found"
+          ${{ steps.cache.outputs.cache-hit  == 'true' && env.ARTIFACTS != '' }} && echo "::notice title=Cache:: found"  || echo "continue=false" >> $GITHUB_OUTPUT
           
   build:
     name: build
