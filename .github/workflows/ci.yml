@@ -72,8 +72,8 @@ jobs:
         run: |
           cd main
           gh extension install actions/gh-actions-cache
-          CACHE=$(gh cache list | grep ${{ github.sha }})
-          [[ ! -z "$CACHE" ]] && echo cache-hit="true" >> $GITHUB_OUTPUT || echo "::notice title=Cache:: not found" 
+          echo "CACHE=$(gh cache list | grep ${{ github.sha }})" >> $GITHUB_ENV
+          ${{ env.CACHE == '' }} && echo cache-hit="true" >> $GITHUB_OUTPUT || echo "::notice title=Cache:: not found" 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: check continue
