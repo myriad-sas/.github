@@ -58,7 +58,7 @@ on:
 jobs:
   check:
     name: check
-    runs-on:  ubuntu-latest
+    runs-on:  ubuntu-20.04
     outputs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
