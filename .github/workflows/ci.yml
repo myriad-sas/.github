@@ -58,7 +58,16 @@ on:
 jobs:
   check:
     name: check
-    runs-on:  ubuntu-20.04
+    runs-on:  ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+    container:
+      image: ghcr.io/myriad-sas/${{ inputs.image }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
