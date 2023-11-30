@@ -87,7 +87,7 @@ jobs:
         run: |
           echo "continue=true" >> $GITHUB_OUTPUT
           ${{ steps.cache.outputs.cache-hit  == 'true'  }} && echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV || echo "::notice title=Cache:: not found"
-          ${{ steps.cache.outputs.cache-hit  == 'true' && env.ARTIFACTS != '' }} && echo "::notice title=Cache:: found"  || echo "continue=false" >> $GITHUB_OUTPUT
+          ${{ steps.cache.outputs.cache-hit  == 'true' && env.ARTIFACTS != '' }} && echo "continue=false" >> $GITHUB_OUTPUT || echo "::notice title=Artifacts:: not found" 
           
   build:
     name: build
