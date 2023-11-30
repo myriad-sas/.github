@@ -55,47 +55,11 @@ on:
           pass runner label to cd workflow
         value: ${{ jobs.build.outputs.runner }}
 
-jobs:
-  check:
-    name: check
-    runs-on:  ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      packages: read
-    container:
-      image: ghcr.io/myriad-sas/${{ inputs.image }}
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    outputs:
-      continue:  ${{ steps.check-continue.outputs.continue }}
-    steps:
-      - name: init job  
-        uses: myriad-actions/init-job@main
-        with:
-          github-pat: ${{ secrets.github-pat }}
-          env-path: ${{ inputs.env-path }}
-      - name: init cache
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: main/${{ env.ARTIFACTS-SRC-PATH }}
-          key: ${{ github.sha }}
-      - name: check continue
-        if: steps.cache.outputs.cache-hit  == 'true'
-        id: check-continue
-        run: |
-          echo "::notice title=Cache:: found cache, head: $(cat main/artifacts/head.txt)"
-          echo "continue=false" >> $GITHUB_OUTPUT 
-          #${{ steps.cache.outputs.cache-hit  == 'true'  }} && echo "ARTIFACTS=$(cat main/artifacts/head.txt)" >> $GITHUB_ENV || echo "::notice title=Cache:: not found"
-          #${{ steps.cache.outputs.cache-hit  == 'true' && env.ARTIFACTS != '' }} && echo "continue=false" >> $GITHUB_OUTPUT || echo "::notice title=Artifacts:: not found" 
-          
+jobs:      
   build:
     name: build
     needs:
       - check
-    if: needs.check.outputs.continue != 'false'
     runs-on:  
       group: default
     permissions:
@@ -141,17 +105,23 @@ jobs:
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
-      - name: extras
-        id: set-runner
-        run: |
-          mkdir -p /root/logs
-          echo label=${{ inputs.runner }} >> $GITHUB_OUTPUT 
       - name: init cache
         id: cache
         uses: actions/cache@v3
         with:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
+      - name: check continue
+        if: steps.cache.outputs.cache-hit  == 'true'
+        id: check-continue
+        run: |
+          echo "::notice title=Cache:: found cache, head: $(cat main/artifacts/head.txt)"
+          echo "continue=false" >> $GITHUB_OUTPUT 
+      - name: extras
+        id: set-runner
+        run: |
+          mkdir -p /root/logs
+          echo label=${{ inputs.runner }} >> $GITHUB_OUTPUT 
       - name: check ssh key
         run: ${{ secrets.github-pak != '' }} && echo "CONFIGURE_SSH=true" >> $GITHUB_ENV || continue 
       - name: configure git ssh
