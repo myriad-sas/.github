@@ -58,8 +58,6 @@ on:
 jobs:      
   build:
     name: build
-    needs:
-      - check
     runs-on:  
       group: default
     permissions:
