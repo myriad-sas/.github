@@ -150,7 +150,7 @@ jobs:
         continue-on-error: true
       - name: check continue
         id: check-continue
-        if: ${{ inputs.environment == 'prod' }}
+        if: ${{ inputs.environment == 'preprod' || inputs.environment == 'prod' }}
         run: |
           ${{ steps.approval-prod.outcome == 'failure' }} && echo "continue=false" >> $GITHUB_OUTPUT || echo "continue=true" >> $GITHUB_OUTPUT
       - name: checkout configurations
