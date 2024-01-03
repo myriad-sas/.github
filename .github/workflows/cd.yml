@@ -20,7 +20,7 @@ on:
         type: string
       image:
         description: >-
-          docker image url 
+          docker image url
         required: true
         type: string
       env-path:
@@ -54,29 +54,28 @@ jobs:
           ${{ inputs.environment == 'preprod' }} && echo "::notice title=PREPROD:: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}" || echo "continue" 
           ${{ inputs.environment == 'prod' }} && echo "::notice title=PROD:: ${{ steps.status.outputs.IS_PROD_FROZEN }}" || echo "continue"
         continue-on-error: true
-      - name: request approval
-        uses: trstringer/manual-approval@v1
-        if: inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
-        id: approval
-        timeout-minutes: 20
-        with:
-          secret: ${{ secrets.GITHUB_TOKEN }}
-          approvers: ${{ env.PREPROD-APPROVERS }}
-          minimum-approvals: 1
-          issue-title: "requested by ${{ github.actor }}"
-        continue-on-error: true
+      # - name: request approval
+      #   uses: trstringer/manual-approval@v1
+      #   if: inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen'
+      #   id: approval
+      #   timeout-minutes: 20
+      #   with:
+      #     secret: ${{ secrets.GITHUB_TOKEN }}
+      #     approvers: ${{ env.PREPROD-APPROVERS }}
+      #     minimum-approvals: 1
+      #     issue-title: "requested by ${{ github.actor }}"
+      #   continue-on-error: true
       - name: check continue
         id: check-continue
         run: |
           echo "continue=false" >> $GITHUB_OUTPUT
           ${{ inputs.environment == 'testing' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "continue"
-          ${{ inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen' && steps.approval.outcome == 'success'}} && echo "continue=true" >> $GITHUB_OUTPUT || echo "continue"
+          ${{ inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "continue"
           ${{ inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT  || echo "skip prod"
-      - name: annotations preprod deployment
-        if: inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen' && steps.approval.outcome != 'success'
-        run: echo "::notice title=PREPROD DEPLOYEMENT::explicitly denied "
-        
-          
+      # - name: annotations preprod deployment
+      #   if: inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen' && steps.approval.outcome != 'success'
+      #   run: echo "::notice title=PREPROD DEPLOYMENT::explicitly denied "
+
   deploy:
     name: deploy
     needs:
