@@ -31,24 +31,6 @@ on:
           docker image url 
         required: true
         type: string
-      mysql-version:
-        description: >-
-          mysql service container version
-        required: false
-        default: latest
-        type: string
-      redis-version:
-        description: >-
-          redis service container version 
-        required: false
-        default: latest
-        type: string
-      influxdb-version:
-        description: >-
-          influxdb service container version 
-        required: false
-        default: latest
-        type: string
     outputs:
       runner:
         description: >-
@@ -71,30 +53,6 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       runner: ${{ steps.set-runner.outputs.label }}
-    services: 
-      mysql:
-        image: mysql:${{ inputs.mysql-version }}
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        ports:
-          - 3306:3306
-        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
-      redis:
-        image: redis:${{ inputs.redis-version }}
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
-      influxdb:
-        image: influxdb:${{ inputs.influxdb-version }}
-        options: >-
-          --health-cmd "curl -f http://localhost:8086/ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
     steps:
       - name: init container
         uses: myriad-actions/init-container@main
@@ -133,7 +91,7 @@ jobs:
         uses: myriad-actions/run@main
         if: steps.check.outputs.continue  != 'false'
         with:
-          script: ${{ env.LANG }}/${{ env.SCRIPT0 }}
+          script: ${{ env.LANG }}/${{ env.SCRIPT01 }}
       - name: upload build artifacts
         uses: myriad-actions/run@main
         if: steps.check.outputs.continue  != 'false'

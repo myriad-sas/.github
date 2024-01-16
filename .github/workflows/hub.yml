@@ -25,9 +25,6 @@ jobs:
       id-token: write
       contents: read
     outputs:
-      MYSQL-VERSION: ${{ steps.vars.outputs.MYSQL-VERSION }}
-      REDIS-VERSION: ${{ steps.vars.outputs.REDIS-VERSION }}
-      INFLUXDB-VERSION: ${{ steps.vars.outputs.INFLUXDB-VERSION }}
       RELEASE:  ${{ steps.vars.outputs.RELEASE }}
       IMAGE: ${{ steps.vars.outputs.IMAGE }}
       IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
@@ -42,16 +39,13 @@ jobs:
       - name: set vars
         id: vars
         run: |
-          ${{ env.MYSQL-VERSION == '' }} && echo "MYSQL-VERSION=latest"  >> $GITHUB_OUTPUT || echo "MYSQL-VERSION=${{ env.MYSQL-VERSION }}"  >> $GITHUB_OUTPUT
-          ${{ env.REDIS-VERSION == '' }} && echo "REDIS-VERSION=latest"  >> $GITHUB_OUTPUT || echo "REDIS-VERSION=${{ env.REDIS-VERSION }}"  >> $GITHUB_OUTPUT
-          ${{ env.INFLUXDB-VERSION == '' }} && echo "INFLUXDB-VERSION=latest"  >> $GITHUB_OUTPUT || echo "INFLUXDB-VERSION=${{ env.INFLUXDB-VERSION }}"  >> $GITHUB_OUTPUT
           ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
           echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT
           echo "::notice title=ref:: ${{ github.ref_name }}"
         shell: bash
 
   ci:
-    uses: ./.github/workflows/ci.yml
+    uses: ./.github/workflows/ci.yml@DH-1292-refactor
     needs:
       - init
     secrets:
@@ -59,14 +53,11 @@ jobs:
       github-pak: ${{ secrets.github-pak }}
     with:
       image: ${{ needs.init.outputs.IMAGE }}
-      mysql-version: ${{ needs.init.outputs.MYSQL-VERSION }}
-      redis-version: ${{ needs.init.outputs.REDIS-VERSION }}
-      influxdb-version: ${{ needs.init.outputs.INFLUXDB-VERSION }}
       env-path: ${{ inputs.env-path }}
       runner: ${{ needs.init.outputs.RUNNER }}
 
   a-test:
-    uses: ./.github/workflows/cd.yml
+    uses: ./.github/workflows/cd.yml@DH-1292-refactor
     needs:
       - init
       - ci
@@ -80,7 +71,7 @@ jobs:
 
 
   b-prep:
-    uses: ./.github/workflows/cd.yml
+    uses: ./.github/workflows/cd.yml@DH-1292-refactor
     needs:
       - init
       - ci
@@ -94,7 +85,7 @@ jobs:
 
 
   c-prod:
-    uses: ./.github/workflows/cd.yml
+    uses: ./.github/workflows/cd.yml@DH-1292-refactor
     needs:
       - init
       - ci
