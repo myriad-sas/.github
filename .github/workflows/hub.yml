@@ -45,7 +45,7 @@ jobs:
         shell: bash
 
   ci:
-    uses: ./.github/workflows/ci.yml@DH-1292-refactor
+    uses: ./.github/workflows/ci.yml
     needs:
       - init
     secrets:
@@ -57,7 +57,7 @@ jobs:
       runner: ${{ needs.init.outputs.RUNNER }}
 
   a-test:
-    uses: ./.github/workflows/cd.yml@DH-1292-refactor
+    uses: ./.github/workflows/cd.yml
     needs:
       - init
       - ci
@@ -71,7 +71,7 @@ jobs:
 
 
   b-prep:
-    uses: ./.github/workflows/cd.yml@DH-1292-refactor
+    uses: ./.github/workflows/cd.yml
     needs:
       - init
       - ci
@@ -85,7 +85,7 @@ jobs:
 
 
   c-prod:
-    uses: ./.github/workflows/cd.yml@DH-1292-refactor
+    uses: ./.github/workflows/cd.yml
     needs:
       - init
       - ci
