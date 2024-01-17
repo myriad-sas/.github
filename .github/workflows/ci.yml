@@ -48,9 +48,9 @@ jobs:
       packages: read
     container:
       image: ${{ inputs.image }}
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      # credentials:
+      #   username: ${{ github.actor }}
+      #   password: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       runner: ${{ steps.set-runner.outputs.label }}
     steps:
