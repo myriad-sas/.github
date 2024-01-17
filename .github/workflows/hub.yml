@@ -26,6 +26,7 @@ jobs:
       contents: read
     outputs:
       RELEASE:  ${{ steps.vars.outputs.RELEASE }}
+      BUILD_IMAGE: ${{ steps.vars.outputs.BUILD_IMAGE }}
       IMAGE: ${{ steps.vars.outputs.IMAGE }}
       IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
       IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
@@ -40,7 +41,8 @@ jobs:
         id: vars
         run: |
           ${{ contains(github.ref_name, env.RELEASE-TAG-PREFIX)  }}  &&  echo "RELEASE=true" >> $GITHUB_OUTPUT  || echo "not a release"
-          echo "IMAGE=${{ env.DOCKER-RUNNER-IMAGE }}" >> $GITHUB_OUTPUT
+          echo "BUILD_IMAGE=${{ env.DOCKER-BUILD-IMAGE }}" >> $GITHUB_OUTPUT
+          echo "IMAGE=${{ env.DOCKER-IMAGE }}" >> $GITHUB_OUTPUT
           echo "::notice title=ref:: ${{ github.ref_name }}"
         shell: bash
 
@@ -52,7 +54,7 @@ jobs:
       github-pat: ${{ secrets.github-pat }}
       github-pak: ${{ secrets.github-pak }}
     with:
-      image: ${{ needs.init.outputs.IMAGE }}
+      image: ${{ needs.init.outputs.BUILD_IMAGE }}
       env-path: ${{ inputs.env-path }}
       runner: ${{ needs.init.outputs.RUNNER }}
 

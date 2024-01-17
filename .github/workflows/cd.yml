@@ -89,7 +89,7 @@ jobs:
       packages: read
       issues: write
     container:
-      image: ghcr.io/myriad-sas/${{ inputs.image }}
+      image: ${{ inputs.image }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -146,7 +146,7 @@ jobs:
       contents: read
       packages: read
     container:
-      image: ghcr.io/myriad-sas/${{ inputs.image }}
+      image: ${{ inputs.image }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
