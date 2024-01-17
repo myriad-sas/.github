@@ -57,7 +57,7 @@ jobs:
       - name: init container
         uses: myriad-actions/init-container@main
       - name: init job  
-        uses: myriad-actions/init-job@main
+        uses: myriad-actions/init-job-debian@main
         with:
           github-pat: ${{ secrets.github-pat }}
           env-path: ${{ inputs.env-path }}
