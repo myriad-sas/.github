@@ -80,12 +80,24 @@ jobs:
           mkdir -p /root/logs
           echo label=${{ inputs.runner }} >> $GITHUB_OUTPUT 
       - name: check ssh key
-        if: steps.check.outputs.continue  != 'false' 
-        run: ${{ secrets.github-pak != '' }} && echo "CONFIGURE_SSH=true" >> $GITHUB_ENV || continue 
+        if: steps.check.outputs.continue  != 'false'
+        run: ${{ secrets.github-pak != '' }} && echo "CONFIGURE_SSH=true" >> $GITHUB_ENV || continue
+      - name: install ssh client package
+        if: env.CONFIGURE_SSH == 'true' && steps.check.outputs.continue  != 'false'
+        run: |
+         if apt list --installed | grep -q "openssh-client"
+          then
+            echo "Package openssh-client exits!"
+          else
+            apt-get -y update
+            apt-get -y install openssh-client
+         fi
+        shell: bash
       - name: configure git ssh
+        if: env.CONFIGURE_SSH == 'true' && steps.check.outputs.continue  != 'false'
         uses: webfactory/ssh-agent@v0.8.0
         with:
-            ssh-private-key: ${{ secrets.github-pak }}
+          ssh-private-key: ${{ secrets.github-pak }}
       - name: build and test
         uses: myriad-actions/run@main
         if: steps.check.outputs.continue  != 'false'
