@@ -89,6 +89,7 @@ jobs:
           then
             echo "Package openssh-client exits!"
           else
+            DEBIAN_FRONTEND=noninteractive
             apt-get -y update
             apt-get -y install openssh-client
          fi
