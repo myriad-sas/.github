@@ -97,10 +97,29 @@ on:
           - to remove the container from registry when it is not needed anymore.
         value: ${{ jobs.build-n-push.outputs.uri }}
 
-        
 jobs:          
+  check-ref:
+    name: check-ref
+    runs-on: ubuntu-latest
+    outputs:
+      check_ref_result: ${{ steps.check-reference.outputs.ref_check }}
+    steps:
+      - name: Check Reference
+        id: check-reference
+        run: |
+          if [[ ${{ inputs.image-name }} =~ ^prod\/.* ]] && [[ ${GITHUB_REF} =~ refs\/heads\/[master|main] ]]
+            then
+              echo "ref_check=true" >> ${GITHUB_OUTPUT}
+              echo "No runtime image will be created and pushed to ECR as this is a Prod workflow run directly on the master/main branch"
+            else
+              echo "ref_check=false" >> ${GITHUB_OUTPUT}
+              echo "Runtime image creation and push to ECR will follow..."
+          fi
+
   build-n-push:
     name: build & push
+    needs: [check-ref]
+    if: needs.check-ref.outputs.check_ref_result == 'false'
     runs-on: ghr-aws
       # group: default
     permissions:
