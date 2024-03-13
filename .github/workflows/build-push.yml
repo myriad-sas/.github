@@ -112,7 +112,7 @@ on:
 jobs:          
   build-n-push:
     name: build & push
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
