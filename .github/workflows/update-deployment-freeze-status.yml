@@ -48,7 +48,7 @@ jobs:
           ${{ inputs.status == 'frozen' }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "target status is unfrozen"
           ${{ inputs.environment == 'preprod' }}  &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "target env is prod"
           ${{ inputs.environment == 'prod' && env.NO-PROD == 'true' }}  &&  echo "CHECK_PASSED=false" >> $GITHUB_ENV || echo "prod env exists"
-          ${{ contains(steps.isMember.outputs.teams, env.GROUP1) || contains(steps.isMember.outputs.teams, env.GROUP2) }} &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "actor is not superuser"
+          ${{ contains(steps.isMember.outputs.teams, env.GROUP1) || contains(steps.isMember.outputs.teams, env.GROUP2) }} || contains(steps.isMember.outputs.teams, env.GROUP3) }} &&  echo "CHECK_PASSED=true" >> $GITHUB_ENV || echo "actor is not superuser"
         shell: bash 
       - name: exit if access denied
         if: env.CHECK_PASSED != 'true' 
