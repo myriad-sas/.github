@@ -40,6 +40,12 @@ on:
           build-args
         required: false
         type: string
+      push_to_ecr:
+        description: >-
+          boolean value to check if the image should be pushed to ecr. 
+        required: false
+        default: false
+        type: boolean
       context:
         description: "Build's context is the set of files located in the specified PATH or URL"
         required: false
