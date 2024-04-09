@@ -58,8 +58,8 @@ on:
 jobs:      
   build:
     name: build
-    runs-on:  
-      group: default
+    runs-on: self-hosted
+      #group: default
     permissions:
       id-token: write
       contents: read
