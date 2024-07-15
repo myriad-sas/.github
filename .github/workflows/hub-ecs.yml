@@ -116,7 +116,7 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       runner: ${{ inputs.runner }}
-      image: "amazon/aws-cli"
+      image: "public.ecr.aws/bitnami/aws-cli"
       task_name: ${{ inputs.task_name }}
       container_name: ${{ inputs.container_name }}
       image_name: ${{ inputs.image_name }}
@@ -132,7 +132,7 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       runner: ${{ inputs.runner }}
-      image: "amazon/aws-cli"
+      image: "public.ecr.aws/bitnami/aws-cli"
       task_name: ${{ inputs.task_name }}
       container_name: ${{ inputs.container_name }}
       image_name: ${{ inputs.image_name }}

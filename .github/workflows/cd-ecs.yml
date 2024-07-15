@@ -120,7 +120,7 @@ jobs:
       continue:  ${{ steps.check-continue.outputs.continue }}
     steps:
       - name: init container
-        uses: myriad-actions/init-container-al@main
+        uses: myriad-actions/init-container@main
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
@@ -190,7 +190,7 @@ jobs:
       image: ${{ inputs.image }}
     steps:
       - name: init container
-        uses: myriad-actions/init-container-al@main
+        uses: myriad-actions/init-container@main
       - name: init job  
         uses: myriad-actions/init-job@main
         with:
