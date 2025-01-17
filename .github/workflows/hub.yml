@@ -58,35 +58,35 @@ jobs:
       env-path: ${{ inputs.env-path }}
       runner: ${{ needs.init.outputs.RUNNER }}
 
-  a-test:
-    uses: ./.github/workflows/cd.yml
-    needs:
-      - init
-      - ci
-    if: needs.init.outputs.RELEASE !=  'true'
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      environment: testing
-      runner: ${{ needs.init.outputs.RUNNER }}
-      image: ${{ needs.init.outputs.IMAGE }}
+#  a-test:
+#    uses: ./.github/workflows/cd.yml
+#    needs:
+#      - init
+#      - ci
+#    if: needs.init.outputs.RELEASE !=  'true'
+#    secrets:
+#      github-pat: ${{ secrets.github-pat }}
+#    with:
+#      environment: testing
+#      runner: ${{ needs.init.outputs.RUNNER }}
+#      image: ${{ needs.init.outputs.IMAGE }}
 
 
-  b-prep:
-    uses: ./.github/workflows/cd.yml
-    needs:
-      - init
-      - ci
-    if: needs.init.outputs.RELEASE != 'true'
-    secrets:
-      github-pat: ${{ secrets.github-pat }}
-    with:
-      environment: preprod
-      runner: ${{ needs.init.outputs.RUNNER }}
-      image: ${{ needs.init.outputs.IMAGE }}
+#  b-prep:
+#    uses: ./.github/workflows/cd.yml
+#    needs:
+#      - init
+#      - ci
+#    if: needs.init.outputs.RELEASE != 'true'
+#    secrets:
+#      github-pat: ${{ secrets.github-pat }}
+#    with:
+#      environment: preprod
+#      runner: ${{ needs.init.outputs.RUNNER }}
+#      image: ${{ needs.init.outputs.IMAGE }}
 
 
-  c-prod:
+  deploy:
     uses: ./.github/workflows/cd.yml
     needs:
       - init
@@ -95,6 +95,6 @@ jobs:
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
-      environment: prod
+      environment: ${HUB_ENV}
       runner: ${{ needs.init.outputs.RUNNER }}
       image: ${{ needs.init.outputs.IMAGE }}
