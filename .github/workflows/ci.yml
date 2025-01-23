@@ -31,6 +31,11 @@ on:
           docker image url 
         required: true
         type: string
+      HUB_ENV:
+        description: >-
+            environment variables
+        required: true
+        type: string
     outputs:
       runner:
         description: >-
@@ -109,3 +114,4 @@ jobs:
         if: steps.check.outputs.continue  != 'false'
         with:
           script: ${{ env.SCRIPT1 }}
+          HUB_ENV: ${{ inputs.HUB_ENV }}
