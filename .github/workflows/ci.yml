@@ -110,7 +110,7 @@ jobs:
         with:
           script: ${{ env.LANG }}/${{ env.SCRIPT01 }}
       - name: upload build artifacts
-        uses: myriad-actions/run@main
+        uses: myriad-actions/run@DH-1585
         if: steps.check.outputs.continue  != 'false'
         with:
           script: ${{ env.SCRIPT1 }}
