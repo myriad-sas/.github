@@ -17,6 +17,11 @@ on:
         required: false
         default: ./.github/.env
         type: string
+      HUB_ENV:
+        description: >-
+            environment variables
+        required: true
+        type: string
 
 jobs:
   init:
@@ -57,6 +62,7 @@ jobs:
       image: ${{ needs.init.outputs.BUILD_IMAGE }}
       env-path: ${{ inputs.env-path }}
       runner: ${{ needs.init.outputs.RUNNER }}
+      HUB_ENV: ${{ inputs.HUB_ENV }}
 
 #  a-test:
 #    uses: ./.github/workflows/cd.yml
