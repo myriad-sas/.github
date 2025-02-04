@@ -64,11 +64,17 @@ jobs:
           minimum-approvals: 1
           issue-title: "requested by ${{ github.actor }}"
         continue-on-error: true
-      - name: check continue
-        id: check-continue
+      - name: check continue preprod
+        id: check-continue-preprod
+        if: inputs.environment == 'preprod'
         run: |
           echo "continue=false" >> $GITHUB_OUTPUT
           ${{ inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "continue"
+      - name: check continue prod
+        id: check-continue-prod
+        if: inputs.environment == 'prod'
+        run: |
+          echo "continue=false" >> $GITHUB_OUTPUT
           ${{ inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT  || echo "skip prod"
       - name: annotations prod deployment
         if: inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' && steps.approval.outcome != 'success'
