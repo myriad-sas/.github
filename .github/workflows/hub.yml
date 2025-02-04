@@ -97,7 +97,6 @@ jobs:
     needs:
       - init
       - ci
-    if: github.ref_name == 'master' || github.ref_name == '202*'
     secrets:
       github-pat: ${{ secrets.github-pat }}
     with:
