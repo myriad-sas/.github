@@ -119,7 +119,6 @@ jobs:
         with:
           script: ${{ env.SCRIPT5 }}
           args: ${{ inputs.environment }}
-          HUB_ENV: ${{ inputs.environment }}
       - name: checkout configurations
         uses: actions/checkout@v3
         with:
