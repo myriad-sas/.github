@@ -109,14 +109,13 @@ jobs:
           path: main/${{ env.ARTIFACTS-SRC-PATH }}
           key: ${{ github.sha }}
       - name: set env
-        if: inputs.environment != 'testing' 
         run: echo 'NEXT-ENV=${{ inputs.environment }}' >> $GITHUB_ENV
       - name: tag env
-        uses: myriad-actions/run@main
-        if: inputs.environment != 'testing' 
+        uses: myriad-actions/run@DH-1585
         with:
           script: ${{ env.SCRIPT5 }}
           args: ${{ env.NEXT-ENV }}
+          HUB_ENV: ${{ inputs.environment }}
       - name: checkout configurations
         uses: actions/checkout@v3
         with:
