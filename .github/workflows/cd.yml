@@ -118,7 +118,7 @@ jobs:
         uses: myriad-actions/run@DH-1585
         with:
           script: ${{ env.SCRIPT5 }}
-          args: ${{ env.NEXT-ENV }}
+          args: ${{ inputs.environment }}
           HUB_ENV: ${{ inputs.environment }}
       - name: checkout configurations
         uses: actions/checkout@v3
