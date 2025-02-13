@@ -64,34 +64,6 @@ jobs:
       runner: ${{ needs.init.outputs.RUNNER }}
       HUB_ENV: ${{ inputs.HUB_ENV }}
 
-#  a-test:
-#    uses: ./.github/workflows/cd.yml
-#    needs:
-#      - init
-#      - ci
-#    if: needs.init.outputs.RELEASE !=  'true'
-#    secrets:
-#      github-pat: ${{ secrets.github-pat }}
-#    with:
-#      environment: testing
-#      runner: ${{ needs.init.outputs.RUNNER }}
-#      image: ${{ needs.init.outputs.IMAGE }}
-
-
-#  b-prep:
-#    uses: ./.github/workflows/cd.yml
-#    needs:
-#      - init
-#      - ci
-#    if: needs.init.outputs.RELEASE != 'true'
-#    secrets:
-#      github-pat: ${{ secrets.github-pat }}
-#    with:
-#      environment: preprod
-#      runner: ${{ needs.init.outputs.RUNNER }}
-#      image: ${{ needs.init.outputs.IMAGE }}
-
-
   deploy:
     uses: ./.github/workflows/cd.yml
     needs:
