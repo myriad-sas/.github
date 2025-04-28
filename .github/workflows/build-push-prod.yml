@@ -184,7 +184,7 @@ jobs:
             latest=auto
           tags: |
             type=raw,value=${{ env.IMAGE-TAG }}
-            type=raw,value=prod, enable=${{ github.ref == 'refs/heads/master' }}
+            type=raw,value=prod, enable=${{ github.ref == 'refs/heads/main' }}
             type=raw,value=latest,enable={{is_default_branch}}
           
       - name: Build and push
