@@ -190,6 +190,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
+          provenance: false
           context: ${{ inputs.context }}
           file: ${{ inputs.file }}
           build-contexts: ${{ inputs.build-contexts }}
