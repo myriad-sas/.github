@@ -146,7 +146,7 @@ jobs:
 
       - name: Download artifacts from previous job
         if: ${{ inputs.download-artifacts }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ inputs.artifacts-name }}
           path: ${{ inputs.artifacts-path }}
