@@ -134,7 +134,7 @@ jobs:
         uses: AutoModality/action-clean@v1
 
       - name: checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: load project env
         run: sudo sed '/^#/d' ${{ inputs.env-path }} >> $GITHUB_ENV

@@ -121,7 +121,7 @@ jobs:
     steps:
       - uses: AutoModality/action-clean@v1
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
 
       - name: get build args
         run: echo "IMAGE-TAG=$(date +'%Y%m%d%H%M%S')"  >> $GITHUB_ENV
