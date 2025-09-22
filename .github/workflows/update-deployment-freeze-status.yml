@@ -52,7 +52,7 @@ jobs:
         shell: bash 
       - name: exit if access denied
         if: env.CHECK_PASSED != 'true' 
-        uses: actions/github-script@v3
+        uses: actions/github-script@v8
         with:
           script: |
               core.setFailed('Access Denied, please contact DevOPS or QA team')
