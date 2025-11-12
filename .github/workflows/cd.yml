@@ -64,18 +64,18 @@ jobs:
           minimum-approvals: 1
           issue-title: "requested by ${{ github.actor }}"
         continue-on-error: true
-      - name: check continue preprod
-        id: check-continue-preprod
-        if: inputs.environment == 'preprod'
+      - name: check continue
+        id: check-continue
         run: |
           echo "continue=false" >> $GITHUB_OUTPUT
-          ${{ inputs.environment == 'preprod' && steps.status.outputs.IS_PREPROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT || echo "continue"
-      - name: check continue prod
-        id: check-continue-prod
-        if: inputs.environment == 'prod'
-        run: |
-          echo "continue=false" >> $GITHUB_OUTPUT
-          ${{ inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' }} && echo "continue=true" >> $GITHUB_OUTPUT  || echo "skip prod"
+          if [ "${{ inputs.environment }}" = "preprod" ]; then
+            echo "continue=true" >> $GITHUB_OUTPUT
+          fi
+          if [ "${{ inputs.environment }}" = "prod" ] && [ "${{ steps.status.outputs.IS_PROD_FROZEN }}" = "unfrozen" ]; then
+            echo "continue=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip prod"
+          fi
       - name: annotations prod deployment
         if: inputs.environment == 'prod' && steps.status.outputs.IS_PROD_FROZEN == 'unfrozen' && steps.approval.outcome != 'success'
         run: echo "::notice title=PROD DEPLOYMENT::explicitly denied "
@@ -84,7 +84,7 @@ jobs:
     name: deploy
     needs:
       - check
-    if: needs.check.outputs.continue != 'false' 
+    if: needs.check.outputs.continue == 'true'
     runs-on:  ${{ inputs.runner }}
     environment: ${{ inputs.environment }}
     permissions:
