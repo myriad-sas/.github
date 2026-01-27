@@ -1,6 +1,6 @@
 name: start-runner
 
-on: 
+on:
   workflow_call:
     secrets:
       github-pat:
@@ -30,10 +30,10 @@ on:
           path to the configuration file of ec2 launch config
         required: false
         type: string
-        
+
       init:
         description: >-
-          whether to run init script on the new runner 
+          whether to run init script on the new runner
         required: false
         default: true
         type: string
@@ -51,7 +51,7 @@ on:
           The id is used to terminate the EC2 instance when the runner is not needed anymore.
         value: ${{ jobs.launch.outputs.ec2-instance-id }}
 
-jobs:          
+jobs:
   launch:
     name: launch
     runs-on: ubuntu-latest
@@ -62,11 +62,11 @@ jobs:
       label: ${{ steps.start-ec2-runner.outputs.label }}
       ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
     steps:
-      - name: init job  
+      - name: init job
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
-      - name: load non-prod launch config 
+      - name: load non-prod launch config
         if: inputs.environment != 'prod'
         run: |
           echo "CONFIG-PATH=$(echo ${{ env.AWS-EC2-RUNNER-NON-PROD-CONFIG }})" >> $GITHUB_ENV
@@ -87,10 +87,10 @@ jobs:
         run: |
           echo "CONFIG-PATH=${{ inputs.runner-config-path }}" >> $GITHUB_ENV
       - name: load instance type
-        run: ${{  env.RUNNER-INSTANCE-TYPE == '' }} && echo "RUNNER-INSTANCE-TYPE=t3a.large" >> $GITHUB_ENV || continue 
+        run: ${{  env.RUNNER-INSTANCE-TYPE == '' }} && echo "RUNNER-INSTANCE-TYPE=t3a.large" >> $GITHUB_ENV || continue
       - name: start runner
         id: start-ec2-runner
-        uses: myriad-actions/start-runner@main
+        uses: myriad-actions/start-runner@test_for_aculab
         with:
           environment: ${{ inputs.environment }}
           config-path: ${{ env.CONFIG-PATH }}
@@ -103,7 +103,7 @@ jobs:
     runs-on: ${{ needs.launch.outputs.label }}
     if: ${{ inputs.init == 'true' }}
     steps:
-      - name: init job  
+      - name: init job
         uses: myriad-actions/init-job@main
         with:
           github-pat: ${{ secrets.github-pat }}
