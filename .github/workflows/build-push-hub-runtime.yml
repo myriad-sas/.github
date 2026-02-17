@@ -120,9 +120,7 @@ jobs:
     name: build & push
     needs: [check-ref]
     if: needs.check-ref.outputs.check_ref_result == 'false'
-    runs-on:
-      ghr-aws
-      # group: default
+    runs-on: hub-runner
     permissions:
       id-token: write
       contents: read
