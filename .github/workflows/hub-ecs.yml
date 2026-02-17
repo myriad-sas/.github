@@ -70,7 +70,7 @@ jobs:
       RELEASE:  ${{ steps.vars.outputs.RELEASE }}
       IS_PREPROD_FROZEN: ${{ steps.status.outputs.IS_PREPROD_FROZEN }}
       IS_PROD_FROZEN: ${{ steps.status.outputs.IS_PROD_FROZEN }}
-      RUNNER: ghr-aws
+      RUNNER: hub-runner
     steps:
       - name: init job
         uses: myriad-actions/init-job@main
