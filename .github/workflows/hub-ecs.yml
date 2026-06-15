@@ -116,7 +116,7 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       runner: ${{ inputs.runner }}
-      image: "public.ecr.aws/aws-cli/aws-cli:2.35.4"
+      image: "public.ecr.aws/aws-cli/aws-cli:latest"
       task_name: ${{ inputs.task_name }}
       container_name: ${{ inputs.container_name }}
       image_name: ${{ inputs.image_name }}
@@ -132,7 +132,7 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       runner: ${{ inputs.runner }}
-      image: "public.ecr.aws/aws-cli/aws-cli:2.35.4"
+      image: "public.ecr.aws/aws-cli/aws-cli:latest"
       task_name: ${{ inputs.task_name }}
       container_name: ${{ inputs.container_name }}
       image_name: ${{ inputs.image_name }}
